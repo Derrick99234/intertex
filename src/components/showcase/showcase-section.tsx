@@ -21,7 +21,7 @@ const ShowcaseSection = () => (
       <button className="bg-white px-6 py-3 w-[284px] h-[43px] md:w-[308px] md:h-[64px] shadow font-bold text-[#152F24] hover:bg-gray-100 transition md:text-lg text-sm font-['FONTSPRING_DEMO_-_Proxima_Nova']">
         Get Your Custom Quote Today
       </button>
-      <button>new</button>
+      
     </div>
   </section>
 );

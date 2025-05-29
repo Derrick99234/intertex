@@ -11,6 +11,8 @@ function Header() {
           alt="intertex logo"
           width={150}
           height={200}
+          quality={90}
+          priority
         />
       </div>
       <nav>
@@ -49,9 +51,9 @@ function Header() {
           <Image
             src={"/icons/location.png"}
             alt="track order"
-            // className="size-2"
             width={10}
             height={10}
+            quality={75}
           />
           <span className="font-bold text-sm">Track Order</span>
         </Link>
@@ -64,6 +66,7 @@ function Header() {
             alt="search order"
             width={12}
             height={12}
+            quality={75}
           />
           <span className="font-semibold text-sm">Search</span>
         </Link>
@@ -73,6 +76,7 @@ function Header() {
           width={30}
           height={10}
           className="cursor-pointer"
+          quality={75}
         />
         <Image
           src={"/icons/profile.png"}
@@ -80,6 +84,7 @@ function Header() {
           alt="user profile"
           width={45}
           height={10}
+          quality={75}
         />
       </div>
     </header>

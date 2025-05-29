@@ -24,7 +24,7 @@ const AboutHeroSection = () => {
         <div className="w-full mx-auto md:flex md:flex-row flex flex-col-reverse gap-8 md:justify-between ">
           <div className="md:w-[621px] w-full">
             <Image
-              src="/images/leftgroup.jpg"
+              src="/images/leftgroup.jpeg"
               alt="Group on couch"
               width={582}
               height={398}
