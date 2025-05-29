@@ -1,10 +1,4 @@
-import Header from "@/components/header/header";
 import HeroPage from "@/components/hero/hero-page";
-import AboutHeroSection from "@/components/about-hero/about-hero-section";
-import MissionVisionSection from "@/components/mission-vision/mission-vision-section";
-import ShowcaseSection from "@/components/showcase/showcase-section";
-import Image from "next/image";
-import About from "./about/page";
 
 export default function Home() {
   return (
