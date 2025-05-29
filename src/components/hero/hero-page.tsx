@@ -13,8 +13,6 @@ function HeroPage() {
           width={490}
           className="bottom-0 left-0 absolute"
           height={300}
-          quality={85}
-          priority
         />
         <div className="text-center text-white flex justify-center items-center flex-col col-span-3 max-w-3xl pl-10">
           <span className="font-bold text-3xl">The</span>
@@ -38,8 +36,6 @@ function HeroPage() {
           alt="young african billionaire"
           width={350}
           height={200}
-          quality={85}
-          priority
         />
       </section>
       <section className="min-h-[50vh] py-16 bg-[#F2F2F2]">
@@ -55,7 +51,6 @@ function HeroPage() {
               width={300}
               height={300}
               alt="A man in brown suit"
-              quality={80}
             />
             <span className="text-blue font-medium text-2xl block mt-2">
               MAN
@@ -69,7 +64,6 @@ function HeroPage() {
               width={300}
               height={300}
               alt="A black man in brown suit"
-              quality={80}
             />
             <span className="text-blue font-medium text-2xl block mt-2">
               WOMAN
@@ -83,7 +77,6 @@ function HeroPage() {
               width={300}
               height={300}
               alt="A lady on glass dress for summer"
-              quality={80}
             />
             <span className="text-blue font-medium text-2xl block mt-2">
               KID'S
