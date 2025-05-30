@@ -33,6 +33,12 @@ function Header() {
           <li>
             <Link href={"#"}>Our Stores</Link>
           </li>
+          <li>
+            <Link href={"/about"}>About Us</Link>
+          </li>
+          <li>
+            <Link href={"/blog"}>Blog</Link>
+          </li>
         </ul>
       </nav>
       <div className="flex gap-5 items-center">
