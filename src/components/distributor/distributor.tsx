@@ -27,7 +27,7 @@ const Distributor = () => {
           </span>
         </nav>
 
-        <div className="bg-[#1739B7] md:rounded-lg text-white text-center md:py-10 md:px-4 mb-8 w-full md:h-[264px] h-[190px] flex flex-col justify-center items-center">
+        <div className="bg-[#091697] md:rounded-lg text-white text-center md:py-10 md:px-4 mb-8 w-full md:h-[264px] h-[190px] flex flex-col justify-center items-center">
           <h1 className="text-4xl md:text-[90px] font-bold mb-1 md:mb-4">
             Become a Distributor
           </h1>
