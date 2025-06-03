@@ -25,7 +25,7 @@ const FAQHeroSection = () => {
           FAQs
         </span>
       </nav>
-      <div className="bg-[#182FA6] md:rounded-lg p-8 md:p-12 flex flex-col items-center w-full md:h-[472px] h-[380px] gap-10 ">
+      <div className="bg-[#091697] md:rounded-lg p-8 md:p-12 flex flex-col items-center w-full md:h-[472px] h-[380px] gap-10 ">
         <h1 className="text-white text-4xl md:text-[90px] font-bold text-center mb-10">
           Frequently Asked Questions
         </h1>

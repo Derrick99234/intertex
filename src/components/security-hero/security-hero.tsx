@@ -25,7 +25,7 @@ const SecurityHeroSection = () => {
           Security
         </span>
       </nav>
-      <div className="bg-[#182FA6] md:rounded-lg md:p-12 flex flex-col justify-center items-center w-full md:h-[264px] h-[190px] gap-10 ">
+      <div className="bg-[#091697] md:rounded-lg md:p-12 flex flex-col justify-center items-center w-full md:h-[264px] h-[190px] gap-10 ">
         <h1 className="text-white text-4xl md:text-[90px] font-bold text-center">
           Security
         </h1>
