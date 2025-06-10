@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import ElevatedStyle from "../elevated-styles";
 
 function HeroPage() {
   return (
@@ -84,6 +85,18 @@ function HeroPage() {
           </div>
         </div>
       </section>
+      <ElevatedStyle
+        hedaer="Elevated Style for the Modern Man"
+        image1={
+          "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Frame+2085653576.png"
+        }
+        image2={
+          "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Frame+2085653577.png"
+        }
+        content="Discover the perfect blend of elegance and comfort with our latest collection. Each piece is designed to elevate your style, making you stand out in any crowd."
+        buttonText="Shop Now"
+        buttonLink="/shop"
+      />
     </>
   );
 }

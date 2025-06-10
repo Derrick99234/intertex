@@ -31,7 +31,7 @@ function Header() {
             <Link href={"#"}>Our Factory</Link>
           </li>
           <li>
-            <Link href={"#"}>Our Stores</Link>
+            <Link href={"/our-stores"}>Our Stores</Link>
           </li>
           <li>
             <Link href={"/about"}>About Us</Link>
