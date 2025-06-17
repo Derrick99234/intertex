@@ -1,14 +1,23 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 function Header() {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/");
+  };
   return (
     <header className="flex justify-between items-center px-10 text-[#091697] py-6 w-full">
       <div className="logo">
         <Image
           src={"/logo/intertex-logo.png"}
+          onClick={handleClick}
           alt="intertex logo"
+          className="cursor-pointer"
           width={150}
           height={200}
         />
@@ -16,19 +25,19 @@ function Header() {
       <nav>
         <ul className="flex gap-5">
           <li>
-            <Link href={"#"}>Man</Link>
+            <Link href={"/mens-wear"}>Man</Link>
           </li>
           <li>
-            <Link href={"#"}>Woman</Link>
+            <Link href={"/mens-wear"}>Woman</Link>
           </li>
           <li>
-            <Link href={"#"}>Kids</Link>
+            <Link href={"/mens-wear"}>Kids</Link>
           </li>
           <li>
-            <Link href={"#"}>Accessories</Link>
+            <Link href={"/mens-wear"}>Accessories</Link>
           </li>
           <li>
-            <Link href={"#"}>Our Factory</Link>
+            <Link href={"/our-factory"}>Our Factory</Link>
           </li>
           <li>
             <Link href={"/our-stores"}>Our Stores</Link>
