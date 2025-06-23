@@ -3,6 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+import MenDropdown from "./men-dropdown";
+import WomenDropdown from "./women-dropdown";
+import KidDropdown from "./kid-dropdown";
 
 function Header() {
   const router = useRouter();
@@ -10,6 +13,9 @@ function Header() {
   const handleClick = () => {
     router.push("/");
   };
+  const [showMenNavMenu, setShowMenNavMenu] = React.useState(false);
+  const [showWomenNavMenu, setShowWomenNavMenu] = React.useState(false);
+  const [showKidMenNavMenu, setShowKidMenNavMenu] = React.useState(false);
   return (
     <header className="flex justify-between items-center px-10 text-[#091697] py-6 w-full">
       <div className="logo">
@@ -25,13 +31,19 @@ function Header() {
       <nav>
         <ul className="flex gap-5">
           <li>
-            <Link href={"/mens-wear"}>Man</Link>
+            <Link href={"#"} onClick={() => setShowMenNavMenu(true)}>
+              Man
+            </Link>
           </li>
           <li>
-            <Link href={"/mens-wear"}>Woman</Link>
+            <Link href={"#"} onClick={() => setShowKidMenNavMenu(true)}>
+              Woman
+            </Link>
           </li>
           <li>
-            <Link href={"/mens-wear"}>Kids</Link>
+            <Link href={"#"} onClick={() => setShowKidMenNavMenu(true)}>
+              Kids
+            </Link>
           </li>
           <li>
             <Link href={"/mens-wear"}>Accessories</Link>
@@ -91,6 +103,13 @@ function Header() {
           height={10}
         />
       </div>
+      {showMenNavMenu && <MenDropdown setShowMenNavMenu={setShowMenNavMenu} />}
+      {showWomenNavMenu && (
+        <WomenDropdown setShowWomenNavMenu={setShowWomenNavMenu} />
+      )}
+      {showKidMenNavMenu && (
+        <KidDropdown setShowKidMenNavMenu={setShowKidMenNavMenu} />
+      )}
     </header>
   );
 }
