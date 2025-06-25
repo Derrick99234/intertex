@@ -68,11 +68,21 @@ function WomenDropdown(props: {
           </div>
         </div>
 
-        <div className="w-[20rem] h-[30rem] relative">
+        <div className="w-[20rem] h-[30rem] relative flex flex-col gap-2">
           <Image
-            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/girl_on_pink_front.jpg"
+            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Woman+on+jacket.jpg"
             alt="Man with shoe"
-            layout="fill"
+            objectFit="cover"
+            unoptimized
+            width={500}
+            height={500}
+            className="rounded-md"
+          />
+          <Image
+            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/A+lady+on+hat.jpg"
+            alt="Man with shoe"
+            width={500}
+            height={500}
             objectFit="cover"
             className="rounded-md"
           />

@@ -70,7 +70,7 @@ function MenDropdown(props: {
 
         <div className="w-[20rem] h-[30rem] relative">
           <Image
-            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/f5abe1290d6fe1fbdfccb4655a0e1b6ec70be944.jpg"
+            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Man+with+shoe.jpg"
             alt="Man with shoe"
             layout="fill"
             objectFit="cover"

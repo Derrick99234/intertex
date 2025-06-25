@@ -2,16 +2,16 @@ import React from "react";
 import Image from "next/image";
 
 function KidDropdown(props: {
-  setShowKidMenNavMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowKidNavMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div
       className="bg-[#00000078] min-h-screen flex justify-center fixed top-0 left-0 right-0 z-50"
-      onClick={() => props.setShowKidMenNavMenu(false)}
+      onClick={() => props.setShowKidNavMenu(false)}
     >
       <div className="bg-white shadow-lg px-20 py-10 w-full flex gap-10 h-max">
         <div className="flex-1">
-          <h2 className="text-  4xl font-bold text-gray-800 mb-2">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">
             Sophisticated Style, Unwavering Confidence
           </h2>
           <p className="text-lg mb-6 text-gray-800">
@@ -70,8 +70,8 @@ function KidDropdown(props: {
 
         <div className="w-[20rem] h-[30rem] relative">
           <Image
-            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/6206d9efd0941c39c61032b51f538ef9edade1ec.png"
-            alt="Man with shoe"
+            src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/A+baby+girl.png"
+            alt="A baby girl"
             layout="fill"
             objectFit="cover"
             className="rounded-md"

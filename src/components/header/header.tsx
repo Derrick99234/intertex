@@ -15,7 +15,7 @@ function Header() {
   };
   const [showMenNavMenu, setShowMenNavMenu] = React.useState(false);
   const [showWomenNavMenu, setShowWomenNavMenu] = React.useState(false);
-  const [showKidMenNavMenu, setShowKidMenNavMenu] = React.useState(false);
+  const [showKidNavMenu, setShowKidNavMenu] = React.useState(false);
   return (
     <header className="flex justify-between items-center px-10 text-[#091697] py-6 w-full">
       <div className="logo">
@@ -36,12 +36,12 @@ function Header() {
             </Link>
           </li>
           <li>
-            <Link href={"#"} onClick={() => setShowKidMenNavMenu(true)}>
+            <Link href={"#"} onClick={() => setShowWomenNavMenu(true)}>
               Woman
             </Link>
           </li>
           <li>
-            <Link href={"#"} onClick={() => setShowKidMenNavMenu(true)}>
+            <Link href={"#"} onClick={() => setShowKidNavMenu(true)}>
               Kids
             </Link>
           </li>
@@ -107,9 +107,7 @@ function Header() {
       {showWomenNavMenu && (
         <WomenDropdown setShowWomenNavMenu={setShowWomenNavMenu} />
       )}
-      {showKidMenNavMenu && (
-        <KidDropdown setShowKidMenNavMenu={setShowKidMenNavMenu} />
-      )}
+      {showKidNavMenu && <KidDropdown setShowKidNavMenu={setShowKidNavMenu} />}
     </header>
   );
 }
