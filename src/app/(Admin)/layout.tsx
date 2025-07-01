@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
+import AdminHeader from "@/components/admin/header/admin-header";
 
 export const metadata: Metadata = {
   title: "Admin | Intertex",
@@ -13,7 +14,10 @@ export default function AdminLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AdminHeader />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,16 +1,8 @@
-import Image from "next/image";
 import React from "react";
 
 function ResetPassword() {
   return (
     <section>
-      <Image
-        src={"/logo/intertex_logo_2.png"}
-        alt="Admin Login"
-        width={200}
-        height={200}
-        className="w-36 h-auto mt-4 ml-4"
-      />
       <div className="flex justify-center items-center">
         <form className="bg-white flex-col py-20 px-10 min-w-md">
           <h2 className="text-3xl font-bold mb-4 text-center">

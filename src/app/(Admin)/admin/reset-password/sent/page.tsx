@@ -1,6 +1,5 @@
 "use client";
 import OtpVerification from "@/components/admin/otp-verification/otp-verification";
-import Image from "next/image";
 import React from "react";
 
 function ResetEmailSent() {
@@ -8,13 +7,6 @@ function ResetEmailSent() {
     React.useState(false);
   return (
     <section>
-      <Image
-        src={"/logo/intertex_logo_2.png"}
-        alt="Admin Login"
-        width={200}
-        height={200}
-        className="w-36 h-auto mt-4 ml-4"
-      />
       <div className="flex justify-center items-center ">
         <div className="">
           <h2 className="text-3xl font-bold mb-8 text-center mt-24">
