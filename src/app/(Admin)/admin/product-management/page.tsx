@@ -1,6 +1,7 @@
 "use client";
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
+import AddNewProducts from "@/components/admin/products/add-new-products";
 import DisplayStats from "@/components/display-stats/display-stats";
 import React from "react";
 
@@ -388,8 +389,9 @@ function PageManagement() {
     },
   ];
 
+  const [addNewProduct, setAddNewProduct] = React.useState(false);
   return (
-    <section className="flex mt-26">
+    <section className="flex mt-20">
       <AdminSidebar />
       <div className="p-5 flex-1 ml-64">
         <DisplayStats />
@@ -411,9 +413,32 @@ function PageManagement() {
           itemsPerPage={5}
           searchPlaceholder="Search by name, ID..."
           showViewAll={true}
-          // onViewAll={() => console.log("View all users")}
+          onViewAll={() => setAddNewProduct(true)}
+          navigations={[
+            {
+              name: "All Products",
+              href: "/admin/product-management",
+            },
+            {
+              name: "Men",
+              href: "/admin/products",
+            },
+            {
+              name: "Women",
+              href: "/admin/products",
+            },
+            {
+              name: "Kids",
+              href: "/admin/products",
+            },
+            {
+              name: "Accessories",
+              href: "/admin/products",
+            },
+          ]}
         />
       </div>
+      {addNewProduct && <AddNewProducts setAddNewProduct={setAddNewProduct} />}
     </section>
   );
 }

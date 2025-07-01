@@ -11,7 +11,10 @@ function OtpVerification({
       className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50"
       onClick={() => setShowVerificationModal(false)}
     >
-      <div className="bg-white p-10 min-w-lg rounded-lg relative">
+      <div
+        className="bg-white p-10 min-w-lg rounded-lg relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div
           className="absolute top-4 right-4 text-white cursor-pointer"
           onClick={(e) => {

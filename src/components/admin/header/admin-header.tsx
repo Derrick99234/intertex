@@ -5,7 +5,7 @@ import { MdOutlineArrowDropDown } from "react-icons/md";
 
 function AdminHeader() {
   return (
-    <header className="flex justify-between items-center bg-white px-4 py-5 fixed w-full top-0 z-50">
+    <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0 z-50">
       <Image
         src={"/logo/intertex_logo_2.png"}
         alt="Admin Login"

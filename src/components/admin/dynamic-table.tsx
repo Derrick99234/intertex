@@ -1,8 +1,11 @@
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import { IoEyeOutline } from "react-icons/io5";
 import { LuListFilter } from "react-icons/lu";
+import Filter from "./filter";
 
 interface TableColumn {
   key: string;
@@ -18,6 +21,10 @@ interface TableProps {
   showViewAll?: boolean;
   onViewAll?: () => void;
   itemsPerPage?: number;
+  navigations?: {
+    name: string;
+    href: string;
+  }[];
 }
 
 export default function DynamicTable({
@@ -27,6 +34,7 @@ export default function DynamicTable({
   searchPlaceholder = "Search...",
   showViewAll = true,
   onViewAll,
+  navigations,
   itemsPerPage = 5,
 }: TableProps) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,14 +66,34 @@ export default function DynamicTable({
     }
   };
 
+  const [showFilter, setShowFilter] = useState(false);
+  const pathname = usePathname();
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+        <div className="flex gap-5 font-semibold text-lg">
+          {navigations ? (
+            <>
+              {navigations.map((nav, index) => (
+                <Link
+                  key={index}
+                  href={nav.href}
+                  className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm ${
+                    pathname === nav.href ? "bg-secondary text-white" : ""
+                  }`}
+                >
+                  {nav.name}
+                </Link>
+              ))}
+            </>
+          ) : (
+            <span className="text-secondary">{title}</span>
+          )}
+        </div>
         {showViewAll && (
           <button
             onClick={onViewAll}
-            className="bg-secondary text-white px-4 py-2 rounded text-sm hover:bg-secondary/80 flex gap-3 justify-center items-center"
+            className="bg-secondary text-white px-4 py-2 rounded text-sm hover:bg-secondary/80 flex gap-3 justify-center items-center cursor-pointer"
           >
             <FiPlus /> {title}
           </button>
@@ -85,7 +113,10 @@ export default function DynamicTable({
                 <CiSearch className="font-bold text-xl" />
               </span>
             </div>
-            <button className="flex items-center space-x-1 border rounded px-3 py-2">
+            <button
+              className="flex items-center space-x-1 border rounded px-3 py-2 cursor-pointer"
+              onClick={() => setShowFilter(!showFilter)}
+            >
               <span className="font-semibold">Filter</span>
               <LuListFilter className="font-bold" />
             </button>
@@ -172,6 +203,7 @@ export default function DynamicTable({
           </div>
         </div>
       </div>
+      {showFilter && <Filter setShowFilter={setShowFilter} />}
     </div>
   );
 }

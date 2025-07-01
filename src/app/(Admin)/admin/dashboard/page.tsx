@@ -79,7 +79,7 @@ const users = [
 
 function Dashboard() {
   return (
-    <section className="flex mt-26">
+    <section className="flex mt-20">
       <AdminSidebar />
 
       <div className="p-5 flex-1 ml-64">
