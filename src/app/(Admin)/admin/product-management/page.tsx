@@ -2,8 +2,10 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import AddNewProducts from "@/components/admin/products/add-new-products";
+import ProductTabs from "@/components/admin/products/product-tabs";
 import DisplayStats from "@/components/display-stats/display-stats";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 
 function PageManagement() {
   const productsData = [
@@ -389,56 +391,69 @@ function PageManagement() {
     },
   ];
 
+  const [productTabs, setProductTabs] = useState(false);
+
   const [addNewProduct, setAddNewProduct] = React.useState(false);
+  const pathname = usePathname();
   return (
     <section className="flex mt-20">
       <AdminSidebar />
       <div className="p-5 flex-1 ml-64">
-        <DisplayStats />
+        {productTabs ? (
+          <ProductTabs />
+        ) : (
+          <>
+            <DisplayStats />
 
-        {/* Recent Users Section */}
-        <DynamicTable
-          columns={[
-            { key: "checkbox", label: "", type: "checkbox" as const },
-            { key: "no", label: "NO" },
-            { key: "productId", label: "Product ID" },
-            { key: "productName", label: "Product Name" },
-            { key: "category", label: "Category" },
-            { key: "price", label: "Price" },
-            { key: "stock", label: "Stock" },
-            { key: "status", label: "Status" },
-          ]}
-          data={productsData}
-          title="Add New Products"
-          itemsPerPage={5}
-          searchPlaceholder="Search by name, ID..."
-          showViewAll={true}
-          onViewAll={() => setAddNewProduct(true)}
-          navigations={[
-            {
-              name: "All Products",
-              href: "/admin/product-management",
-            },
-            {
-              name: "Men",
-              href: "/admin/products",
-            },
-            {
-              name: "Women",
-              href: "/admin/products",
-            },
-            {
-              name: "Kids",
-              href: "/admin/products",
-            },
-            {
-              name: "Accessories",
-              href: "/admin/products",
-            },
-          ]}
-        />
+            <DynamicTable
+              columns={[
+                { key: "checkbox", label: "", type: "checkbox" as const },
+                { key: "no", label: "NO" },
+                { key: "productId", label: "Product ID" },
+                { key: "productName", label: "Product Name" },
+                { key: "category", label: "Category" },
+                { key: "price", label: "Price" },
+                { key: "stock", label: "Stock" },
+                { key: "status", label: "Status" },
+              ]}
+              data={productsData}
+              title="Add New Products"
+              itemsPerPage={5}
+              searchPlaceholder="Search by name, ID..."
+              showViewAll={true}
+              onViewAll={() => setAddNewProduct(true)}
+              navigations={[
+                {
+                  name: "All Products",
+                  href: "/admin/product-management",
+                },
+                {
+                  name: "Men",
+                  href: "/admin/products",
+                },
+                {
+                  name: "Women",
+                  href: "/admin/products",
+                },
+                {
+                  name: "Kids",
+                  href: "/admin/products",
+                },
+                {
+                  name: "Accessories",
+                  href: "/admin/products",
+                },
+              ]}
+            />
+            {addNewProduct && (
+              <AddNewProducts
+                setAddNewProduct={setAddNewProduct}
+                setProductTabs={setProductTabs}
+              />
+            )}
+          </>
+        )}
       </div>
-      {addNewProduct && <AddNewProducts setAddNewProduct={setAddNewProduct} />}
     </section>
   );
 }
