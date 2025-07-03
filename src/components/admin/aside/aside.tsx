@@ -24,7 +24,11 @@ const menuItems = [
     icon: <FaBox />,
     href: "/admin/product-management",
   },
-  { label: "User Management", icon: <FaUsers />, href: "/admin/users" },
+  {
+    label: "User Management",
+    icon: <FaUsers />,
+    href: "/admin/users-management",
+  },
   { label: "Order Management", icon: <FaChartLine />, href: "/admin/orders" },
   { label: "Inventory & Stock", icon: <FaBox />, href: "/admin/inventory" },
   { label: "Sales & Accounting", icon: <FaChartLine />, href: "/admin/sales" },

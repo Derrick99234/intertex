@@ -1,4 +1,6 @@
 import { useState } from "react";
+import DisplayDetails from "../display-details";
+import Image from "next/image";
 
 interface TabData {
   id: string;
@@ -12,195 +14,173 @@ interface ProductTabsProps {
 
 export default function ProductTabs({ onDataChange }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("categories");
-  const [formData, setFormData] = useState({
-    categories: {
-      category: "Men",
-      subCategory: "Casual Wear",
-      type: "T-Shirts",
-    },
-    images: [],
-    details: {},
-    sizeQuantities: [],
-  });
+  // const [formData, setFormData] = useState({
+  //   categories: {
+  //     category: "Men",
+  //     subCategory: "Casual Wear",
+  //     type: "T-Shirts",
+  //   },
+  //   images: [],
+  //   details: {},
+  //   sizeQuantities: [],
+  // });
 
-  const categoryOptions = {
-    categories: ["Men", "Women", "Kids", "Unisex"],
-    subCategories: {
-      Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
-      Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
-      Kids: ["Boys", "Girls", "Infants"],
-      Unisex: ["Accessories", "Footwear", "Bags"],
-    },
-    types: {
-      "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
-      "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
-      "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
-      "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
-    },
+  // const categoryOptions = {
+  //   categories: ["Men", "Women", "Kids", "Unisex"],
+  //   subCategories: {
+  //     Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
+  //     Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
+  //     Kids: ["Boys", "Girls", "Infants"],
+  //     Unisex: ["Accessories", "Footwear", "Bags"],
+  //   },
+  //   types: {
+  //     "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
+  //     "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
+  //     "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
+  //     "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
+  //   },
+  // };
+
+  // const handleCategoryChange = (field: string, value: string) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     categories: { ...prev.categories, [field]: value },
+  //   }));
+
+  //   if (onDataChange) {
+  //     onDataChange("categories", { ...formData.categories, [field]: value });
+  //   }
+  // };
+
+  const renderCategoriesTab = () => {
+    const data = [
+      {
+        label: "Category",
+        value: "Men",
+      },
+      {
+        label: "Sub-Categories",
+        value: "casual Wears",
+      },
+      {
+        label: "Types",
+        value: "T-shirts",
+      },
+    ];
+    return (
+      <div className="space-y-6 p-6">
+        <DisplayDetails data={data} />
+      </div>
+    );
   };
 
-  const handleCategoryChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      categories: { ...prev.categories, [field]: value },
-    }));
+  const renderImagesTab = () => {
+    const images = [
+      {
+        url: "/images/design1.jpeg",
+        label: "Image 1",
+      },
+      {
+        url: "/images/design2.jpeg",
+        label: "Image 2",
+      },
+      {
+        url: "/images/design3.jpeg",
+        label: "Image 3",
+      },
+    ];
 
-    if (onDataChange) {
-      onDataChange("categories", { ...formData.categories, [field]: value });
-    }
+    return (
+      <div className="flex items-center p-6 gap-5 flex-wrap">
+        {images.map((image, index) => (
+          <div className="text-center">
+            <Image
+              key={index}
+              src={image.url}
+              className="h-[16rem] w-[20rem] object-cover object-top"
+              alt={image.label} // make sure you do the right thing here
+              width={400}
+              height={400}
+            />
+            <span className="mt-3 block">{image.label}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
-  const renderCategoriesTab = () => (
-    <div className="space-y-6 p-6">
-      <div className="grid grid-cols-2 gap-8">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Categories
-          </label>
-          <select
-            value={formData.categories.category}
-            onChange={(e) => handleCategoryChange("category", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {categoryOptions.categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <span className="text-lg font-medium text-gray-600">
-            {formData.categories.category}
-          </span>
-        </div>
+  const renderDetailsTab = () => {
+    const data = [
+      {
+        label: "Products Name",
+        value: "Men",
+      },
+      {
+        label: "Products Price",
+        value: "N30,000",
+      },
+      {
+        label: "Materials",
+        value: "Lorem, ipsum dolor sit amet consectetur adipisicing elit...",
+      },
+      {
+        label: "Process",
+        value: "Lorem, ipsum dolor sit amet consectetur adipisicing elit...",
+      },
+      {
+        label: "Offer",
+        value: "20%",
+      },
+      {
+        label: "Product Description",
+        value: "Lorem ipsum dolor sit...",
+      },
+      {
+        label: "Product Features",
+        value: "Lorem ipsum dolor sit...",
+      },
+    ];
+    return (
+      <div className="space-y-6 p-6">
+        <DisplayDetails data={data} />
       </div>
+    );
+  };
 
-      <div className="grid grid-cols-2 gap-8">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sub-Categories
-          </label>
-          <select
-            value={formData.categories.subCategory}
-            onChange={(e) =>
-              handleCategoryChange("subCategory", e.target.value)
-            }
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {categoryOptions.subCategories[
-              formData.categories
-                .category as keyof typeof categoryOptions.subCategories
-            ]?.map((subCat) => (
-              <option key={subCat} value={subCat}>
-                {subCat}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <span className="text-lg font-medium text-gray-600">
-            {formData.categories.subCategory}
-          </span>
-        </div>
+  const renderSizeQuantitiesTab = () => {
+    const data = [
+      {
+        label: "XXL",
+        value: 5,
+        thirdValue: "-",
+      },
+      {
+        label: "S",
+        value: 7,
+        thirdValue: "-",
+      },
+      {
+        label: "M",
+        value: 3,
+        thirdValue: "-",
+      },
+      {
+        label: "L",
+        value: 4,
+        thirdValue: "-",
+      },
+      {
+        label: "Total",
+        value: 19,
+        thirdValue: "-",
+      },
+    ];
+    return (
+      <div className="space-y-6 p-6">
+        <DisplayDetails data={data} />
       </div>
-
-      <div className="grid grid-cols-2 gap-8">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Types
-          </label>
-          <select
-            value={formData.categories.type}
-            onChange={(e) => handleCategoryChange("type", e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {categoryOptions.types[
-              formData.categories
-                .subCategory as keyof typeof categoryOptions.types
-            ]?.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <span className="text-lg font-medium text-gray-600">
-            {formData.categories.type}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderImagesTab = () => <div className="p-6">Hi</div>;
-
-  const renderDetailsTab = () => (
-    <div className="p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Product Name
-          </label>
-          <input
-            type="text"
-            placeholder="Enter product name"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            SKU
-          </label>
-          <input
-            type="text"
-            placeholder="Enter SKU"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Price
-          </label>
-          <input
-            type="number"
-            placeholder="0.00"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Brand
-          </label>
-          <input
-            type="text"
-            placeholder="Enter brand name"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            rows={4}
-            placeholder="Enter product description"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderSizeQuantitiesTab = () => <div className="p-6">Hello</div>;
+    );
+  };
 
   const tabs: TabData[] = [
     {
