@@ -100,6 +100,7 @@ function Dashboard() {
           title="Recent Users"
           itemsPerPage={5}
           searchPlaceholder="Search by date, email..."
+          onAction={() => console.log("Click on action button")}
           showViewAll={true}
           // onViewAll={() => console.log("View all users")}
         />

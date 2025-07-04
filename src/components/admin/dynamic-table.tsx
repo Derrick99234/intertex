@@ -21,6 +21,7 @@ interface TableProps {
   showViewAll?: boolean;
   onViewAll?: () => void;
   itemsPerPage?: number;
+  onAction: () => void;
   navigations?: {
     name: string;
     href: string;
@@ -35,6 +36,7 @@ export default function DynamicTable({
   showViewAll = true,
   onViewAll,
   navigations,
+  onAction,
   itemsPerPage = 5,
 }: TableProps) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -135,9 +137,6 @@ export default function DynamicTable({
                     {column.label}
                   </th>
                 ))}
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                  More
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -151,11 +150,6 @@ export default function DynamicTable({
                       {renderCellContent(item, column)}
                     </td>
                   ))}
-                  <td className="py-3 px-4">
-                    <button className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer">
-                      <IoEyeOutline />
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>

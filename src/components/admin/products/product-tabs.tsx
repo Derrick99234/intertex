@@ -93,9 +93,8 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
     return (
       <div className="flex items-center p-6 gap-5 flex-wrap">
         {images.map((image, index) => (
-          <div className="text-center">
+          <div className="text-center" key={index}>
             <Image
-              key={index}
               src={image.url}
               className="h-[16rem] w-[20rem] object-cover object-top"
               alt={image.label} // make sure you do the right thing here
@@ -228,7 +227,7 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors cursor-pointer ${
                 activeTab === tab.id
                   ? "border-blue-600 text-blue-600"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
@@ -251,7 +250,7 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
           <button
             onClick={goToPrevious}
             disabled={currentTabIndex === 0}
-            className={`px-6 py-2 border rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2 border rounded-lg font-medium transition-colors cursor-pointer ${
               currentTabIndex === 0
                 ? "border-gray-300 text-gray-400 cursor-not-allowed"
                 : "border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -263,17 +262,17 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
           <button
             onClick={goToNext}
             disabled={currentTabIndex === tabs.length - 1}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
               currentTabIndex === tabs.length - 1
                 ? "bg-gray-300 text-gray-400 cursor-not-allowed"
-                : "bg-orange-500 text-white hover:bg-orange-600"
+                : "bg-[#FEB313] text-white hover:bg-[#FEB313]/70"
             }`}
           >
             {currentTabIndex === tabs.length - 1 ? "Finish" : "Next"}
           </button>
         </div>
 
-        <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+        <button className="px-6 py-2 cursor-pointer bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
           Create New Product
         </button>
       </div>

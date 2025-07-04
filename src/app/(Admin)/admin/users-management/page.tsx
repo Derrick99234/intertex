@@ -98,6 +98,7 @@ function UserManagement() {
           data={users}
           title="Recent Users"
           itemsPerPage={5}
+          onAction={() => console.log("Click on action button")}
           searchPlaceholder="Search by date, email..."
           showViewAll={true}
           navigations={[
