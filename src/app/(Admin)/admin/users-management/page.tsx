@@ -3,6 +3,7 @@ import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import React, { useState } from "react";
+import { IoEyeOutline } from "react-icons/io5";
 
 function UserManagement() {
   const users = [
@@ -12,6 +13,7 @@ function UserManagement() {
       email: "adeyanju.celestial@gmail.com",
       dateJoined: "03-03-2025",
       totalOrders: 10,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01001AB",
@@ -19,6 +21,7 @@ function UserManagement() {
       email: "fatima.y@gmail.com",
       dateJoined: "12-01-2025",
       totalOrders: 5,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01002CD",
@@ -26,6 +29,7 @@ function UserManagement() {
       email: "okafor.chi@gmail.com",
       dateJoined: "25-12-2024",
       totalOrders: 13,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01003EF",
@@ -33,6 +37,7 @@ function UserManagement() {
       email: "blessing.j@gmail.com",
       dateJoined: "08-04-2025",
       totalOrders: 2,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01004GH",
@@ -40,6 +45,7 @@ function UserManagement() {
       email: "tunde.salami@yahoo.com",
       dateJoined: "30-01-2025",
       totalOrders: 7,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01005IJ",
@@ -47,6 +53,7 @@ function UserManagement() {
       email: "linda.okeke@gmail.com",
       dateJoined: "14-02-2025",
       totalOrders: 11,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01006KL",
@@ -54,6 +61,7 @@ function UserManagement() {
       email: "mike.adewole@outlook.com",
       dateJoined: "22-03-2025",
       totalOrders: 4,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01007MN",
@@ -61,6 +69,7 @@ function UserManagement() {
       email: "jennymusa@gmail.com",
       dateJoined: "10-06-2025",
       totalOrders: 9,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01008OP",
@@ -68,6 +77,7 @@ function UserManagement() {
       email: "david.emma@gmail.com",
       dateJoined: "17-05-2025",
       totalOrders: 6,
+      more: <IoEyeOutline />,
     },
     {
       userId: "01009QR",
@@ -75,6 +85,7 @@ function UserManagement() {
       email: "zlawal@mail.com",
       dateJoined: "01-01-2025",
       totalOrders: 12,
+      more: <IoEyeOutline />,
     },
   ];
   return (
@@ -94,6 +105,7 @@ function UserManagement() {
             { key: "email", label: "Email", type: "email" as const },
             { key: "dateJoined", label: "Date Joined" },
             { key: "totalOrders", label: "Total Orders" },
+            { key: "more", label: "More", type: "action" },
           ]}
           data={users}
           title="Recent Users"

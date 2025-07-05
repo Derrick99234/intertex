@@ -10,7 +10,7 @@ import Filter from "./filter";
 interface TableColumn {
   key: string;
   label: string;
-  type?: "text" | "email" | "date" | "number" | "checkbox";
+  type?: "text" | "email" | "date" | "number" | "checkbox" | "action";
 }
 
 interface TableProps {
@@ -21,7 +21,7 @@ interface TableProps {
   showViewAll?: boolean;
   onViewAll?: () => void;
   itemsPerPage?: number;
-  onAction: () => void;
+  onAction: (id: string) => void;
   navigations?: {
     name: string;
     href: string;
@@ -61,6 +61,15 @@ export default function DynamicTable({
     switch (column.type) {
       case "email":
         return <span className="text-black">{value}</span>;
+      case "action":
+        return (
+          <button
+            className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
+            onClick={() => onAction(item.productId)}
+          >
+            {value}
+          </button>
+        );
       case "checkbox":
         return <input type="checkbox" className="rounded cursor-pointer" />;
       default:

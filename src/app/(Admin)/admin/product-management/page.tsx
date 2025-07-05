@@ -3,6 +3,7 @@ import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import AddNewProducts from "@/components/admin/products/add-new-products";
 import ProductTabs from "@/components/admin/products/product-tabs";
+import ViewProduct from "@/components/admin/products/view-product";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -19,14 +20,7 @@ function PageManagement() {
       price: "$25.99",
       stock: 150,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -37,14 +31,7 @@ function PageManagement() {
       price: "$59.99",
       stock: 75,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -55,14 +42,7 @@ function PageManagement() {
       price: "$89.99",
       stock: 30,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -73,14 +53,7 @@ function PageManagement() {
       price: "$19.99",
       stock: 200,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -91,14 +64,7 @@ function PageManagement() {
       price: "$74.99",
       stock: 20,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -109,14 +75,7 @@ function PageManagement() {
       price: "$39.99",
       stock: 0,
       status: "Out of Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -127,14 +86,7 @@ function PageManagement() {
       price: "$49.99",
       stock: 95,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -145,14 +97,7 @@ function PageManagement() {
       price: "$15.00",
       stock: 300,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -163,14 +108,7 @@ function PageManagement() {
       price: "$45.00",
       stock: 110,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -181,14 +119,7 @@ function PageManagement() {
       price: "$60.00",
       stock: 48,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -199,14 +130,7 @@ function PageManagement() {
       price: "$12.00",
       stock: 85,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -217,14 +141,7 @@ function PageManagement() {
       price: "$39.50",
       stock: 60,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -235,14 +152,7 @@ function PageManagement() {
       price: "$99.99",
       stock: 25,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -263,14 +173,7 @@ function PageManagement() {
       price: "$55.00",
       stock: 40,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -281,14 +184,7 @@ function PageManagement() {
       price: "$70.00",
       stock: 10,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -299,14 +195,7 @@ function PageManagement() {
       price: "$80.00",
       stock: 100,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -317,14 +206,7 @@ function PageManagement() {
       price: "$99.00",
       stock: 5,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -335,14 +217,7 @@ function PageManagement() {
       price: "$18.00",
       stock: 70,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -353,14 +228,7 @@ function PageManagement() {
       price: "$65.00",
       stock: 0,
       status: "Out of Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -371,14 +239,7 @@ function PageManagement() {
       price: "$55.00",
       stock: 40,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -389,14 +250,7 @@ function PageManagement() {
       price: "$70.00",
       stock: 10,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -407,14 +261,7 @@ function PageManagement() {
       price: "$80.00",
       stock: 100,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -425,14 +272,7 @@ function PageManagement() {
       price: "$99.00",
       stock: 5,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -443,14 +283,7 @@ function PageManagement() {
       price: "$18.00",
       stock: 70,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -461,14 +294,7 @@ function PageManagement() {
       price: "$65.00",
       stock: 0,
       status: "Out of Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -479,14 +305,7 @@ function PageManagement() {
       price: "$55.00",
       stock: 40,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -497,14 +316,7 @@ function PageManagement() {
       price: "$70.00",
       stock: 10,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -515,14 +327,7 @@ function PageManagement() {
       price: "$80.00",
       stock: 100,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -533,14 +338,7 @@ function PageManagement() {
       price: "$99.00",
       stock: 5,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -551,14 +349,7 @@ function PageManagement() {
       price: "$18.00",
       stock: 70,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -569,14 +360,7 @@ function PageManagement() {
       price: "$65.00",
       stock: 0,
       status: "Out of Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -587,14 +371,7 @@ function PageManagement() {
       price: "$55.00",
       stock: 40,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -605,14 +382,7 @@ function PageManagement() {
       price: "$70.00",
       stock: 10,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -623,14 +393,7 @@ function PageManagement() {
       price: "$80.00",
       stock: 100,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -641,14 +404,7 @@ function PageManagement() {
       price: "$99.00",
       stock: 5,
       status: "Low Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -659,14 +415,7 @@ function PageManagement() {
       price: "$18.00",
       stock: 70,
       status: "Active",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
     {
       checkbox: true,
@@ -677,19 +426,15 @@ function PageManagement() {
       price: "$65.00",
       stock: 0,
       status: "Out of Stock",
-      more: (
-        <button
-          className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-          // onClick={() => onAction()}
-        >
-          <IoEyeOutline />
-        </button>
-      ),
+      more: <IoEyeOutline />,
     },
   ];
 
   const [productTabs, setProductTabs] = useState(false);
-
+  const [viewProduct, setViewProduct] = useState({
+    status: false,
+    productId: "",
+  });
   const [addNewProduct, setAddNewProduct] = React.useState(false);
   const pathname = usePathname();
   return (
@@ -698,6 +443,8 @@ function PageManagement() {
       <div className="p-5 flex-1 ml-64">
         {productTabs ? (
           <ProductTabs />
+        ) : viewProduct.status ? (
+          <ViewProduct />
         ) : (
           <>
             <DisplayStats />
@@ -712,10 +459,15 @@ function PageManagement() {
                 { key: "price", label: "Price" },
                 { key: "stock", label: "Stock" },
                 { key: "status", label: "Status" },
-                { key: "more", label: "More" },
+                { key: "more", label: "More", type: "action" },
               ]}
               data={productsData}
-              onAction={() => console.log("Click on action button")}
+              onAction={(id: string) => {
+                setViewProduct({
+                  status: true,
+                  productId: id,
+                });
+              }}
               title="Add New Products"
               itemsPerPage={5}
               searchPlaceholder="Search by name, ID..."

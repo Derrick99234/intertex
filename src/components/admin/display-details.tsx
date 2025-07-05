@@ -19,7 +19,7 @@ const DisplayDetails = ({ data }: DisplayDetailsProps) => {
           } gap-4`}
         >
           <span className="text-sm">{label}</span>
-          <span className="text-sm font-semibold">{value}</span>
+          <span className="text-sm font-medium">{value}</span>
           {thirdValue && (
             <span className="text-sm font-semibold">{thirdValue}</span>
           )}
