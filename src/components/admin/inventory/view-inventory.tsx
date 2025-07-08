@@ -1,7 +1,7 @@
 import { useState } from "react";
-import DisplayDetails from "../display-details";
 import Image from "next/image";
 import Link from "next/link";
+import DisplayDetails from "@/components/admin/display-details";
 
 interface TabData {
   id: string;
@@ -13,45 +13,8 @@ interface ProductTabsProps {
   onDataChange?: (tabId: string, data: any) => void;
 }
 
-export default function ViewProduct({ onDataChange }: ProductTabsProps) {
+export default function ViewInventory({ onDataChange }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("product-details");
-  // const [formData, setFormData] = useState({
-  //   categories: {
-  //     category: "Men",
-  //     subCategory: "Casual Wear",
-  //     type: "T-Shirts",
-  //   },
-  //   images: [],
-  //   details: {},
-  //   sizeQuantities: [],
-  // });
-
-  // const categoryOptions = {
-  //   categories: ["Men", "Women", "Kids", "Unisex"],
-  //   subCategories: {
-  //     Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
-  //     Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
-  //     Kids: ["Boys", "Girls", "Infants"],
-  //     Unisex: ["Accessories", "Footwear", "Bags"],
-  //   },
-  //   types: {
-  //     "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
-  //     "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
-  //     "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
-  //     "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
-  //   },
-  // };
-
-  // const handleCategoryChange = (field: string, value: string) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     categories: { ...prev.categories, [field]: value },
-  //   }));
-
-  //   if (onDataChange) {
-  //     onDataChange("categories", { ...formData.categories, [field]: value });
-  //   }
-  // };
 
   const renderProductDetailsTab = () => {
     const data = [
@@ -95,6 +58,10 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
         label: "Product Features",
         value: "-",
       },
+      {
+        label: "Total Price",
+        value: "$900",
+      },
     ];
     return (
       <div className="space-y-6 p-6 w-full">
@@ -117,40 +84,6 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
       label: "Image 3",
     },
   ];
-  const renderSalesDetailsTab = () => {
-    const data = [
-      {
-        label: "XXL",
-        value: 5,
-        thirdValue: "$1000",
-      },
-      {
-        label: "S",
-        value: 7,
-        thirdValue: "$995",
-      },
-      {
-        label: "M",
-        value: 3,
-        thirdValue: "$500",
-      },
-      {
-        label: "L",
-        value: 4,
-        thirdValue: "$892",
-      },
-      {
-        label: "Total",
-        value: 19,
-        thirdValue: "$11490",
-      },
-    ];
-    return (
-      <div className="space-y-6 p-6 w-full">
-        <DisplayDetails data={data} />
-      </div>
-    );
-  };
 
   const renderQuantityLeftTab = () => {
     const data = [
@@ -187,11 +120,6 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
       id: "product-details",
       label: "Products Details",
       component: renderProductDetailsTab(),
-    },
-    {
-      id: "sales-details",
-      label: "Sales Details",
-      component: renderSalesDetailsTab(),
     },
     {
       id: "quantity-left",
@@ -241,33 +169,18 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
           {tabs.find((tab) => tab.id === activeTab)?.component}
           <div className="flex justify-between items-center p-6 border-t border-gray-200">
             <div className="flex space-x-3">
-              <Link
+              {/* <Link
                 href="/admin/product-management/buyers"
                 className="border border-b-secondary py-2 px-4 text-secondary font-semibold rounded cursor-pointer"
               >
-                Buyers Details
-              </Link>
+                Edit
+              </Link> */}
+              <button className="border border-b-secondary py-2 px-6 text-white bg-secondary font-semibold rounded cursor-pointer">
+                Upload Product
+              </button>
               <button className="border border-red-500 bg-red-500 py-2 px-8 text-white font-semibold rounded cursor-pointer">
                 Delete
               </button>
-
-              <button className="border border-b-secondary py-2 px-6 text-secondary font-semibold rounded cursor-pointer">
-                Upload
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 font-semibold">
-                Deactivate products
-              </span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  defaultChecked
-                />
-                <div className="w-7 h-4 bg-black peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-secondary"></div>
-              </label>
             </div>
           </div>
         </div>

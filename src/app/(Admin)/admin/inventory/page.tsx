@@ -1,28 +1,28 @@
 "use client";
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
-import ViewOrder from "@/components/admin/order/view-order";
+import ViewInventory from "@/components/admin/inventory/view-inventory";
 import DisplayStats from "@/components/display-stats/display-stats";
 import React, { useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
-function OrderManagement() {
-  const orders = [
+function Inventory() {
+  const inventory = [
     {
       checkbox: true,
       no: "01",
-      userId: "USR001",
-      orderId: "ORD001",
-      deliveryMethod: "pick-up",
-      amount: "$300",
-      date: "12-12-2024",
-      status: "pending",
+      productId: "ORD001",
+      productName: "Classic T-Shirt",
+      totalItems: 10,
+      itemsLeft: 5,
+      totalSold: 5,
+      dateAdded: "12-12-2024",
       more: <IoEyeOutline />,
     },
   ];
   const [viewOrder, setViewOrder] = useState({
     status: false,
-    orderId: "",
+    productId: "",
   });
   return (
     <section className="flex mt-20">
@@ -30,7 +30,7 @@ function OrderManagement() {
 
       <div className="p-5 flex-1 ml-64">
         {viewOrder.status ? (
-          <ViewOrder />
+          <ViewInventory />
         ) : (
           <div>
             <DisplayStats />
@@ -38,21 +38,21 @@ function OrderManagement() {
               columns={[
                 { key: "checkbox", label: "", type: "checkbox" as const },
                 { key: "no", label: "NO" },
-                { key: "userId", label: "User ID" },
-                { key: "orderId", label: "Order ID" },
-                { key: "deliveryMethod", label: "Delivery Method" },
-                { key: "amount", label: "Amount" },
-                { key: "date", label: "Date" },
-                { key: "status", label: "Status" },
+                { key: "productId", label: "Product ID" },
+                { key: "productName", label: "Product Name" },
+                { key: "totalItems", label: "Total Items" },
+                { key: "itemsLeft", label: "Items Left" },
+                { key: "totalSold", label: "Total Sold" },
+                { key: "dateAdded", label: "Date Added" },
                 { key: "more", label: "More", type: "action" },
               ]}
-              data={orders}
+              data={inventory}
               title="Orders"
               itemsPerPage={5}
               onAction={(id: string) => {
                 setViewOrder({
                   status: true,
-                  orderId: id,
+                  productId: id,
                 });
               }}
               searchPlaceholder="Search by date, email..."
@@ -84,4 +84,4 @@ function OrderManagement() {
   );
 }
 
-export default OrderManagement;
+export default Inventory;

@@ -13,7 +13,7 @@ interface ProductTabsProps {
   onDataChange?: (tabId: string, data: any) => void;
 }
 
-export default function ViewProduct({ onDataChange }: ProductTabsProps) {
+export default function ViewOrder({ onDataChange }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("product-details");
   // const [formData, setFormData] = useState({
   //   categories: {
@@ -95,6 +95,10 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
         label: "Product Features",
         value: "-",
       },
+      {
+        label: "Total Price",
+        value: "$900",
+      },
     ];
     return (
       <div className="space-y-6 p-6 w-full">
@@ -117,32 +121,39 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
       label: "Image 3",
     },
   ];
-  const renderSalesDetailsTab = () => {
+  const renderOrderDetailsTab = () => {
     const data = [
       {
-        label: "XXL",
-        value: 5,
-        thirdValue: "$1000",
+        label: "Order ID",
+        value: "ORD123456",
       },
       {
-        label: "S",
-        value: 7,
-        thirdValue: "$995",
+        label: "Delivery Method",
+        value: "Pick-Up",
       },
       {
-        label: "M",
-        value: 3,
-        thirdValue: "$500",
+        label: "Delivery Address",
+        value: "123 Main St, City, Country",
       },
       {
-        label: "L",
-        value: 4,
-        thirdValue: "$892",
+        label: "Contact Phone",
+        value: "123-456-7890",
       },
       {
-        label: "Total",
-        value: 19,
-        thirdValue: "$11490",
+        label: "Alternative Call Line",
+        value: "098-765-4321",
+      },
+      {
+        label: "Delivery Fee",
+        value: "$400",
+      },
+      {
+        label: "Order Status",
+        value: "Pending",
+      },
+      {
+        label: "Delivery/Pick-up Date",
+        value: "-",
       },
     ];
     return (
@@ -152,27 +163,15 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
     );
   };
 
-  const renderQuantityLeftTab = () => {
+  const renderReviewsTab = () => {
     const data = [
       {
-        label: "XXL",
-        value: 5,
+        label: "Star Rating",
+        value: "-",
       },
       {
-        label: "S",
-        value: 7,
-      },
-      {
-        label: "M",
-        value: 3,
-      },
-      {
-        label: "L",
-        value: 4,
-      },
-      {
-        label: "Total",
-        value: 19,
+        label: "Message",
+        value: "-",
       },
     ];
     return (
@@ -184,19 +183,19 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
 
   const tabs: TabData[] = [
     {
+      id: "order-details",
+      label: "Order Details",
+      component: renderOrderDetailsTab(),
+    },
+    {
       id: "product-details",
       label: "Products Details",
       component: renderProductDetailsTab(),
     },
     {
-      id: "sales-details",
-      label: "Sales Details",
-      component: renderSalesDetailsTab(),
-    },
-    {
-      id: "quantity-left",
-      label: "Quantity Left",
-      component: renderQuantityLeftTab(),
+      id: "reviews",
+      label: "Reviews",
+      component: renderReviewsTab(),
     },
   ];
 
@@ -245,29 +244,11 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
                 href="/admin/product-management/buyers"
                 className="border border-b-secondary py-2 px-4 text-secondary font-semibold rounded cursor-pointer"
               >
-                Buyers Details
+                Edit
               </Link>
-              <button className="border border-red-500 bg-red-500 py-2 px-8 text-white font-semibold rounded cursor-pointer">
-                Delete
+              <button className="border border-b-secondary py-2 px-6 text-white bg-secondary font-semibold rounded cursor-pointer">
+                Change Status
               </button>
-
-              <button className="border border-b-secondary py-2 px-6 text-secondary font-semibold rounded cursor-pointer">
-                Upload
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 font-semibold">
-                Deactivate products
-              </span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  defaultChecked
-                />
-                <div className="w-7 h-4 bg-black peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-secondary"></div>
-              </label>
             </div>
           </div>
         </div>

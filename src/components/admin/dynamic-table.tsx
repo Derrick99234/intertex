@@ -78,14 +78,14 @@ export default function DynamicTable({
   };
 
   const [activeTab, setActiveTab] = useState(
-    navigations && navigations[0].name
+    navigations && navigations[0].href
   );
 
   const [showFilter, setShowFilter] = useState(false);
   // const pathname = usePathname();
   return (
     <div className="bg-white rounded-lg shadow">
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex gap-5 font-semibold text-lg">
           {navigations ? (
             <>

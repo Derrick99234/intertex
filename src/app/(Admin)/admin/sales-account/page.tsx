@@ -6,13 +6,13 @@ import DisplayStats from "@/components/display-stats/display-stats";
 import React, { useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
-function OrderManagement() {
-  const orders = [
+function SaleAccountManagement() {
+  const sales = [
     {
       checkbox: true,
       no: "01",
-      userId: "USR001",
-      orderId: "ORD001",
+      productId: "PRD001",
+      productName: "Product 1",
       deliveryMethod: "pick-up",
       amount: "$300",
       date: "12-12-2024",
@@ -38,16 +38,16 @@ function OrderManagement() {
               columns={[
                 { key: "checkbox", label: "", type: "checkbox" as const },
                 { key: "no", label: "NO" },
-                { key: "userId", label: "User ID" },
-                { key: "orderId", label: "Order ID" },
+                { key: "productId", label: "Product ID" },
+                { key: "productName", label: "Product Name" },
                 { key: "deliveryMethod", label: "Delivery Method" },
                 { key: "amount", label: "Amount" },
                 { key: "date", label: "Date" },
                 { key: "status", label: "Status" },
                 { key: "more", label: "More", type: "action" },
               ]}
-              data={orders}
-              title="Orders"
+              data={sales}
+              title="All Sales"
               itemsPerPage={5}
               onAction={(id: string) => {
                 setViewOrder({
@@ -57,24 +57,7 @@ function OrderManagement() {
               }}
               searchPlaceholder="Search by date, email..."
               showViewAll={false}
-              navigations={[
-                {
-                  name: "All Orders",
-                  href: "all-order",
-                },
-                {
-                  name: "Pending Orders",
-                  href: "pending-orders",
-                },
-                {
-                  name: "Successful orders",
-                  href: "succesful-orders",
-                },
-                {
-                  name: "Failed orders",
-                  href: "failed-orders",
-                },
-              ]}
+
               // onViewAll={() => console.log("View all users")}
             />
           </div>
@@ -84,4 +67,4 @@ function OrderManagement() {
   );
 }
 
-export default OrderManagement;
+export default SaleAccountManagement;
