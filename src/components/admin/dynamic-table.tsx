@@ -77,8 +77,12 @@ export default function DynamicTable({
     }
   };
 
+  const [activeTab, setActiveTab] = useState(
+    navigations && navigations[0].name
+  );
+
   const [showFilter, setShowFilter] = useState(false);
-  const pathname = usePathname();
+  // const pathname = usePathname();
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="flex items-center justify-between p-4 border-b">
@@ -86,15 +90,15 @@ export default function DynamicTable({
           {navigations ? (
             <>
               {navigations.map((nav, index) => (
-                <Link
+                <button
                   key={index}
-                  href={nav.href}
-                  className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm ${
-                    pathname === nav.href ? "bg-secondary text-white" : ""
+                  onClick={() => setActiveTab(nav.href)}
+                  className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm cursor-pointer ${
+                    activeTab === nav.href ? "bg-secondary text-white" : ""
                   }`}
                 >
                   {nav.name}
-                </Link>
+                </button>
               ))}
             </>
           ) : (

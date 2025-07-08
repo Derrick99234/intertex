@@ -282,8 +282,6 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
           ))}
         </div>
       </div>
-
-      {/* Navigation Buttons */}
     </div>
   );
 }

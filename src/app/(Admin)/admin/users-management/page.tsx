@@ -116,19 +116,19 @@ function UserManagement() {
           navigations={[
             {
               name: "All Users",
-              href: "/admin/users-management",
+              href: "all-users",
             },
             {
-              name: "Top-users",
-              href: "/admin/products",
+              name: "Top Users",
+              href: "top-users",
             },
+            // {
+            //   name: "Inactive Users",
+            //   href: "inactive-users",
+            // },
             {
-              name: "Inactive users",
-              href: "/admin/products",
-            },
-            {
-              name: "Decativated users",
-              href: "/admin/products",
+              name: "Deactivated Users",
+              href: "deactivated-users",
             },
           ]}
           // onViewAll={() => console.log("View all users")}
