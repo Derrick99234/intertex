@@ -46,7 +46,11 @@ const menuItems = [
   },
   { label: "Admin Users", icon: <FaUserShield />, href: "/admin/admin-users" },
   { label: "Roles & Permission", icon: <FaCogs />, href: "/admin/roles" },
-  { label: "Blogs Management", icon: <FaBlog />, href: "/admin/blogs" },
+  {
+    label: "Blogs Management",
+    icon: <FaBlog />,
+    href: "/admin/blog-management",
+  },
   { label: "Sales & Promotion", icon: <FaTags />, href: "/admin/promotions" },
   { label: "Feedback", icon: <FaEnvelope />, href: "/admin/feedback" },
   { label: "Email Management", icon: <FaEnvelope />, href: "/admin/email" },
