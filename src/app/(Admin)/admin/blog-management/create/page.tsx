@@ -24,6 +24,8 @@ function CreateBlog() {
 
   const handlePost = () => {
     console.log("Post created with title:", title);
+
+    console.log("Post created with content:", content);
   };
   return (
     <section className="flex mt-20">

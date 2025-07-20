@@ -3,7 +3,7 @@ import Delivery from "@/components/shop/delivery-option/delivery";
 import Pickup from "@/components/shop/delivery-option/pick-up";
 import { useState } from "react";
 
-function DeliveryOption() {
+export default function DeliveryOption() {
   const [deliveryOption, setDeliveryOption] = useState("delivery");
 
   return (
@@ -48,5 +48,3 @@ function DeliveryOption() {
     </section>
   );
 }
-
-export default DeliveryOption;

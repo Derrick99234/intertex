@@ -1,10 +1,16 @@
 "use client";
-
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ResetPasswordPage({ params }: any) {
+export default function ClientResetForm({
+  params,
+}: {
+  params: { token: string };
+}) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const token = params.token;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +27,7 @@ export default function ResetPasswordPage({ params }: any) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: params.token,
+          token: token,
           newPassword,
         }),
       });
@@ -32,9 +38,6 @@ export default function ResetPasswordPage({ params }: any) {
       alert("Password reset successful!");
     } catch (err: any) {
       alert(err.message);
-    } finally {
-      setNewPassword("");
-      setConfirmPassword("");
     }
   };
 
@@ -46,7 +49,7 @@ export default function ResetPasswordPage({ params }: any) {
           className="bg-white flex-col mt-20 px-10 min-w-xs"
         >
           <h2 className="text-3xl font-bold mb-4 text-center">
-            Reset Your Password
+            Reset Your {token}
           </h2>
           <p className="text-center mt-5 mb-16 text-sm">
             Kindly enter your new password and confirm

@@ -2,7 +2,7 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
-import React, { useState } from "react";
+import React from "react";
 import { IoEyeOutline } from "react-icons/io5";
 const users = [
   {
