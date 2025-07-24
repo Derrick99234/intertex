@@ -7,26 +7,28 @@ import Link from "next/link";
 function HeroPage() {
   return (
     <>
-      <section className="relative grid grid-cols-[30rem_1fr_20rem] bg-[#BFB2A2] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <section className="relative grid grid-cols-[30rem_1fr_20rem] max-[1246px]:grid-cols-[1fr] max-[1246px]:min-h-[85vh] max-[1246px]:items-start bg-[#BFB2A2] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
         <Image
           src={
             "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/elegant-man-suit+1.png"
           }
           alt="young elegant billionaire"
           width={490}
-          className="bottom-0 left-0 absolute"
+          className="bottom-0 left-0 absolute max-[1246px]:max-w-[15rem]"
           height={300}
         />
-        <div className="text-center text-white flex justify-center items-center flex-col col-span-3 max-w-3xl pl-10">
+        <div className="text-center text-white flex justify-center items-center col-span-3 flex-col max-w-3xl pl-10 max-[1246px]:pl-0 ">
           <span className="font-bold text-3xl">The</span>
-          <span className="text-[10rem] block ">1912</span>
+          <span className="text-[10rem] max-[1246px]:text-[4rem] block">
+            1912
+          </span>
           <span className="text-bold block text-3xl">Collections</span>
-          <h1 className="text-xl">
+          <p className="text-xl max-[1246px]:text-sm">
             “Our suits are tailored for confidence — combining premium fabrics,{" "}
-            <br />
+            <br className="max-[1246px]:hidden" />
             precise cuts, and timeless design to help you make a lasting <br />
             impression at every occasion.
-          </h1>
+          </p>
           <button className="text-white px-18 py-4 mt-5 bg-primary">
             Shop Now
           </button>
@@ -35,7 +37,7 @@ function HeroPage() {
           src={
             "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/young-african-businessman-classy-suit-removebg-preview+1.png"
           }
-          className="bottom-0 right-0 absolute"
+          className="bottom-0 right-0 absolute max-[1246px]:max-w-[12rem]"
           alt="young african billionaire"
           width={350}
           height={200}
@@ -45,7 +47,7 @@ function HeroPage() {
         <h2 className="text-3xl text-secondary font-medium text-center mb-10">
           Explore our collections
         </h2>
-        <div className="flex justify-center items-start gap-10">
+        <div className="flex justify-center items-start gap-10 flex-wrap">
           <div className="flex flex-col justify-center items-center">
             <Image
               src={
@@ -111,8 +113,8 @@ function HeroPage() {
         buttonText="Explore Woman Fashion"
         buttonLink="/mems-wear"
       />
-      <section className="min-h-screen flex justify-center items-center gap-14 p-8">
-        <div className="bg-light-blue w-1/2">
+      <section className="min-h-screen flex justify-center items-center gap-14 max-[1246px]:p-4 p-8 max-[1246px]:flex-wrap">
+        <div className="bg-light-blue w-1/2 max-[1240px]:w-full">
           <h2 className="text-4xl font-semibold text-white text-center pt-8">
             Made for KIDs
           </h2>
@@ -126,7 +128,7 @@ function HeroPage() {
             className=""
           />
         </div>
-        <div className="flex flex-col gap-8 items-center w-1/2">
+        <div className="flex flex-col gap-8 items-center w-1/2 max-[1240px]:w-full">
           <div className="flex gap-4">
             <Image
               src={
@@ -135,7 +137,7 @@ function HeroPage() {
               alt="A kid on blue jacket"
               width={500}
               height={500}
-              className="h-[30rem]"
+              className="max-h-[30rem] max-[1246px]:max-h-[20rem]"
             />
             <Image
               src={
@@ -144,7 +146,7 @@ function HeroPage() {
               alt="A kid on skate"
               width={500}
               height={500}
-              className="h-[30rem]"
+              className="max-h-[30rem] max-[1246px]:max-h-[20rem]"
             />
           </div>
           <p className="text-center">
@@ -172,7 +174,7 @@ function HeroPage() {
           height="615"
           src="https://www.youtube.com/embed/vxc9-kpjEfw?si=2o2RRuauONwB-nrw"
           title="YouTube video player"
-          className="mx-auto mt-8"
+          className="mx-auto mt-8 max-[1246px]:max-w-full"
           // frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           // referrerpolicy="strict-origin-when-cross-origin"

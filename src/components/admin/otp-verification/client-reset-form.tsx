@@ -2,15 +2,12 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ClientResetForm({
-  params,
-}: {
-  params: { token: string };
-}) {
+export default function ClientResetForm() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const token = params.token;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -26,7 +26,7 @@ function ElevatedStyle({
           Elevated Style for the Modern Man
         </h2>
       </div>
-      <div className="absolute top-1/6 left-1/2 text-center px-10 py-5 -translate-x-1/2  bg-white max-w-3xl">
+      <div className="absolute top-1/6 left-1/2 max-[1246px]:w-full text-center px-10 py-5 -translate-x-1/2  bg-white max-w-3xl">
         <h2 className="text-2xl text-secondary font-marcellus font-semibold mb-5">
           {header}
         </h2>

@@ -10,19 +10,19 @@ function Footer() {
     },
     {
       productName: "Women",
-      productLink: "/mens-wear",
+      productLink: "/womens-wear",
     },
     {
       productName: "Kids",
-      productLink: "mens-wear",
+      productLink: "/kids-wear",
     },
     {
       productName: "Accessories",
-      productLink: "mens-wear",
+      productLink: "/accessories",
     },
     {
       productName: "Our Factory",
-      productLink: "mens-wear",
+      productLink: "/our-factory",
     },
   ];
   const companyLinks = [
@@ -107,98 +107,116 @@ function Footer() {
       socialLink: "https://www.youtube.com/yourcompany",
     },
   ];
-  return (
-    <footer className="min-h-[50vh] bg-black text-white px-10 flex items-center">
-      <div className="w-1/2">
-        <h2 className="text-white text-2xl font-bold py-8">
-          Sign up to stay ahead in fashion! Get exclusive style tips, insights
-          on fabrics and craftsmanship, the latest trends, and special
-          discounts—delivered straight to your inbox.
-        </h2>
-        <div className="flex gap-4">
-          <input
-            type="email"
-            className="w-full rounded-2xl px-6 bg-white text-black outline-none"
-          />
-          <button className="border-white border-2 rounded-2xl bg-black text-white w-52 py-3">
-            Subscribe Now
-          </button>
-        </div>
-        <h3 className="font-bold mt-3">Head Office Address:</h3>
-        <p>
-          Your company Head Office address would be here surly if there is one
-        </p>
-        <Image
-          src={"/logo/intertex_logo_2.png"}
-          alt="intertex logo"
-          className="mt-4"
-          width={150}
-          height={200}
-        />
-      </div>
 
-      <div className="flex justify-between py-8 w-1/2 px-8">
-        <div>
-          <h3 className="text-lg font-bold">Products</h3>
-          <ul className="mt-4">
-            {productLinks.map((link) => (
-              <li key={link.productName}>
-                <Link
-                  href={link.productLink}
-                  className="text-white hover:text-gray-400"
-                >
-                  {link.productName}
-                </Link>
-              </li>
-            ))}
-          </ul>
+  return (
+    <footer className="min-h-[50vh] bg-black text-white px-4 md:px-10 py-8">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-8">
+        {/* Left Section - Newsletter & Company Info */}
+        <div className="w-full lg:w-1/2">
+          <h2 className="text-white text-lg md:text-xl lg:text-2xl font-bold py-4 lg:py-8">
+            Sign up to stay ahead in fashion! Get exclusive style tips, insights
+            on fabrics and craftsmanship, the latest trends, and special
+            discounts—delivered straight to your inbox.
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 rounded-2xl px-6 py-3 bg-white text-black outline-none"
+            />
+            <button className="border-white border-2 rounded-2xl bg-black text-white px-6 py-3 whitespace-nowrap hover:bg-white hover:text-black transition-colors">
+              Subscribe Now
+            </button>
+          </div>
+          <div className="mt-6">
+            <h3 className="font-bold mb-2">Head Office Address:</h3>
+            <p className="text-gray-300 text-sm">
+              Your company Head Office address would be here surly if there is
+              one
+            </p>
+            <Image
+              src={"/logo/intertex_logo_2.png"}
+              alt="intertex logo"
+              className="mt-4"
+              width={150}
+              height={200}
+            />
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-bold">Company</h3>
-          <ul className="mt-4">
-            {companyLinks.map((link) => (
-              <li key={link.companyName}>
-                <Link
-                  href={link.companyLink}
-                  className="text-white hover:text-gray-400"
-                >
-                  {link.companyName}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-bold">Resources</h3>
-          <ul className="mt-4">
-            {resourcesLinks.map((link) => (
-              <li key={link.resourceName}>
-                <Link
-                  href={link.resourceLink}
-                  className="text-white hover:text-gray-400"
-                >
-                  {link.resourceName}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <h3 className="text-lg font-bold">Follow Us</h3>
-          <ul className="mt-4">
-            {socialLinks.map((link) => (
-              <li key={link.socialName}>
-                <Link
-                  href={link.socialLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white hover:text-gray-400"
-                >
-                  {link.socialName}
-                </Link>
-              </li>
-            ))}
-          </ul>
+
+        {/* Right Section - Links */}
+        <div className="w-full lg:w-1/2 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4">
+            {/* Products */}
+            <div>
+              <h3 className="text-lg font-bold mb-4">Products</h3>
+              <ul className="space-y-2">
+                {productLinks.map((link) => (
+                  <li key={link.productName}>
+                    <Link
+                      href={link.productLink}
+                      className="text-gray-300 hover:text-white transition-colors text-sm"
+                    >
+                      {link.productName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h3 className="text-lg font-bold mb-4">Company</h3>
+              <ul className="space-y-2">
+                {companyLinks.map((link) => (
+                  <li key={link.companyName}>
+                    <Link
+                      href={link.companyLink}
+                      className="text-gray-300 hover:text-white transition-colors text-sm"
+                    >
+                      {link.companyName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h3 className="text-lg font-bold mb-4">Resources</h3>
+              <ul className="space-y-2">
+                {resourcesLinks.map((link) => (
+                  <li key={link.resourceName}>
+                    <Link
+                      href={link.resourceLink}
+                      className="text-gray-300 hover:text-white transition-colors text-sm"
+                    >
+                      {link.resourceName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Follow Us */}
+            <div>
+              <h3 className="text-lg font-bold mb-4">Follow Us</h3>
+              <ul className="space-y-2">
+                {socialLinks.map((link) => (
+                  <li key={link.socialName}>
+                    <Link
+                      href={link.socialLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-white transition-colors text-sm"
+                    >
+                      {link.socialName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

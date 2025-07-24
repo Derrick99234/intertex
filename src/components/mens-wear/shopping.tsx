@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 const tabData = [
@@ -177,8 +178,9 @@ const Accordion = ({
 };
 
 // Main product detail page component
-const Shopping = ({ slug }: { slug: string }) => {
-  // Find the product and its category based on the URL slug
+const Shopping = () => {
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("slug");
   let foundProduct = null;
   let currentCategory = null;
   for (const tab of tabData) {
