@@ -46,7 +46,7 @@ function Login() {
         <Facebook />
         <p className="mt-4 text-sm text-center text-gray-600">
           Don&apos;t have an account,
-          <Link href={"/login"} className="text-secondary hover:underline">
+          <Link href={"/register"} className="text-secondary hover:underline">
             {" "}
             Sign up
           </Link>

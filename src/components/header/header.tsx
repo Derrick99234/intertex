@@ -110,13 +110,15 @@ function Header() {
             height={10}
             className="cursor-pointer"
           />
-          <Image
-            src={"/icons/profile.png"}
-            className="cursor-pointer"
-            alt="user profile"
-            width={45}
-            height={10}
-          />
+          <Link href={"/login"}>
+            <Image
+              src={"/icons/profile.png"}
+              className="cursor-pointer"
+              alt="user profile"
+              width={45}
+              height={10}
+            />
+          </Link>
         </div>
       </header>
 
@@ -140,13 +142,14 @@ function Header() {
             height={24}
             className="cursor-pointer"
           />
-          <Image
-            src={"/icons/profile.png"}
-            className="cursor-pointer"
-            alt="user profile"
-            width={24}
-            height={24}
-          />
+          <Link href={"/login"}>
+            <Image
+              src={"/icons/profile.png"}
+              alt="user profile"
+              width={24}
+              height={24}
+            />
+          </Link>
           <button
             onClick={toggleMobileMenu}
             className="hamburger-menu flex flex-col gap-1 p-2"
