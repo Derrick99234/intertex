@@ -7,9 +7,10 @@ interface InputFieldProps {
   id?: string;
   name?: string;
   className?: string;
+  readOnly?: boolean;
+  required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
-  required?: boolean;
 }
 
 function InputField({
@@ -18,6 +19,7 @@ function InputField({
   placeholder,
   type,
   id,
+  readOnly,
   name,
   onChange,
   value,
@@ -41,6 +43,7 @@ function InputField({
         className={`mt-1 block w-full bg-gray-100 outline-none py-4 px-6 mb-5 rounded-3xl sm:text-sm ${className}`}
         onChange={onChange}
         value={value}
+        readOnly={readOnly}
         required={required}
       />
     </div>
