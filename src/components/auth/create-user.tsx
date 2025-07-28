@@ -1,5 +1,6 @@
 "use client";
 import { API_BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreatePassword({
@@ -12,6 +13,8 @@ export default function CreatePassword({
 }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +39,7 @@ export default function CreatePassword({
         return;
       }
       alert("User created successfully!");
-      window.location.href = "/login"; // Redirect to login page after successful password creation
+      router.push("/login");
     } else {
       console.error("Passwords do not match");
     }
