@@ -36,11 +36,15 @@ function AdminHeader() {
         });
         const data = await res.json();
 
-        if (!res.ok) throw new Error(data.message || "Failed to fetch users");
+        if (!res.ok) {
+          router.push("/admin");
+          throw new Error(data.message || "Failed to fetch users");
+        }
 
         setUser(data);
       } catch (err: any) {
         setError(err.message);
+        router.push("/admin");
       } finally {
         setLoading(false);
       }

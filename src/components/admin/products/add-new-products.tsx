@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ImageUploader from "./add-image-section";
 import ProductDetails from "./add-product-details-section";
 import ProductSize from "./add-product-size-section";
+import { getCategories } from "@/lib/fetchCategories";
 
 function AddNewProducts({
   setAddNewProduct,
@@ -11,8 +13,25 @@ function AddNewProducts({
   setProductTabs: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   // const router = useRouter();
-
   const [currentPage, setCurrentPage] = useState(0);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const data = await getCategories();
+        console.log(`Fetched categories: ${JSON.stringify(data)}`);
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCategories();
+  }, []);
+
   return (
     <div
       className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50 z-10"
@@ -35,10 +54,15 @@ function AddNewProducts({
                 className="border rounded px-3 py-2 w-full"
               >
                 <option value="">Select a category</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
-                <option value="kids">Kids</option>
-                <option value="accessories">Accessories</option>
+                {loading ? (
+                  <option value="">Loading categories...</option>
+                ) : (
+                  categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))
+                )}
               </select>
               <h3 className="text-sm font-medium my-3">Sub categories</h3>
               <select

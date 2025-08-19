@@ -32,7 +32,6 @@ function Header() {
 
   return (
     <>
-      {/* Desktop Header */}
       <header className="hidden lg:flex justify-between items-center px-10 text-[#091697] py-6 w-full">
         <div className="logo">
           <Image
