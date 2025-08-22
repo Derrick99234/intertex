@@ -106,7 +106,7 @@ function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="bg-secondary text-lg text-white w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
+            className="bg-secondary text-lg text-white cursor-pointer w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

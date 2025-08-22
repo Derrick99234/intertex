@@ -8,73 +8,54 @@ interface ProductVariant {
 }
 
 function ProductSize({
-  onVariantsChange,
+  sizes,
+  setSizes,
   maxVariants = 10,
 }: {
-  onVariantsChange?: (variants: ProductVariant[]) => void;
+  sizes: ProductVariant[];
+  setSizes: (variants: ProductVariant[]) => void;
   maxVariants?: number;
 }) {
-  const [variants, setVariants] = useState<ProductVariant[]>([
-    { id: "1", size: "XXL", quantity: 10 },
-  ]);
+  // const [variants, setVariants] = useState<ProductVariant[]>([
+  //   { id: "1", size: "XXL", quantity: 10 },
+  // ]);
 
   const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
   const handleSizeChange = (id: string, size: string) => {
-    setVariants((prev) => {
-      const updated = prev.map((variant) =>
-        variant.id === id ? { ...variant, size } : variant
-      );
-      if (onVariantsChange) {
-        onVariantsChange(updated);
-      }
-      return updated;
-    });
+    const updated = sizes.map((variant) =>
+      variant.id === id ? { ...variant, size } : variant
+    );
+    setSizes(updated);
   };
 
   const handleQuantityChange = (id: string, quantity: number) => {
-    setVariants((prev) => {
-      const updated = prev.map((variant) =>
-        variant.id === id ? { ...variant, quantity } : variant
-      );
-      if (onVariantsChange) {
-        onVariantsChange(updated);
-      }
-      return updated;
-    });
+    const updated = sizes.map((variant) =>
+      variant.id === id ? { ...variant, quantity } : variant
+    );
+    setSizes(updated);
   };
 
   const addNewVariant = () => {
-    if (variants.length >= maxVariants) return;
+    if (sizes.length >= maxVariants) return;
 
-    const newId = (variants.length + 1).toString();
+    const newId = (sizes.length + 1).toString();
     const newVariant: ProductVariant = {
       id: newId,
       size: "S",
       quantity: 1,
     };
 
-    setVariants((prev) => {
-      const updated = [...prev, newVariant];
-      if (onVariantsChange) {
-        onVariantsChange(updated);
-      }
-      return updated;
-    });
+    setSizes([...sizes, newVariant]);
   };
 
   const removeVariant = (id: string) => {
-    setVariants((prev) => {
-      const updated = prev.filter((variant) => variant.id !== id);
-      if (onVariantsChange) {
-        onVariantsChange(updated);
-      }
-      return updated;
-    });
+    const updated = sizes.filter((variant) => variant.id !== id);
+    setSizes(updated);
   };
   return (
     <div className="space-y-4 pt-5">
-      {variants.map((variant, index) => (
+      {sizes.map((variant, index) => (
         <div key={variant.id} className="flex items-start space-x-4">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -177,7 +158,7 @@ function ProductSize({
             </div>
           </div>
 
-          {variants.length > 1 && (
+          {sizes.length > 1 && (
             <div className="pt-8">
               <button
                 onClick={() => removeVariant(variant.id)}
@@ -191,7 +172,7 @@ function ProductSize({
         </div>
       ))}
 
-      {variants.length < maxVariants && (
+      {sizes.length < maxVariants && (
         <button
           onClick={addNewVariant}
           className="flex cursor-pointer items-center space-x-2 text-blue-600 hover:text-blue-800 text-sm font-medium mt-4"

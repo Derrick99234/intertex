@@ -74,15 +74,47 @@ export async function deleteCategory(id: string) {
 
 // subcategories
 
-export async function getSubCategories() {
-  const res = await fetch(`${API_BASE_URL}/categories`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
-    next: { revalidate: 300 },
-  });
+// export async function getSubCategories() {
+//   const res = await fetch(`${API_BASE_URL}/categories`, {
+//     method: "GET",
+//     headers: {
+//       Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+//     },
+//     next: { revalidate: 300 },
+//   });
 
-  if (!res.ok) throw new Error("Failed to fetch categories");
+//   if (!res.ok) throw new Error("Failed to fetch categories");
+//   return res.json();
+// }
+
+export async function getSubCategories(categoryId: string) {
+  const res = await fetch(
+    `${API_BASE_URL}/subcategories/category/${categoryId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+      next: { revalidate: 300 }, // optional caching for Next.js
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch subcategories");
+  return res.json();
+}
+
+export async function getProductTypes(subcategoryId: string) {
+  const res = await fetch(
+    `${API_BASE_URL}/types/by-subcategory/${subcategoryId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+      next: { revalidate: 300 }, // optional caching for Next.js
+    }
+  );
+
+  if (!res.ok) throw new Error("Failed to fetch subcategories");
   return res.json();
 }
