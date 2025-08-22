@@ -1,9 +1,6 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
-import { IoEyeOutline } from "react-icons/io5";
 import { LuListFilter } from "react-icons/lu";
 import Filter from "./filter";
 

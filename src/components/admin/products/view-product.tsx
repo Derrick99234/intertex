@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import DisplayDetails from "../display-details";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/constants";
+import { IoEyeOutline } from "react-icons/io5";
 
 interface TabData {
   id: string;
@@ -11,89 +14,141 @@ interface TabData {
 
 interface ProductTabsProps {
   onDataChange?: (tabId: string, data: any) => void;
+  productId: string;
 }
 
-export default function ViewProduct({ onDataChange }: ProductTabsProps) {
+export interface Product {
+  _id: string;
+  productName: string;
+  description: string;
+  price: number;
+  materials: string;
+  process: string;
+  inStock: Array<{
+    size: string;
+    quantity: number;
+  }>;
+  offer: string;
+  features: string;
+  ratings: number;
+  imageUrl: string;
+  otherImages: string[];
+  productType: {
+    _id: string;
+    name: string;
+    description: string;
+    status: boolean;
+    subcategory: string;
+    createdAt: string;
+    updatedAt: string;
+    slug: string;
+    __v?: number;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
+}
+
+export default function ViewProduct({ productId }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("product-details");
-  // const [formData, setFormData] = useState({
-  //   categories: {
-  //     category: "Men",
-  //     subCategory: "Casual Wear",
-  //     type: "T-Shirts",
-  //   },
-  //   images: [],
-  //   details: {},
-  //   sizeQuantities: [],
-  // });
+  const [product, setProduct] = useState<Product>({
+    _id: "",
+    productName: "",
+    description: "",
+    price: 0,
+    materials: "",
+    process: "",
+    inStock: [],
+    offer: "",
+    features: "",
+    ratings: 0,
+    imageUrl: "",
+    otherImages: [],
+    productType: {
+      _id: "",
+      name: "",
+      description: "",
+      status: true,
+      subcategory: "",
+      createdAt: "",
+      updatedAt: "",
+      slug: "",
+    },
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // const categoryOptions = {
-  //   categories: ["Men", "Women", "Kids", "Unisex"],
-  //   subCategories: {
-  //     Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
-  //     Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
-  //     Kids: ["Boys", "Girls", "Infants"],
-  //     Unisex: ["Accessories", "Footwear", "Bags"],
-  //   },
-  //   types: {
-  //     "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
-  //     "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
-  //     "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
-  //     "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
-  //   },
-  // };
+  const router = useRouter();
 
-  // const handleCategoryChange = (field: string, value: string) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     categories: { ...prev.categories, [field]: value },
-  //   }));
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("adminToken");
 
-  //   if (onDataChange) {
-  //     onDataChange("categories", { ...formData.categories, [field]: value });
-  //   }
-  // };
+      if (!token) {
+        router.push("/admin");
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/products/${productId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { product, message } = await res.json();
 
+        if (!res.ok) throw new Error(message || "Failed to fetch product");
+        setProduct(product);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
   const renderProductDetailsTab = () => {
     const data = [
       {
         label: "Category",
-        value: "Men",
+        value: product?.productType?.name || "",
       },
       {
         label: "Sub-Categories",
-        value: "casual Wears",
+        value: product?.productType?.name || "",
       },
       {
         label: "Types",
-        value: "T-shirts",
+        value: product?.productType?.name || "",
       },
       {
         label: "Product Name",
-        value: "Blue T-shirt",
+        value: product?.productName || "",
       },
       {
         label: "Products Price",
-        value: "N30,000",
+        value: product?.price || "",
       },
       {
         label: "Materials",
-        value: "-",
+        value: product?.materials || "",
       },
       {
         label: "Process",
-        value: "-",
+        value: product?.process || "",
       },
       {
         label: "Offer",
-        value: "20%",
+        value: product?.offer || "",
       },
       {
         label: "Product Description",
-        value: "-",
+        value: product?.description || "",
       },
       {
         label: "Product Features",
-        value: "-",
+        value: product?.features || "",
       },
     ];
     return (
@@ -103,18 +158,18 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
     );
   };
 
+  const data = product.otherImages.map((item, index) => {
+    return {
+      url: item || "",
+      label: `Image ${index + 1}`,
+    };
+  });
+
   const images = [
+    ...data,
     {
-      url: "/images/design1.jpeg",
-      label: "Image 1",
-    },
-    {
-      url: "/images/design2.jpeg",
-      label: "Image 2",
-    },
-    {
-      url: "/images/design3.jpeg",
-      label: "Image 3",
+      url: product.imageUrl || "",
+      label: `Image ${data.length + 1}`,
     },
   ];
   const renderSalesDetailsTab = () => {
@@ -153,28 +208,12 @@ export default function ViewProduct({ onDataChange }: ProductTabsProps) {
   };
 
   const renderQuantityLeftTab = () => {
-    const data = [
-      {
-        label: "XXL",
-        value: 5,
-      },
-      {
-        label: "S",
-        value: 7,
-      },
-      {
-        label: "M",
-        value: 3,
-      },
-      {
-        label: "L",
-        value: 4,
-      },
-      {
-        label: "Total",
-        value: 19,
-      },
-    ];
+    const data = product.inStock.map((item) => {
+      return {
+        label: item?.size || "",
+        value: item?.quantity || "",
+      };
+    });
     return (
       <div className="space-y-6 p-6 w-full">
         <DisplayDetails data={data} />

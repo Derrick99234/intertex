@@ -84,7 +84,7 @@ function HeroPage() {
               alt="A lady on glass dress for summer"
             />
             <span className="text-secondary font-medium text-2xl block mt-2">
-              KID'S
+              KID&#39;S
             </span>
           </div>
         </div>

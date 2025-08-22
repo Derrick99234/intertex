@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import AdminHeader from "@/components/admin/header/admin-header";
+import LayoutWrapper from "@/components/layout-wrapper";
 
 export const metadata: Metadata = {
   title: "Admin | Intertex",
   icons: "/logo/logo.png",
   description: "Admin dashboard",
 };
-
 export default function AdminLayout({
   children,
 }: Readonly<{
@@ -16,8 +15,7 @@ export default function AdminLayout({
   return (
     <html lang="en">
       <body>
-        <AdminHeader />
-        {children}
+        <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
   );

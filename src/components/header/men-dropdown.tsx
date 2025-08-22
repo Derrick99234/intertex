@@ -9,7 +9,10 @@ function MenDropdown(props: {
       className="bg-[#00000078] min-h-screen flex justify-center fixed top-0 left-0 right-0 z-50"
       onClick={() => props.setShowMenNavMenu(false)}
     >
-      <div className="bg-white shadow-lg px-20 py-10 w-full flex gap-10 h-max">
+      <div
+        className="bg-white shadow-lg px-20 py-10 w-full flex gap-10 h-max"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex-1">
           <h2 className="text-4xl font-bold text-gray-800 mb-2">
             Sophisticated Style, Unwavering Confidence

@@ -1,8 +1,45 @@
+"use client"; // <== Required if you're using Next.js App Router
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/constants";
 
 function AdminLogin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Login failed");
+      }
+
+      const { accessToken } = await res.json();
+      localStorage.setItem("adminToken", accessToken);
+      router.push("/admin/dashboard");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="flex justify-center max-w-5xl w-full">
@@ -22,35 +59,56 @@ function AdminLogin() {
             className="w-[30rem] h-auto"
           />
         </div>
-        <form className="bg-white flex-col py-20 px-10 min-w-md">
+
+        <form
+          onSubmit={handleLogin}
+          className="bg-white flex-col py-20 px-10 min-w-md w-full"
+        >
           <h2 className="text-3xl font-bold mb-4 text-center">Login</h2>
-          <p className="text-center mt-5 mb-16 text-sm">
+          <p className="text-center mt-5 mb-8 text-sm">
             Login into your account
           </p>
+
+          {error && (
+            <p className="text-red-600 text-center mb-4 font-semibold">
+              {error}
+            </p>
+          )}
+
           <label htmlFor="email" className="text-lg mb-2 block">
             Email address
           </label>
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="example@gmail.com"
+            required
             className="mb-6 p-2 border border-gray-300 rounded w-full"
           />
+
           <label htmlFor="password" className="text-lg mb-2 block">
             Password
           </label>
           <input
             type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
+            required
             className="mb-4 p-2 border border-gray-300 rounded w-full"
           />
-          <Link href={"#"} className="text-right text-sm font-semibold block">
-            Forget password ?
+
+          <Link href="#" className="text-right text-sm font-semibold block">
+            Forgot password?
           </Link>
+
           <button
             type="submit"
-            className="bg-secondary text-lg text-white w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
+            disabled={loading}
+            className="bg-secondary text-lg text-white cursor-pointer w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
           >
-            Sign In
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>
