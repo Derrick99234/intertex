@@ -31,8 +31,10 @@ function ProductDetails({
       <input
         type="text"
         placeholder="Enter product material"
-        value={formData.material}
-        onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+        value={formData.materials}
+        onChange={(e) =>
+          setFormData({ ...formData, materials: e.target.value })
+        }
         className="w-full py-3 outline-none rounded px-4 text-xs border border-gray-200"
       />
 

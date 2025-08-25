@@ -9,6 +9,7 @@ import {
   getSubCategories,
 } from "@/lib/fetchCategories";
 import { CgClose } from "react-icons/cg";
+import { API_BASE_URL } from "@/lib/constants";
 
 function AddNewProducts({
   setAddNewProduct,
@@ -26,30 +27,31 @@ function AddNewProducts({
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
 
+  const [imagePreview, setImagePreview] = useState([
+    {
+      id: "1",
+      label: "Add Image 1",
+      file: null as File | null,
+      preview: null as string | null,
+    },
+    {
+      id: "2",
+      label: "Add Image 2",
+      file: null as File | null,
+      preview: null as string | null,
+    },
+  ]);
+
   const [formData, setFormData] = useState({
     productType: "",
     productName: "",
     price: "",
-    material: "",
+    materials: "",
     process: "",
     offer: "",
     description: "",
+    ratings: "4.6",
     features: "",
-    otherImages: [
-      {
-        id: "1",
-        label: "Add Image 1",
-        file: null as File | null,
-        preview: null as string | null,
-      },
-      {
-        id: "2",
-        label: "Add Image 2",
-        file: null as File | null,
-        preview: null as string | null,
-      },
-    ],
-
     inStock: [{ id: "1", size: "S", quantity: 1 }],
   });
 
@@ -106,23 +108,55 @@ function AddNewProducts({
 
   const handleSubmit = async () => {
     try {
-      console.log("Submitting product:", formData);
+      const formDataToSend = new FormData();
 
-      // const res = await fetch("/api/products", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      formDataToSend.append("price", String(Number(formData.price)));
+      formDataToSend.append("productName", formData.productName);
+      formDataToSend.append("productType", formData.productType);
+      formDataToSend.append("ratings", formData.ratings.toString());
+      formDataToSend.append("materials", formData.materials);
+      formDataToSend.append("process", formData.process);
+      formDataToSend.append("offer", formData.offer);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("features", formData.features);
+      // formDataToSend.append("inStock", JSON.stringify(formData.inStock));
+      formData.inStock.forEach((stock, index) => {
+        formDataToSend.append(`inStock[${index}][size]`, stock.size);
+        formDataToSend.append(
+          `inStock[${index}][quantity]`,
+          String(stock.quantity)
+        );
+      });
 
-      // if (!res.ok) throw new Error("Failed to add product");
-      // const data = await res.json();
-      // console.log("Product created:", data);
+      // ✅ Append images
+      if (imagePreview.length > 0 && imagePreview[0].file) {
+        formDataToSend.append("imageUrl", imagePreview[0].file);
+        imagePreview.slice(1).forEach((image) => {
+          if (image.file) {
+            formDataToSend.append("otherImages", image.file);
+          }
+        });
+      }
 
-      // setProductTabs(true);
-      // setAddNewProduct(false);
+      console.log("Submitting product:");
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
+
+      const res = await fetch(`${API_BASE_URL}/products`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+        body: formDataToSend,
+      });
+
+      if (!res.ok) throw new Error("Failed to add product");
+      const data = await res.json();
+      console.log("Product created:", data);
+
+      setProductTabs(true);
+      setAddNewProduct(false);
     } catch (error) {
       console.error(error);
     }
@@ -207,10 +241,8 @@ function AddNewProducts({
           )}
           {currentPage === 1 && (
             <ImageUploader
-              images={formData.otherImages}
-              setImages={(images) =>
-                setFormData({ ...formData, otherImages: images })
-              }
+              images={imagePreview}
+              setImages={(images) => setImagePreview(images)}
             />
           )}
           {currentPage === 2 && (
