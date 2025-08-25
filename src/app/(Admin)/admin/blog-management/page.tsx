@@ -2,26 +2,80 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
+import { API_BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { JSX, useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 import { MdEdit, MdDelete } from "react-icons/md";
 
+interface Blog {
+  checkbox: boolean;
+  no: string;
+  initiatorId: string;
+  topic: string;
+  datePosted: string;
+  edit: JSX.Element;
+  action: JSX.Element;
+  more: JSX.Element;
+}
 function BlogManagement() {
-  const blogs = [
-    {
-      checkbox: true,
-      no: "01",
-      initiatorId: "INT0098",
-      topic: "Interex won Africa Fashion of the Year...",
-      datePosted: "12-12-2024",
-      edit: <MdEdit className="text-secondary" />,
-      action: <MdDelete className="text-red-500" />,
-      more: <IoEyeOutline />,
-    },
-  ];
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      const token = localStorage.getItem("adminToken");
+
+      if (!token) {
+        router.push("/admin");
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/blog`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to fetch blogs");
+
+        console.log(data);
+        const transformedBlogs = data.map((blog: any, index: number) => ({
+          initiatorId: `BLG-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
+          topic: blog.title || "N/A",
+          datePosted: new Date(blog.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
+          edit: (
+            <MdEdit
+              className="text-secondary cursor-pointer"
+              onClick={() =>
+                router.push(`/admin/blog-management/edit?id=${blog._id}`)
+              }
+            />
+          ),
+          action: (
+            <MdDelete
+              className="text-red-500 cursor-pointer"
+              // onClick={() => handleDelete(blog._id)}
+            />
+          ),
+          more: <IoEyeOutline />,
+        }));
+
+        setBlogs(transformedBlogs);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   return (
     <section className="flex mt-20">
@@ -35,8 +89,8 @@ function BlogManagement() {
             { key: "initiatorId", label: "Initiator ID" },
             { key: "topic", label: "Topic" },
             { key: "datePosted", label: "Date Posted" },
-            { key: "edit", label: "Edit", type: "action" },
-            { key: "action", label: "Action", type: "action" },
+            { key: "edit", label: "Edit" },
+            { key: "action", label: "Action" },
             { key: "more", label: "More", type: "action" },
           ]}
           data={blogs}

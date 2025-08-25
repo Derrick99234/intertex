@@ -1,5 +1,6 @@
 "use client";
 import AdminSidebar from "@/components/admin/aside/aside";
+import { API_BASE_URL } from "@/lib/constants";
 import { useState, useRef } from "react";
 
 function CreateBlog() {
@@ -22,11 +23,32 @@ function CreateBlog() {
     }
   };
 
-  const handlePost = () => {
-    console.log("Post created with title:", title);
+  const handlePost = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", content);
+      formData.append("tags", tagsInput);
+      if (imageFile) {
+        formData.append("imageCover", imageFile);
+      }
 
-    console.log("Post created with content:", content);
+      const res = await fetch(`${API_BASE_URL}/blog`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to create post");
+
+      const data = await res.json();
+      console.log("✅ Post created:", data);
+      alert("Blog created successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Error creating blog");
+    }
   };
+
   return (
     <section className="flex mt-20">
       <AdminSidebar />
