@@ -1,5 +1,6 @@
 "use client";
 import AdminSidebar from "@/components/admin/aside/aside";
+import DeleteBlogPost from "@/components/admin/blog/delete-blog-popup";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
@@ -24,6 +25,24 @@ function BlogManagement() {
   const [error, setError] = useState("");
 
   const router = useRouter();
+
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    const res = await fetch(`${API_BASE_URL}/blog/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setBlogs((prev) => prev.filter((blog) => blog.initiatorId !== id));
+      alert("Blog deleted successfully");
+    } else {
+      setError(data.message || "Failed to delete blog");
+    }
+  };
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -60,7 +79,10 @@ function BlogManagement() {
           action: (
             <MdDelete
               className="text-red-500 cursor-pointer"
-              // onClick={() => handleDelete(blog._id)}
+              onClick={() => {
+                setBlogToDelete(blog._id);
+                setShowDeletePopup(true);
+              }}
             />
           ),
           more: <IoEyeOutline />,
@@ -122,6 +144,15 @@ function BlogManagement() {
           onViewAll={() => router.push("/admin/blog-management/create")}
         />
       </div>
+      {showDeletePopup && (
+        <DeleteBlogPost
+          onClose={() => setShowDeletePopup(false)}
+          onDelete={() => {
+            handleDelete(blogToDelete!);
+            setShowDeletePopup(false);
+          }}
+        />
+      )}
     </section>
   );
 }
