@@ -5,17 +5,36 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/constants";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { NotificationSystem } from "@/components/notification-popup";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 3000);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
     setError("");
 
     try {
@@ -27,16 +46,22 @@ function AdminLogin() {
 
       if (!res.ok) {
         const data = await res.json();
+        showNotification(data.message || "Login failed", "error");
         throw new Error(data.message || "Login failed");
       }
+
+      showNotification("Login successful", "success");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      showNotification("redirecting to dashboard...", "info");
 
       const { accessToken } = await res.json();
       localStorage.setItem("adminToken", accessToken);
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);
+      showNotification(err.message || "Login failed", "error");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -69,11 +94,11 @@ function AdminLogin() {
             Login into your account
           </p>
 
-          {error && (
+          {/* {error && (
             <p className="text-red-600 text-center mb-4 font-semibold">
               {error}
             </p>
-          )}
+          )} */}
 
           <label htmlFor="email" className="text-lg mb-2 block">
             Email address
@@ -105,13 +130,21 @@ function AdminLogin() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className="bg-secondary text-lg text-white cursor-pointer w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {/* {loading ? "Signing in..." : "Sign In"} */}
+            sign in
           </button>
         </form>
       </div>
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={isLoading} />
     </section>
   );
 }

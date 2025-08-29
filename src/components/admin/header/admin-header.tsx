@@ -14,8 +14,6 @@ interface User {
 
 function AdminHeader() {
   const [user, setUser] = useState<User>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -40,21 +38,15 @@ function AdminHeader() {
           router.push("/admin");
           throw new Error(data.message || "Failed to fetch users");
         }
-
         setUser(data);
       } catch (err: any) {
-        setError(err.message);
         router.push("/admin");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchUsers();
   }, []);
 
-  if (loading) return <p className="text-center py-10">Loading...</p>;
-  if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
   return (
     <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0 z-50">
       <Image

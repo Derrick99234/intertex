@@ -1,7 +1,10 @@
 "use client";
 
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { NotificationSystem } from "@/components/notification-popup";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import {
   FaTachometerAlt,
@@ -59,8 +62,44 @@ const menuItems = [
 export default function AdminSidebar() {
   const pathname = usePathname();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
+
+  const router = useRouter();
+
+  const handleLogout = () => {
+    try {
+      setIsLoading(true);
+      setTimeout(() => {
+        localStorage.removeItem("adminToken");
+        setIsLoading(false);
+        showNotification("You have been successfully logged out!", "success");
+        router.push("/admin");
+      }, 500);
+    } catch (error) {
+      console.error("Logout error:", error);
+      setIsLoading(false);
+      showNotification("Failed to log out. Please try again.", "error");
+    }
+  };
+
   return (
-    <aside className="w-64 bg-white flex flex-col pb-8 border-r border-gray-200 fixed h-screen">
+    <aside className="w-64 bg-white flex flex-col pb-20 border-r border-gray-200 fixed h-screen">
       <nav className="flex-1 overflow-y-auto px-4 py-3">
         <ul className="space-y-4">
           {menuItems.map((item, index) => (
@@ -79,19 +118,29 @@ export default function AdminSidebar() {
             </li>
           ))}
         </ul>
-      </nav>
 
-      <div className="pl-7 space-y-6 mt-3">
-        <Link
-          href="/admin/help"
-          className="flex items-center text-sm text-gray-400 hover:text-blue-600 cursor-pointer"
-        >
-          <FaQuestionCircle className="mr-2" /> Help
-        </Link>
-        <button className="flex items-center text-sm text-gray-400 hover:text-blue-600 cursor-pointer">
-          <FaSignOutAlt className="mr-2" /> Logout
-        </button>
-      </div>
+        <div className="pl-7 space-y-6 mt-3">
+          <Link
+            href="/admin/help"
+            className="flex items-center text-sm text-gray-400 hover:text-blue-600 cursor-pointer"
+          >
+            <FaQuestionCircle className="mr-2" /> Help
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center text-sm text-gray-400 hover:text-blue-600 cursor-pointer"
+          >
+            <FaSignOutAlt className="mr-2" /> Logout
+          </button>
+          {notifications.status && (
+            <NotificationSystem
+              message={notifications.message}
+              type={notifications.type as "success" | "error" | "info"}
+            />
+          )}
+          <LoadingSpinner isLoading={isLoading} />
+        </div>
+      </nav>
     </aside>
   );
 }
