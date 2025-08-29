@@ -2,6 +2,8 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import React, { JSX, useEffect, useState } from "react";
@@ -100,8 +102,24 @@ interface User {
 
 function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
 
   const router = useRouter();
 
@@ -135,17 +153,17 @@ function Dashboard() {
 
         setUsers(transformedUsers);
       } catch (err: any) {
-        setError(err.message);
+        showNotification(
+          err.message || "An error occurred while fetching users",
+          "error"
+        );
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchUsers();
   }, []);
-
-  if (loading) return <p className="text-center py-10">Loading...</p>;
-  if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
 
   return (
     <section className="flex mt-20">
@@ -175,6 +193,13 @@ function Dashboard() {
           onViewAll={() => router.push("/admin/users-management")}
         />
       </div>
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={isLoading} />
     </section>
   );
 }

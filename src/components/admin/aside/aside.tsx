@@ -87,9 +87,9 @@ export default function AdminSidebar() {
       setIsLoading(true);
       setTimeout(() => {
         localStorage.removeItem("adminToken");
-        setIsLoading(false);
         showNotification("You have been successfully logged out!", "success");
         router.push("/admin");
+        setIsLoading(false);
       }, 500);
     } catch (error) {
       console.error("Logout error:", error);

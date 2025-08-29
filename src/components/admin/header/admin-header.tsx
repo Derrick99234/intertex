@@ -1,3 +1,5 @@
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,10 +17,29 @@ interface User {
 function AdminHeader() {
   const [user, setUser] = useState<User>();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
+
   const router = useRouter();
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setIsLoading(true);
       const token = localStorage.getItem("adminToken");
 
       if (!token) {
@@ -35,12 +56,14 @@ function AdminHeader() {
         const data = await res.json();
 
         if (!res.ok) {
+          showNotification(data.message || "Failed to fetch user", "error");
           router.push("/admin");
-          throw new Error(data.message || "Failed to fetch users");
         }
         setUser(data);
       } catch (err: any) {
         router.push("/admin");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -69,6 +92,13 @@ function AdminHeader() {
         <span>{user?.firstName + " " + user?.lastName}</span>
         <MdOutlineArrowDropDown />
       </div>
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={isLoading} />
     </header>
   );
 }

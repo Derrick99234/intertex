@@ -10,6 +10,8 @@ import {
 } from "@/lib/fetchCategories";
 import { CgClose } from "react-icons/cg";
 import { API_BASE_URL } from "@/lib/constants";
+import { NotificationSystem } from "@/components/notification-popup";
+import { LoadingSpinner } from "@/components/loading-spinner";
 
 function AddNewProducts({
   setAddNewProduct,
@@ -20,11 +22,28 @@ function AddNewProducts({
   // const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
   const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [productTypes, setProductTypes] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
 
   const [imagePreview, setImagePreview] = useState([
     {
@@ -57,13 +76,13 @@ function AddNewProducts({
   useEffect(() => {
     async function loadCategories() {
       try {
+        setIsLoading(true);
         const data = await getCategories();
-        console.log(`Fetched categories: ${JSON.stringify(data)}`);
         setCategories(data);
       } catch (error) {
-        console.error("Failed to fetch categories", error);
+        showNotification("Failed to fetch categories", "error");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     }
     loadCategories();
@@ -71,16 +90,16 @@ function AddNewProducts({
 
   useEffect(() => {
     if (!selectedCategory) return;
+    setIsLoading(true);
 
     async function loadSubcategories() {
-      // setLoadingSubcategories(true);
       try {
         const data = await getSubCategories(selectedCategory);
         setSubcategories(data);
       } catch (error) {
-        console.error("Failed to fetch subcategories", error);
+        showNotification("Failed to fetch subcategories", "error");
       } finally {
-        // setLoadingSubcategories(false);
+        setIsLoading(false);
       }
     }
 
@@ -93,20 +112,68 @@ function AddNewProducts({
     async function loadProductTypes() {
       // setLoadingProductTypes(true);
       try {
+        setIsLoading(true);
         const data = await getProductTypes(selectedSubcategory);
         setProductTypes(data);
       } catch (error) {
-        console.error("Failed to fetch product types", error);
+        showNotification("Failed to fetch product types", "error");
       } finally {
-        // setLoadingSubcategories(false);
+        setIsLoading(false);
       }
     }
 
     loadProductTypes();
   }, [selectedSubcategory]);
 
+  const validateFormFields = () => {
+    const missingFields = [];
+
+    // Check main formData fields
+    const requiredFormDataFields = {
+      productType: "Product Type",
+      productName: "Product Name",
+      price: "Price",
+      materials: "Materials",
+      process: "Process",
+      description: "Description",
+      features: "Features",
+    };
+
+    for (const key in requiredFormDataFields) {
+      const typedKey = key as keyof typeof formData;
+      if (!formData[typedKey] || formData[typedKey].toString().trim() === "") {
+        missingFields.push(
+          requiredFormDataFields[key as keyof typeof requiredFormDataFields]
+        );
+      }
+    }
+
+    // Check if at least one image has been selected
+    const hasImage = imagePreview.some((img) => img.file !== null);
+    if (!hasImage) {
+      missingFields.push("At least one image");
+    }
+
+    // Check the inStock array for valid size and quantity
+    formData.inStock.forEach((stock, index) => {
+      if (stock.size.toString().trim() === "" || stock.quantity <= 0) {
+        missingFields.push(`Size & Quantity for Stock #${index + 1}`);
+      }
+    });
+
+    return missingFields;
+  };
+
   const handleSubmit = async () => {
     try {
+      const missingFields = validateFormFields();
+      if (missingFields.length > 0) {
+        const message = `Please fill in all required fields: ${missingFields.join(
+          ", "
+        )}.`;
+        showNotification(message, "error");
+        return;
+      }
       const formDataToSend = new FormData();
 
       formDataToSend.append("price", String(Number(formData.price)));
@@ -186,7 +253,7 @@ function AddNewProducts({
                 className="border rounded px-3 py-2 w-full"
               >
                 <option value="">Select a category</option>
-                {loading ? (
+                {isLoading ? (
                   <option value="">Loading categories...</option>
                 ) : (
                   categories.map((category) => (
@@ -205,7 +272,7 @@ function AddNewProducts({
                 className="border rounded px-3 py-2 w-full "
               >
                 <option value="">Select a subcategory</option>
-                {loading ? (
+                {isLoading ? (
                   <option value="">Loading subcategories...</option>
                 ) : (
                   subcategories.map((subcategory) => (
@@ -226,7 +293,7 @@ function AddNewProducts({
                 className="border rounded px-3 py-2 w-full"
               >
                 <option value="">Select a types</option>
-                {loading ? (
+                {isLoading ? (
                   <option value="">Loading types...</option>
                 ) : (
                   productTypes.map((type) => (
@@ -282,6 +349,13 @@ function AddNewProducts({
           </div>
         </div>
       </div>
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={isLoading} />
     </div>
   );
 }
