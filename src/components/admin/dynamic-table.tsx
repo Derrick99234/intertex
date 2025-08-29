@@ -7,7 +7,7 @@ import Filter from "./filter";
 interface TableColumn {
   key: string;
   label: string;
-  type?: "text" | "email" | "date" | "number" | "checkbox" | "action";
+  type?: "text" | "email" | "date" | "number" | "checkbox" | "action" | "id";
 }
 
 interface TableProps {
@@ -58,11 +58,13 @@ export default function DynamicTable({
     switch (column.type) {
       case "email":
         return <span className="text-black">{value}</span>;
+      case "id":
+        return <span className="font-mono text-black">{value}</span>;
       case "action":
         return (
           <button
             className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-            onClick={() => onAction(item.productId)}
+            onClick={() => onAction(item.id)}
           >
             {value}
           </button>

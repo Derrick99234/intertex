@@ -13,7 +13,6 @@ import { API_BASE_URL } from "@/lib/constants";
 
 function AddNewProducts({
   setAddNewProduct,
-  setProductTabs,
 }: {
   setAddNewProduct: React.Dispatch<React.SetStateAction<boolean>>;
   setProductTabs: React.Dispatch<React.SetStateAction<boolean>>;
@@ -155,7 +154,7 @@ function AddNewProducts({
       const data = await res.json();
       console.log("Product created:", data);
 
-      setProductTabs(true);
+      // setProductTabs(true);
       setAddNewProduct(false);
     } catch (error) {
       console.error(error);
@@ -278,7 +277,7 @@ function AddNewProducts({
                 }
               }}
             >
-              {currentPage === 3 ? "Save" : "Next"}
+              {currentPage === 3 ? "Create Product" : "Next"}
             </button>
           </div>
         </div>

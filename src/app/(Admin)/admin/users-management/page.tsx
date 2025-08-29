@@ -10,6 +10,7 @@ import { IoEyeOutline } from "react-icons/io5";
 interface User {
   userId: string;
   fullName: string;
+  id: string;
   email: string;
   dateJoined: string;
   totalOrders: number;
@@ -45,6 +46,7 @@ function UserManagement() {
         const transformedUsers = data.map((user: any, index: number) => ({
           userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           fullName: user.fullName || "N/A",
+          id: user._id,
           email: user.email,
           dateJoined: new Date(user.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
           totalOrders: Math.floor(Math.random() * 20), // simulate total orders
@@ -76,7 +78,8 @@ function UserManagement() {
           columns={[
             { key: "checkbox", label: "", type: "checkbox" as const },
             { key: "no", label: "NO" },
-            { key: "userId", label: "User ID" },
+            // { key: "userId", label: "User ID" },
+            { key: "id", label: "ID", type: "id" },
             { key: "fullName", label: "Full Name" },
             { key: "email", label: "Email", type: "email" as const },
             { key: "dateJoined", label: "Date Joined" },
@@ -86,7 +89,9 @@ function UserManagement() {
           data={users}
           title="Recent Users"
           itemsPerPage={5}
-          onAction={() => console.log("Click on action button")}
+          onAction={(userId: string) =>
+            router.push(`/admin/users-management/user-profile?id=${userId}`)
+          }
           searchPlaceholder="Search by date, email..."
           showViewAll={false}
           navigations={[

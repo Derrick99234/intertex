@@ -1,14 +1,40 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Image from "next/image";
+import { API_BASE_URL } from "@/lib/constants";
+import { useSearchParams } from "next/navigation";
 
 function UserProfileComponent() {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("id");
+  const [userData, setUserData] = React.useState({
+    _id: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    createdAt: "",
+    isActive: false,
+    updatedAt: "",
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const res = await fetch(`${API_BASE_URL}/user/${userId}`);
+      const data = await res.json();
+      setUserData(data);
+    };
+    fetchUserData();
+  }, []);
+
   const user = {
-    "First Name": "ABC200023",
-    "Last Name": "John Doe",
-    "User ID": "john.doe@example.com",
-    "Email Address": "john.doe@example.com",
-    "Phone Number": "+1 (555) 123-4567",
-    DOB: "1990-01-01",
+    "First Name": userData?.fullName.split(" ")[0] || "N/A",
+    "Last Name": userData?.fullName.split(" ")[1] || "N/A",
+    "User ID": userData?._id || "N/A",
+    "Email Address": userData?.email || "N/A",
+    "Phone Number": userData?.phone || "N/A",
+    DOB: userData?.createdAt
+      ? new Date(userData.createdAt).toLocaleDateString("en-US")
+      : "N/A",
     "Date Created": "2023-01-01",
     "No. of Orders": 15,
     "No. of Pending Orders": 13,

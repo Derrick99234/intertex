@@ -156,18 +156,16 @@ function ProductManagement() {
 
         if (!res.ok) throw new Error(message || "Failed to fetch product");
 
-        const transformedUsers = products.map(
-          (product: Product, index: number) => ({
-            productId: product._id,
-            // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
-            productName: product.productName || "N/A",
-            category: product?.productType?.name,
-            price: product.price,
-            stock: product.inStock.length,
-            status: "Active",
-            more: <IoEyeOutline />,
-          })
-        );
+        const transformedUsers = products.map((product: Product) => ({
+          id: product._id,
+          // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
+          productName: product.productName || "N/A",
+          category: product?.productType?.name,
+          price: product.price,
+          stock: product.inStock.length,
+          status: "Active",
+          more: <IoEyeOutline />,
+        }));
         setProducts(transformedUsers);
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -201,7 +199,7 @@ function ProductManagement() {
               columns={[
                 { key: "checkbox", label: "", type: "checkbox" as const },
                 { key: "no", label: "NO" },
-                { key: "productId", label: "Product ID" },
+                { key: "id", label: "ID", type: "id" },
                 { key: "productName", label: "Product Name" },
                 { key: "category", label: "Category" },
                 { key: "price", label: "Price" },
