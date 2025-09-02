@@ -12,12 +12,15 @@ import { CgClose } from "react-icons/cg";
 import { API_BASE_URL } from "@/lib/constants";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { Product } from "./view-product";
 
 function AddNewProducts({
   setAddNewProduct,
+  setProducts,
 }: {
   setAddNewProduct: React.Dispatch<React.SetStateAction<boolean>>;
   setProductTabs: React.Dispatch<React.SetStateAction<boolean>>;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }) {
   // const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
@@ -42,7 +45,7 @@ function AddNewProducts({
 
     setTimeout(() => {
       setNotifications((prev) => ({ ...prev, status: false }));
-    }, 2000);
+    }, 3000);
   };
 
   const [imagePreview, setImagePreview] = useState([
@@ -166,6 +169,7 @@ function AddNewProducts({
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const missingFields = validateFormFields();
       if (missingFields.length > 0) {
         const message = `Please fill in all required fields: ${missingFields.join(
@@ -194,7 +198,6 @@ function AddNewProducts({
         );
       });
 
-      // ✅ Append images
       if (imagePreview.length > 0 && imagePreview[0].file) {
         formDataToSend.append("imageUrl", imagePreview[0].file);
         imagePreview.slice(1).forEach((image) => {
@@ -202,11 +205,6 @@ function AddNewProducts({
             formDataToSend.append("otherImages", image.file);
           }
         });
-      }
-
-      console.log("Submitting product:");
-      for (const [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
       }
 
       const res = await fetch(`${API_BASE_URL}/products`, {
@@ -217,25 +215,32 @@ function AddNewProducts({
         body: formDataToSend,
       });
 
-      if (!res.ok) throw new Error("Failed to add product");
+      if (!res.ok) {
+        showNotification("Failed to add product", "error");
+        return;
+      }
+      showNotification("Product added successfully", "success");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const data = await res.json();
-      console.log("Product created:", data);
-
+      const { product } = await data.json();
+      setProducts((prev) => [...prev, product]);
       // setProductTabs(true);
-      setAddNewProduct(false);
     } catch (error) {
-      console.error(error);
+      showNotification("Failed to add product", "error");
+    } finally {
+      setAddNewProduct(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50 z-10">
+    <div className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50">
       <CgClose
-        className="text-white text-2xl absolute top-28 font-bold right-4 cursor-pointer"
+        className="text-white text-2xl absolute top-8 font-bold right-4 cursor-pointer"
         onClick={() => setAddNewProduct(false)}
       />
       <div
-        className="bg-white w-full max-w-lg rounded-lg relative z-[1000]"
+        className="bg-white w-full max-w-lg rounded-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="bg-secondary py-2 text-lg text-white text-center">

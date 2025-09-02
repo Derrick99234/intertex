@@ -70,8 +70,10 @@ function AdminHeader() {
     fetchUsers();
   }, []);
 
+  if (!user) return;
+
   return (
-    <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0 z-50">
+    <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0">
       <Image
         src={"/logo/intertex_logo_2.png"}
         alt="Admin Login"

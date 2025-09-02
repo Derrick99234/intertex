@@ -20,7 +20,7 @@ function ProductDetails({
 
       <label className="text-sm font-medium my-3 block">Product Price</label>
       <input
-        type="text"
+        type="number"
         placeholder="How much is this product?"
         value={formData.price}
         onChange={(e) => setFormData({ ...formData, price: e.target.value })}

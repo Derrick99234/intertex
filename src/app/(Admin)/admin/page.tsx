@@ -87,8 +87,14 @@ function AdminLogin() {
 
         <form
           onSubmit={handleLogin}
-          className="bg-white flex-col py-20 px-10 min-w-md w-full"
+          className="bg-white flex-col py-20 px-10 min-w-md w-full relative"
         >
+          <Link
+            href="/login"
+            className="text-secondary hover:underline pb-2 text-lg absolute top-5 right-5"
+          >
+            &lt;- back as a user
+          </Link>
           <h2 className="text-3xl font-bold mb-4 text-center">Login</h2>
           <p className="text-center mt-5 mb-8 text-sm">
             Login into your account

@@ -1,11 +1,13 @@
 "use client";
 import InputField from "@/components/input-field/input-field";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { NotificationSystem } from "@/components/notification-popup";
 import Facebook from "@/components/other-authentication-method/facebook";
 import Google from "@/components/other-authentication-method/google";
 import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 function Login() {
   const router = useRouter();
@@ -13,6 +15,24 @@ function Login() {
     email: "",
     password: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,7 +43,7 @@ function Login() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
@@ -38,22 +58,27 @@ function Login() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Login failed: ${errorData.message || "Invalid credentials"}`);
+        showNotification(
+          `Login failed: ${errorData.message || "Invalid credentials"}`,
+          "error"
+        );
         return;
       }
-
+      showNotification("Login successful!", "success");
       const data = await response.json();
-
-      // Save token if returned
       if (data.accessToken) {
-        localStorage.setItem("token", data.accessToken);
+        localStorage.setItem("intertex-token", data.accessToken);
       }
-
-      alert("Login successful!");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      showNotification("redirecting to profile page...", "info");
       router.push("/update-profile");
     } catch (error) {
-      console.error("Login error:", error);
-      alert("Something went wrong. Please try again later.");
+      showNotification(
+        "Something went wrong. Please try again later.",
+        "error"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,7 +118,7 @@ function Login() {
         </p>
         <button
           type="submit"
-          className="mt-4 px-4 py-3 w-full bg-secondary text-white rounded-2xl hover:bg-secondary/70 transition-colors duration-200"
+          className="mt-4 px-4 py-3 w-full cursor-pointer bg-secondary text-white rounded-2xl hover:bg-secondary/70 transition-colors duration-200"
         >
           Sign In
         </button>
@@ -108,6 +133,13 @@ function Login() {
           </Link>
         </p>
       </form>
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={isLoading} />
     </section>
   );
 }
