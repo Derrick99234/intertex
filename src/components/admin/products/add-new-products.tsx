@@ -17,10 +17,12 @@ import { Product } from "./view-product";
 function AddNewProducts({
   setAddNewProduct,
   setProducts,
+  products,
 }: {
   setAddNewProduct: React.Dispatch<React.SetStateAction<boolean>>;
   setProductTabs: React.Dispatch<React.SetStateAction<boolean>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  products: Product[];
 }) {
   // const router = useRouter();
   const [currentPage, setCurrentPage] = useState(0);
@@ -221,14 +223,21 @@ function AddNewProducts({
       }
       showNotification("Product added successfully", "success");
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const data = await res.json();
-      const { product } = await data.json();
-      setProducts((prev) => [...prev, product]);
+      const { product } = await res.json();
+      setProducts((prev) => [
+        {
+          ...product,
+          inStock: product.inStock.length,
+          category: product?.productType?.name,
+          status: "Active",
+        },
+        ...prev,
+      ]);
       // setProductTabs(true);
+      setAddNewProduct(false);
     } catch (error) {
       showNotification("Failed to add product", "error");
     } finally {
-      setAddNewProduct(false);
       setIsLoading(false);
     }
   };

@@ -175,12 +175,12 @@ function ProductManagement() {
         if (!res.ok) throw new Error(message || "Failed to fetch product");
 
         const transformedUsers = products.map((product: Product) => ({
-          id: product._id,
+          _id: product._id,
           // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           productName: product.productName || "N/A",
           category: product?.productType?.name,
           price: product.price,
-          stock: product.inStock.length,
+          inStock: product.inStock.length,
           status: "Active",
           more: <IoEyeOutline />,
         }));
@@ -215,11 +215,11 @@ function ProductManagement() {
               columns={[
                 { key: "checkbox", label: "", type: "checkbox" as const },
                 { key: "no", label: "NO" },
-                { key: "id", label: "ID", type: "id" },
+                { key: "_id", label: "ID", type: "id" },
                 { key: "productName", label: "Product Name" },
                 { key: "category", label: "Category" },
                 { key: "price", label: "Price" },
-                { key: "stock", label: "Stock" },
+                { key: "inStock", label: "Stock" },
                 { key: "status", label: "Status" },
                 { key: "more", label: "More", type: "action" },
               ]}
@@ -262,6 +262,7 @@ function ProductManagement() {
               <AddNewProducts
                 setAddNewProduct={setAddNewProduct}
                 setProductTabs={setProductTabs}
+                products={products}
                 setProducts={setProducts}
               />
             )}

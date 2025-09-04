@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
+import { LoadingSpinner } from "../loading-spinner";
+import { API_BASE_URL } from "@/lib/constants";
+import { Product } from "../admin/products/view-product";
 
 const tabData = [
   {
@@ -125,7 +128,7 @@ const tabData = [
   },
 ];
 
-const MensWearList = () => {
+function ShopLandingPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const tabParam = searchParams.get("tab");
@@ -133,9 +136,27 @@ const MensWearList = () => {
   const [activeTab, setActiveTab] = useState(tabParam || defaultTab);
   const [search, setSearch] = useState("");
 
-  const [imageIndexes, setImageIndexes] = useState<{ [id: number]: number }>(
+  const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
     {}
   );
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [subcategory, setSubcategory] = useState<Product[]>([]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setIsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/products`);
+      const data = await response.json();
+      if (response.ok) {
+        setProducts(data.products);
+      }
+      setIsLoading(false);
+    };
+    fetchProduct();
+  }, []);
 
   useEffect(() => {
     setActiveTab(tabParam || defaultTab);
@@ -153,13 +174,14 @@ const MensWearList = () => {
       p.collection.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleImageClick = (id: number, images: string[]) => {
-    setImageIndexes((prev) => {
-      const nextIndex = ((prev[id] || 0) + 1) % images.length;
-      return { ...prev, [id]: nextIndex };
-    });
+  const handleImageClick = (id: string, images: string[]) => {
+    const nextIdx = ((imageIndexes[id] ?? 0) + 1) % images.length;
+    setImageIndexes((prev) => ({
+      ...prev,
+      [id]: nextIdx,
+    }));
   };
-  const handleDotClick = (id: number, idx: number) => {
+  const handleDotClick = (id: string, idx: number) => {
     setImageIndexes((prev) => ({ ...prev, [id]: idx }));
   };
 
@@ -170,10 +192,10 @@ const MensWearList = () => {
         aria-label="Breadcrumb"
       >
         <Link
-          href="/"
+          href="/shop"
           className="hover:underline text-[#091697] font-normal md:text-[13px] text-[10px] font-['OpenSans']"
         >
-          Man
+          All
         </Link>
         <Image
           src="/icons/arrow-left.png"
@@ -182,7 +204,7 @@ const MensWearList = () => {
           height={10}
           className="mx-2"
         />
-        <span className="text-[#A3A3A3] md:text-[13px] text-[10px] font-normal flex items-center">
+        {/* <span className="text-[#A3A3A3] md:text-[13px] text-[10px] font-normal flex items-center">
           Casual Wear
           <Image
             src="/icons/arrow-left.png"
@@ -191,21 +213,18 @@ const MensWearList = () => {
             height={10}
             className="mx-2"
           />
-        </span>
+        </span> */}
       </nav>
-      <h1 className="text-[22px] md:text-5xl font-normal mb-2">
-        Men&apos;s Casual Wear
-      </h1>
+      <h1 className="text-[22px] md:text-5xl font-normal mb-2">All Products</h1>
       <p className="text-xs md:text-lg text-[#000000] mb-4">
-        Classic fashion tailored for the modern man who values sophistication
-        and ease.
+        Discover our wide range of products designed for the modern individual.
       </p>
       {/* Tabs */}
       <div className="flex gap-6 items-center justify-between md:justify-start ">
         {tabData.map((tab) => (
           <button
             key={tab.key}
-            className={` border-b border-[#152F24] text-[10px] md:text-[13px] text-[#152F24]  transition-colors ${
+            className={` border-b border-[#152F24] cursor-pointer text-[10px] md:text-[13px] text-[#152F24]  transition-colors ${
               activeTab === tab.key
                 ? "text-[10px] md:text-[13px] font-bold"
                 : "border-transparent text-[#152F24] font-normal hover:border-[#152F24]"
@@ -315,54 +334,61 @@ const MensWearList = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center justify-between">
-          {filtered.map((product) => {
-            const imgIdx = imageIndexes[product.id] || 0;
+          {products.map((product) => {
+            const imgIdx = imageIndexes[product._id];
             return (
               <div
-                key={product.id}
+                key={product._id}
                 className="md:w-[405px] w-[166px] md:h-[573px] h-[245px] group  rounded-xl flex flex-col items-center justify-between transition hover:shadow-lg cursor-default"
               >
                 <div
                   className="w-full md:h-[506px] h-[208px]  flex flex-col items-center justify-between bg-gray-100 select-none rounded-[6px]"
-                  onClick={() => handleImageClick(product.id, product.images)}
+                  onClick={() =>
+                    handleImageClick(product._id, product.otherImages)
+                  }
                   style={{ cursor: "pointer" }}
                 >
                   <Image
-                    src={product.images[imgIdx]}
-                    alt={product.name}
+                    src={
+                      product.otherImages && product.otherImages.length > 0
+                        ? product.otherImages[imgIdx ?? 0]
+                        : product.imageUrl
+                    }
+                    alt={product.productName}
                     width={260}
                     height={320}
                     className="object-cover md:w-[405px] w-[156px] md:h-[490px] h-[190px]"
                   />
 
                   <div className="flex gap-2 md:w-[73px] w-[57px] md:h-[40px] h-[20px]">
-                    {product.images.map((_, idx) => (
-                      <button
-                        key={idx}
-                        aria-label={`Show image ${idx + 1}`}
-                        className="focus:outline-none flex items-center justify-center "
-                        onClick={() => handleDotClick(product.id, idx)}
-                        tabIndex={0}
-                      >
-                        {imgIdx === idx ? (
-                          <span className="inline-block md:w-[25px] w-[17px] md:h-[9px] h-[6px] bg-[#152F24] rounded-[3px] align-middle" />
-                        ) : (
-                          <span className="inline-block md:w-[14px] w-[10px] md:h-[14px] h-[10px] bg-[#152F24] rounded-full align-middle" />
-                        )}
-                      </button>
-                    ))}
+                    {product.otherImages &&
+                      product.otherImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          aria-label={`Show image ${idx + 1}`}
+                          className="focus:outline-none flex items-center justify-center "
+                          onClick={() => handleDotClick(product._id, idx)}
+                          tabIndex={0}
+                        >
+                          {imgIdx === idx ? (
+                            <span className="inline-block md:w-[25px] w-[17px] md:h-[9px] h-[6px] bg-[#152F24] rounded-[3px] align-middle" />
+                          ) : (
+                            <span className="inline-block md:w-[14px] w-[10px] md:h-[14px] h-[10px] bg-[#152F24] rounded-full align-middle" />
+                          )}
+                        </button>
+                      ))}
                   </div>
                 </div>
 
                 <div className="text-center w-full flex items-center justify-between md:h-[47px] h-[34px] md:pr-4 ">
                   <div className="font-normal text-xs md:text-base text-left">
-                    {product.name}
+                    {product.productName}
                     <div className="text-xs md:text-base  mb-2">
-                      {product.collection}
+                      {product.productType.name}
                     </div>
                   </div>
 
-                  <Link href={`/mens-wear/${product.slug}`}>
+                  <Link href={`/mens-wear/${product._id}`}>
                     <button className="bg-[#1739B7] text-white md:px-6 px-2 py-2 rounded-[3px] font-bold text-[8px] md:text-[13px] md:w-[113px] w-[60px] md:h-[31px] h-[16px] flex items-center justify-center">
                       Shop Now
                     </button>
@@ -373,8 +399,9 @@ const MensWearList = () => {
           })}
         </div>
       )}
+      <LoadingSpinner isLoading={isLoading} />
     </div>
   );
-};
+}
 
-export default MensWearList;
+export default ShopLandingPage;

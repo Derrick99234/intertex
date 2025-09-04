@@ -1,10 +1,13 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import ElevatedStyle from "../elevated-styles";
 import ShowcaseSection from "../showcase/showcase-section";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function HeroPage() {
+  const router = useRouter();
   return (
     <>
       <section className="relative grid grid-cols-[30rem_1fr_20rem] max-[1246px]:grid-cols-[1fr] max-[1246px]:min-h-[85vh] max-[1246px]:items-start bg-[#BFB2A2] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -29,7 +32,10 @@ function HeroPage() {
             precise cuts, and timeless design to help you make a lasting <br />
             impression at every occasion.
           </p>
-          <button className="text-white px-18 py-4 mt-5 bg-primary">
+          <button
+            className="text-white px-18 py-4 mt-5 bg-primary cursor-pointer"
+            onClick={() => router.push("/shop")}
+          >
             Shop Now
           </button>
         </div>
@@ -137,7 +143,7 @@ function HeroPage() {
               alt="A kid on blue jacket"
               width={500}
               height={500}
-              className="max-h-[30rem] max-[1246px]:max-h-[20rem]"
+              className="max-h-[30rem] max-[1246px]:max-h-[16rem] flex-1/2"
             />
             <Image
               src={
@@ -146,7 +152,7 @@ function HeroPage() {
               alt="A kid on skate"
               width={500}
               height={500}
-              className="max-h-[30rem] max-[1246px]:max-h-[20rem]"
+              className="max-h-[30rem] max-[1246px]:max-h-[16rem] flex-1/2"
             />
           </div>
           <p className="text-center">

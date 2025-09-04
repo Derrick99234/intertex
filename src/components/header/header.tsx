@@ -2,10 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MenDropdown from "./men-dropdown";
 import WomenDropdown from "./women-dropdown";
 import KidDropdown from "./kid-dropdown";
+import { LoadingSpinner } from "../loading-spinner";
+import { NotificationSystem } from "../notification-popup";
+import { API_BASE_URL } from "@/lib/constants";
 
 function Header() {
   const router = useRouter();
@@ -26,9 +29,39 @@ function Header() {
     router.push("/");
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  const [user, setUser] = useState({
+    fullName: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("intertex-token");
+    if (!token) {
+      return;
+    }
+    setIsLoading(true);
+    const fetchUserData = async () => {
+      const response = await fetch(`${API_BASE_URL}/user/get-user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setIsLoading(false);
+        setUser(data);
+      }
+      setIsLoading(false);
+    };
+
+    fetchUserData();
+  }, []);
 
   return (
     <>
@@ -109,15 +142,30 @@ function Header() {
             height={10}
             className="cursor-pointer"
           />
-          <Link href={"/login"}>
-            <Image
-              src={"/icons/profile.png"}
-              className="cursor-pointer"
-              alt="user profile"
-              width={45}
-              height={10}
-            />
-          </Link>
+          {user.fullName ? (
+            <>
+              <p>{user.fullName}</p>
+              <Link href={"/update-profile"}>
+                <Image
+                  src={"/icons/profile.png"}
+                  alt="user profile"
+                  width={30}
+                  height={30}
+                  className="cursor-pointer"
+                />
+              </Link>
+            </>
+          ) : (
+            <Link href={"/login"}>
+              <Image
+                src={"/icons/profile.png"}
+                alt="user profile"
+                width={30}
+                height={30}
+                className="cursor-pointer"
+              />
+            </Link>
+          )}
         </div>
       </header>
 
@@ -868,6 +916,7 @@ function Header() {
           </div>
         </div>
       )}
+      <LoadingSpinner isLoading={isLoading} />
 
       {/* Desktop Dropdowns */}
       {showMenNavMenu && <MenDropdown setShowMenNavMenu={setShowMenNavMenu} />}
