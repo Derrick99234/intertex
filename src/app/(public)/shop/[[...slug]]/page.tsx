@@ -6,14 +6,12 @@ import ShopLandingPage, {
   Type,
 } from "@/components/shop/shop-page";
 
-export type AppPageProps<T extends Record<string, any> = object> = {
-  params: T;
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
-
 export default async function ShopPage({
   params,
-}: AppPageProps<{ slug?: string[] }>) {
+}: {
+  params: { slug?: string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const slug = params?.slug || [];
 
   if (slug.length === 0) {
