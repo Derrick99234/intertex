@@ -8,11 +8,11 @@ import ShopLandingPage, {
 import { API_BASE_URL } from "@/lib/constants";
 import { notFound } from "next/navigation";
 
-interface ShopParamsProps {
+export default async function ShopPage({
+  params,
+}: {
   params: { slug?: string[] };
-}
-
-export default async function ShopPage({ params }: ShopParamsProps) {
+}) {
   const slug = params?.slug || [];
 
   if (slug.length === 0) {
