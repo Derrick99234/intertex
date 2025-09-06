@@ -1,4 +1,5 @@
 import { Product } from "@/components/admin/products/view-product";
+// Removed invalid import of PageProps from "next"
 import ShopLandingPage, {
   Category,
   Subcategory,
@@ -7,11 +8,13 @@ import ShopLandingPage, {
 import { API_BASE_URL } from "@/lib/constants";
 import { notFound } from "next/navigation";
 
-export default async function ShopPage({
-  params,
-}: {
-  params: { slug?: string[] };
-}) {
+interface ShopPageProps {
+  params: {
+    slug?: string[];
+  };
+}
+
+export default async function ShopPage({ params }: ShopPageProps) {
   const slug = params?.slug || [];
 
   if (slug.length === 0) {
