@@ -6,15 +6,10 @@ import ShopLandingPage, {
   Type,
 } from "@/components/shop/shop-page";
 
-export default async function ShopPage({
-  params,
-}: {
-  params: { slug?: string[] | undefined };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const slug = params?.slug || [];
+export default async function ShopPage({ params, searchParams }: any) {
+  const slugArray = params?.slug ?? [];
 
-  if (slug.length === 0) {
+  if (slugArray.length === 0) {
     const response = await fetch(`${API_BASE_URL}/products`);
     const data = await response.json();
     const tabs = await fetch(`${API_BASE_URL}/subcategories`);
@@ -34,34 +29,34 @@ export default async function ShopPage({
       <ShopLandingPage
         products={data.products}
         tabs={allCategoryFilter}
-        slug={slug}
+        slug={slugArray}
       />
     );
   }
 
-  if (slug.length === 1) {
+  if (slugArray.length === 1) {
     const response = await fetch(
-      `${API_BASE_URL}/products/category/${slug[0]}`
+      `${API_BASE_URL}/products/category/${slugArray[0]}`
     );
     const data = await response.json();
 
     const subcategories = await fetch(`${API_BASE_URL}/subcategories`);
     const tabData = await subcategories.json();
     const allSubcategories = tabData.filter(
-      (sub: Subcategory) => sub.category.slug === slug[0]
+      (sub: Subcategory) => sub.category.slug === slugArray[0]
     );
 
     return (
       <ShopLandingPage
         products={data.products}
         tabs={allSubcategories}
-        slug={slug}
+        slug={slugArray}
       />
     );
   }
 
-  if (slug.length === 2) {
-    const [category, subcategory] = slug;
+  if (slugArray.length === 2) {
+    const [category, subcategory] = slugArray;
     const { products } = await fetch(
       `${API_BASE_URL}/products/subcategory/${category}/${subcategory}`
     ).then((res) => res.json());
@@ -74,16 +69,18 @@ export default async function ShopPage({
         type.subcategory.category.slug === category
     );
 
-    return <ShopLandingPage products={products} tabs={allTypes} slug={slug} />;
+    return (
+      <ShopLandingPage products={products} tabs={allTypes} slug={slugArray} />
+    );
   }
 
-  if (slug.length === 3) {
-    const [category, subcategory, type] = slug;
+  if (slugArray.length === 3) {
+    const [category, subcategory, type] = slugArray;
     const { products } = await fetch(
       `${API_BASE_URL}/products/type/${type}`
     ).then((res) => res.json());
 
-    return <ShopLandingPage products={products} tabs={[]} slug={slug} />;
+    return <ShopLandingPage products={products} tabs={[]} slug={slugArray} />;
   }
 
   // if (slug.length === 4) {
