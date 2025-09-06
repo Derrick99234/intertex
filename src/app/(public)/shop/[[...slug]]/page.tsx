@@ -1,18 +1,19 @@
-import { Product } from "@/components/admin/products/view-product";
-// Removed invalid import of PageProps from "next"
+import { notFound } from "next/navigation";
+import { API_BASE_URL } from "@/lib/constants";
 import ShopLandingPage, {
   Category,
   Subcategory,
   Type,
 } from "@/components/shop/shop-page";
-import { API_BASE_URL } from "@/lib/constants";
-import { notFound } from "next/navigation";
+
+export type AppPageProps<T extends Record<string, any> = object> = {
+  params: T;
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
 export default async function ShopPage({
   params,
-}: {
-  params: { slug?: string[] };
-}) {
+}: AppPageProps<{ slug?: string[] }>) {
   const slug = params?.slug || [];
 
   if (slug.length === 0) {
