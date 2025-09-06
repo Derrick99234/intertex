@@ -7,172 +7,220 @@ import { LoadingSpinner } from "../loading-spinner";
 import { API_BASE_URL } from "@/lib/constants";
 import { Product } from "../admin/products/view-product";
 
-const tabData = [
-  {
-    key: "tshirts",
-    label: "T-shirts",
-    products: [
-      {
-        id: 1,
-        slug: "classic-tshirt-cream",
-        name: "Classic T-shirt",
-        collection: "New collection",
-        images: [
-          "/images/shirt1.jpeg",
-          "/images/shirt1b.jpeg",
-          "/images/shirt1c.jpeg",
-        ],
-      },
-      {
-        id: 2,
-        slug: "classic-tshirt-blue",
-        name: "Classic T-shirt",
-        collection: "New collection",
-        images: [
-          "/images/shirt2.jpeg",
-          "/images/shirt2b.jpeg",
-          "/images/shirt2c.jpeg",
-        ],
-      },
-      {
-        id: 3,
-        slug: "classic-tshirt-striped",
-        name: "Classic T-shirt",
-        collection: "New collection",
-        images: [
-          "/images/shirt3.jpeg",
-          "/images/shirt3b.jpeg",
-          "/images/shirt3c.jpeg",
-        ],
-      },
-    ],
-  },
-  {
-    key: "polos",
-    label: "Polos",
-    products: [
-      {
-        id: 4,
-        slug: "classic-polo-white",
-        name: "Classic Polo",
-        collection: "New collection",
-        images: [
-          "/images/polos.jpeg",
-          "/images/polo1b.jpeg",
-          "/images/polo1c.jpeg",
-        ],
-      },
-      {
-        id: 5,
-        slug: "classic-polo-navy",
-        name: "Classic Polo",
-        collection: "New collection",
-        images: [
-          "/images/polos.jpeg",
-          "/images/polo2b.jpeg",
-          "/images/polo2c.jpeg",
-        ],
-      },
-    ],
-  },
-  {
-    key: "sweatshirts",
-    label: "Sweatshirts",
-    products: [
-      {
-        id: 6,
-        slug: "classic-sweatshirt-grey",
-        name: "Classic Sweatshirt",
-        collection: "New collection",
-        images: [
-          "/images/sweatshirt.jpg",
-          "/images/sweatshirt1b.jpeg",
-          "/images/sweatshirt1c.jpeg",
-        ],
-      },
-    ],
-  },
-  {
-    key: "hoodies",
-    label: "Hoodies",
-    products: [
-      {
-        id: 7,
-        slug: "classic-hoodie-black",
-        name: "Classic Hoodie",
-        collection: "New collection",
-        images: [
-          "/images/hoodie1.jpeg",
-          "/images/hoodie1b.jpeg",
-          "/images/hoodie1c.jpeg",
-        ],
-      },
-    ],
-  },
-  {
-    key: "denim-jeans",
-    label: "Denim Jeans",
-    products: [
-      {
-        id: 8,
-        slug: "classic-jeans-blue",
-        name: "Classic Jeans",
-        collection: "New collection",
-        images: [
-          "/images/jeans1.jpeg",
-          "/images/jeans1b.jpeg",
-          "/images/jeans1c.jpeg",
-        ],
-      },
-    ],
-  },
-];
+// const tabData = [
+//   {
+//     key: "tshirts",
+//     label: "T-shirts",
+//     products: [
+//       {
+//         id: 1,
+//         slug: "classic-tshirt-cream",
+//         name: "Classic T-shirt",
+//         collection: "New collection",
+//         images: [
+//           "/images/shirt1.jpeg",
+//           "/images/shirt1b.jpeg",
+//           "/images/shirt1c.jpeg",
+//         ],
+//       },
+//       {
+//         id: 2,
+//         slug: "classic-tshirt-blue",
+//         name: "Classic T-shirt",
+//         collection: "New collection",
+//         images: [
+//           "/images/shirt2.jpeg",
+//           "/images/shirt2b.jpeg",
+//           "/images/shirt2c.jpeg",
+//         ],
+//       },
+//       {
+//         id: 3,
+//         slug: "classic-tshirt-striped",
+//         name: "Classic T-shirt",
+//         collection: "New collection",
+//         images: [
+//           "/images/shirt3.jpeg",
+//           "/images/shirt3b.jpeg",
+//           "/images/shirt3c.jpeg",
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     key: "polos",
+//     label: "Polos",
+//     products: [
+//       {
+//         id: 4,
+//         slug: "classic-polo-white",
+//         name: "Classic Polo",
+//         collection: "New collection",
+//         images: [
+//           "/images/polos.jpeg",
+//           "/images/polo1b.jpeg",
+//           "/images/polo1c.jpeg",
+//         ],
+//       },
+//       {
+//         id: 5,
+//         slug: "classic-polo-navy",
+//         name: "Classic Polo",
+//         collection: "New collection",
+//         images: [
+//           "/images/polos.jpeg",
+//           "/images/polo2b.jpeg",
+//           "/images/polo2c.jpeg",
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     key: "sweatshirts",
+//     label: "Sweatshirts",
+//     products: [
+//       {
+//         id: 6,
+//         slug: "classic-sweatshirt-grey",
+//         name: "Classic Sweatshirt",
+//         collection: "New collection",
+//         images: [
+//           "/images/sweatshirt.jpg",
+//           "/images/sweatshirt1b.jpeg",
+//           "/images/sweatshirt1c.jpeg",
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     key: "hoodies",
+//     label: "Hoodies",
+//     products: [
+//       {
+//         id: 7,
+//         slug: "classic-hoodie-black",
+//         name: "Classic Hoodie",
+//         collection: "New collection",
+//         images: [
+//           "/images/hoodie1.jpeg",
+//           "/images/hoodie1b.jpeg",
+//           "/images/hoodie1c.jpeg",
+//         ],
+//       },
+//     ],
+//   },
+//   {
+//     key: "denim-jeans",
+//     label: "Denim Jeans",
+//     products: [
+//       {
+//         id: 8,
+//         slug: "classic-jeans-blue",
+//         name: "Classic Jeans",
+//         collection: "New collection",
+//         images: [
+//           "/images/jeans1.jpeg",
+//           "/images/jeans1b.jpeg",
+//           "/images/jeans1c.jpeg",
+//         ],
+//       },
+//     ],
+//   },
+// ];
 
-function ShopLandingPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const tabParam = searchParams.get("tab");
-  const defaultTab = tabData[0].key;
-  const [activeTab, setActiveTab] = useState(tabParam || defaultTab);
+export interface Category {
+  _id: string;
+  name: string;
+  description?: string;
+  slug?: string;
+  status?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+export interface Subcategory {
+  _id: string;
+  name: string;
+  description?: string;
+  slug?: string;
+  status: boolean;
+  category: Category;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Type {
+  name: string;
+  description?: string;
+  slug?: string;
+  status?: boolean;
+  subcategory: Subcategory;
+}
+
+function ShopLandingPage({
+  products,
+  tabs,
+  slug,
+}: {
+  products: any[];
+  tabs: any[];
+  slug: string[];
+}) {
   const [search, setSearch] = useState("");
 
   const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
     {}
   );
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [subcategory, setSubcategory] = useState<Product[]>([]);
+  const router = useRouter();
+  // const [products, setProducts] = useState<Product[]>([]);
+  // const [subcategory, setSubcategory] = useState<Subcategory[]>([]);
 
-  const [isLoading, setIsLoading] = useState(false);
+  // useEffect(() => {
+  //   const fetchSubcategories = async () => {
+  //     try {
+  //       const response = await fetch(`${API_BASE_URL}/subcategories`);
+  //       const data = await response.json();
+  //       if (response.ok) {
+  //         setSubcategory(data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching subcategories:", error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/products`);
-      const data = await response.json();
-      if (response.ok) {
-        setProducts(data.products);
-      }
-      setIsLoading(false);
-    };
-    fetchProduct();
-  }, []);
+  //   fetchSubcategories();
+  // }, []);
 
-  useEffect(() => {
-    setActiveTab(tabParam || defaultTab);
-  }, [tabParam]);
+  // const [isLoading, setIsLoading] = useState(false);
 
-  const handleTabClick = (key: string) => {
-    setActiveTab(key);
-    router.replace(`?tab=${key}`);
-  };
+  // useEffect(() => {
+  //   const fetchProduct = async () => {
+  //     setIsLoading(true);
+  //     const response = await fetch(`${API_BASE_URL}/products`);
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       setProducts(data.products);
+  //     }
+  //     setIsLoading(false);
+  //   };
+  //   fetchProduct();
+  // }, []);
 
-  const currentTab = tabData.find((tab) => tab.key === activeTab) || tabData[0];
-  const filtered = currentTab.products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.collection.toLowerCase().includes(search.toLowerCase())
-  );
+  // useEffect(() => {
+  //   setActiveTab(tabParam || defaultTab);
+  // }, [tabParam]);
+
+  // const handleTabClick = (key: string) => {
+  //   setActiveTab(key);
+  //   router.replace(`?tab=${key}`);
+  // };
+
+  // const currentTab = tabData.find((tab) => tab.key === activeTab) || tabData[0];
+  // const filtered = currentTab.products.filter(
+  //   (p) =>
+  //     p.name.toLowerCase().includes(search.toLowerCase()) ||
+  //     p.collection.toLowerCase().includes(search.toLowerCase())
+  // );
 
   const handleImageClick = (id: string, images: string[]) => {
     const nextIdx = ((imageIndexes[id] ?? 0) + 1) % images.length;
@@ -184,54 +232,75 @@ function ShopLandingPage() {
   const handleDotClick = (id: string, idx: number) => {
     setImageIndexes((prev) => ({ ...prev, [id]: idx }));
   };
+  const segments = [
+    { name: "All", href: "/shop" },
+    ...slug.map((s, i) => {
+      const href = `/shop/${slug.slice(0, i + 1).join("/")}`;
+      return { name: s.replace(/-/g, " "), href };
+    }),
+  ];
 
   return (
-    <div className="bg-white min-h-screen px-2 md:px-8 md:py-8 ">
+    <div className="bg-white min-h-screen px-2 md:px-8 md:pb-8 ">
       <nav
         className="flex items-center text-[13px] text-gray-600 mb-2 py-2"
         aria-label="Breadcrumb"
       >
-        <Link
-          href="/shop"
-          className="hover:underline text-[#091697] font-normal md:text-[13px] text-[10px] font-['OpenSans']"
-        >
-          All
-        </Link>
-        <Image
-          src="/icons/arrow-left.png"
-          alt="Arrow Left"
-          width={10}
-          height={10}
-          className="mx-2"
-        />
-        {/* <span className="text-[#A3A3A3] md:text-[13px] text-[10px] font-normal flex items-center">
-          Casual Wear
-          <Image
-            src="/icons/arrow-left.png"
-            alt="Arrow Left"
-            width={10}
-            height={10}
-            className="mx-2"
-          />
-        </span> */}
+        <div className="flex items-center">
+          {segments.map((seg, idx) => (
+            <div key={seg.href} className="flex items-center">
+              <Link
+                href={seg.href}
+                className={`hover:underline ${
+                  idx === segments.length - 1
+                    ? "text-[#A3A3A3]" // current page style
+                    : "text-[#091697]"
+                } font-normal text-lg`}
+              >
+                {seg.name}
+              </Link>
+
+              {idx < segments.length - 1 && (
+                <Image
+                  src="/icons/arrow-left.png"
+                  alt="Arrow Left"
+                  width={10}
+                  height={10}
+                  className="mx-2"
+                />
+              )}
+            </div>
+          ))}
+        </div>
       </nav>
       <h1 className="text-[22px] md:text-5xl font-normal mb-2">All Products</h1>
       <p className="text-xs md:text-lg text-[#000000] mb-4">
         Discover our wide range of products designed for the modern individual.
       </p>
-      {/* Tabs */}
       <div className="flex gap-6 items-center justify-between md:justify-start ">
-        {tabData.map((tab) => (
+        <button
+          className={` border-b border-[#152F24] cursor-pointer text-[10px] md:text-[13px] text-[#152F24]  transition-colors ${
+            true
+              ? "text-[10px] md:text-[13px] font-bold"
+              : "border-transparent text-[#152F24] font-normal hover:border-[#152F24]"
+          }`}
+          onClick={() => router.push("/shop")}
+        >
+          All
+        </button>
+        {tabs.map((tab) => (
           <button
-            key={tab.key}
+            key={tab.slug}
             className={` border-b border-[#152F24] cursor-pointer text-[10px] md:text-[13px] text-[#152F24]  transition-colors ${
-              activeTab === tab.key
+              false
                 ? "text-[10px] md:text-[13px] font-bold"
                 : "border-transparent text-[#152F24] font-normal hover:border-[#152F24]"
             }`}
-            onClick={() => handleTabClick(tab.key)}
+            onClick={() =>
+              router.push(`/shop/${[...slug, tab.slug].join("/")}`)
+            }
           >
-            {tab.label}
+            {tab.name}
           </button>
         ))}
       </div>
@@ -316,7 +385,7 @@ function ShopLandingPage() {
         </div>
       </div>
       {/* Product Grid */}
-      {filtered.length === 0 ? (
+      {products?.length === 0 ? (
         <div className="w-full flex flex-col items-center justify-center py-16">
           <Image
             src="/icons/search.png"
@@ -362,7 +431,7 @@ function ShopLandingPage() {
 
                   <div className="flex gap-2 md:w-[73px] w-[57px] md:h-[40px] h-[20px]">
                     {product.otherImages &&
-                      product.otherImages.map((_, idx) => (
+                      product.otherImages.map((_: any, idx: any) => (
                         <button
                           key={idx}
                           aria-label={`Show image ${idx + 1}`}
@@ -399,7 +468,7 @@ function ShopLandingPage() {
           })}
         </div>
       )}
-      <LoadingSpinner isLoading={isLoading} />
+      {/* <LoadingSpinner isLoading={isLoading} /> */}
     </div>
   );
 }

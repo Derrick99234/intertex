@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/constants";
 import { IoEyeOutline } from "react-icons/io5";
+import { Subcategory, Type } from "@/components/shop/shop-page";
 
 interface TabData {
   id: string;
@@ -33,19 +34,9 @@ export interface Product {
   ratings: number;
   imageUrl: string;
   otherImages: string[];
-  productType: {
-    _id: string;
-    name: string;
-    description: string;
-    status: boolean;
-    subcategory: string;
-    createdAt: string;
-    updatedAt: string;
-    slug: string;
-    __v?: number;
-  };
+  productType: Type;
+  subcategory: Subcategory;
   createdAt?: string;
-  updatedAt?: string;
   __v?: number;
 }
 
@@ -65,14 +56,40 @@ export default function ViewProduct({ productId }: ProductTabsProps) {
     imageUrl: "",
     otherImages: [],
     productType: {
-      _id: "",
       name: "",
       description: "",
       status: true,
-      subcategory: "",
+      subcategory: {
+        _id: "",
+        name: "",
+        description: "",
+        slug: "",
+        status: true,
+        createdAt: "",
+        updatedAt: "",
+        category: {
+          _id: "",
+          name: "",
+          description: "",
+          slug: "",
+        },
+      },
+      slug: "",
+    },
+    subcategory: {
+      _id: "",
+      name: "",
+      description: "",
+      slug: "",
+      status: true,
       createdAt: "",
       updatedAt: "",
-      slug: "",
+      category: {
+        _id: "",
+        name: "",
+        description: "",
+        slug: "",
+      },
     },
   });
   const [loading, setLoading] = useState(true);
