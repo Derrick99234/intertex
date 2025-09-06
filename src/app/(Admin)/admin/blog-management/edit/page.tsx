@@ -5,9 +5,8 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
-function EditBlog() {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
+export default function EditBlog({ params }: { params: { id: string } }) {
+  const { id } = params;
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -195,5 +194,3 @@ function EditBlog() {
     </section>
   );
 }
-
-export default EditBlog;
