@@ -5,6 +5,7 @@ import ShopLandingPage, {
   Subcategory,
   Type,
 } from "@/components/shop/shop-page";
+import ProductDetails from "@/components/shop/product-details";
 
 export default async function ShopPage({ params, searchParams }: any) {
   const slugArray = params?.slug ?? [];
@@ -83,17 +84,17 @@ export default async function ShopPage({ params, searchParams }: any) {
     return <ShopLandingPage products={products} tabs={[]} slug={slugArray} />;
   }
 
-  // if (slug.length === 4) {
-  //   // /shop/men/tops/t-shirts/some-product-slug
-  //   const productSlug = slug[3];
-  //   const product = await fetch(
-  //     `${process.env.API_URL}/products/${productSlug}`
-  //   ).then((res) => res.json());
+  if (slugArray.length === 4) {
+    // /shop/men/tops/t-shirts/some-product-slug
+    const productSlug = slugArray[3];
+    const { product } = await fetch(
+      `${API_BASE_URL}/products/product/${productSlug}`
+    ).then((res) => res.json());
 
-  //   if (!product) return notFound();
+    console.log(product);
 
-  //   return <ShopLandingPage products={product} />;
-  // }
+    return <ProductDetails slug={[...slugArray]} product={product} />;
+  }
 
   return notFound();
 }

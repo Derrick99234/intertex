@@ -24,6 +24,7 @@ export interface Product {
   description: string;
   price: number;
   materials: string;
+  slug: string;
   process: string;
   inStock: Array<{
     size: string;
@@ -55,6 +56,7 @@ export default function ViewProduct({ productId }: ProductTabsProps) {
     ratings: 0,
     imageUrl: "",
     otherImages: [],
+    slug: "",
     productType: {
       name: "",
       description: "",
