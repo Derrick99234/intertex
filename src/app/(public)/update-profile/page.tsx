@@ -113,6 +113,10 @@ function UpdateProfile() {
         }
 
         const userData = await res.json();
+        if (userData.gender || userData.dob || userData.stateOfResidence) {
+          router.push("/shop");
+        }
+
         setUser({
           fullName: userData.fullName,
           email: userData.email,
@@ -170,9 +174,9 @@ function UpdateProfile() {
     updateUser();
   };
   return (
-    <section className="min-h-screen flex items-center justify-center bg-primary">
+    <>
       <form
-        className="max-w-md w-full mx-auto p-6 px-10 bg-white rounded-md shadow-md mt-10"
+        className="max-w-md w-full p-6 px-10 bg-white rounded-md shadow-md mt-10"
         onSubmit={handleSubmit}
       >
         <h1 className="text-2xl font-bold mb-6 text-center">Update Profile</h1>
@@ -291,7 +295,7 @@ function UpdateProfile() {
         />
       )}
       <LoadingSpinner isLoading={isLoading} />
-    </section>
+    </>
   );
 }
 

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Product } from "../admin/products/view-product";
 
@@ -184,7 +184,8 @@ function ProductDetails({
   slug: string[];
   product: Product;
 }) {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
+  const router = useRouter();
   const hhh = "classic-tshirt-blue";
   let foundProduct = null;
   let currentCategory = null;
@@ -247,13 +248,14 @@ function ProductDetails({
     }),
   ];
   const images = [product.imageUrl, ...product.otherImages];
+
   return (
     <div className="max-w-[1400px] mx-auto md:py-8 px-2 md:px-8">
       <nav
         className="flex items-center text-[13px] text-gray-600 mb-2 py-2"
         aria-label="Breadcrumb"
       >
-        <div className="flex items-center">
+        <div className="flex items-center flex-wrap">
           {segments.map((seg, idx) => (
             <div key={seg.href} className="flex items-center">
               <Link
@@ -367,7 +369,7 @@ function ProductDetails({
           </div>
 
           <button
-            className="bg-[#091697] md:mb-2 mb-8 text-white w-full py-3 rounded-[6px] font-bold text-[13px] h-[32px] md:h-[34px] flex items-center justify-center"
+            className="bg-[#091697] md:mb-2 mb-8 cursor-pointer text-white w-full py-3 rounded-[6px] font-bold text-[13px] h-[32px] md:h-[34px] flex items-center justify-center"
             onClick={() => setShowVariationModal(true)}
           >
             Buy Now
@@ -641,14 +643,14 @@ function ProductDetails({
               </div>
               <div className="flex md:gap-32 md:justify-center justify-between md:w-[80%] w-full">
                 <button
-                  className="border-2 border-[#091697] text-[#091697] px-10 py-2 rounded-md font-bold hover:bg-[#f0f4ff] md:w-[300px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center md:text-[19px] text-xs"
+                  className="border-2 border-[#091697] cursor-pointer text-[#091697] px-10 py-2 rounded-md font-bold hover:bg-[#f0f4ff] md:w-[300px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center md:text-[19px] text-xs"
                   onClick={() => setShowVariationModal(false)}
                 >
                   Back
                 </button>
                 <button
-                  className="bg-[#091697] text-white md:px-10 px-2 py-2 rounded-md font-bold hover:bg-[#0f1e6a] md:w-[300px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center md:text-[19px] text-xs"
-                  // Add cart logic here
+                  className="bg-[#091697] text-white md:px-10 px-2 cursor-pointer py-2 rounded-md font-bold hover:bg-[#0f1e6a] md:w-[300px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center md:text-[19px] text-xs"
+                  onClick={() => console.log(variationCounts)}
                 >
                   Go to Cart
                 </button>

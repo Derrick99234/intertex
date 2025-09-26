@@ -144,7 +144,10 @@ function Header() {
           />
           {user.fullName ? (
             <>
-              <p>{user.fullName}</p>
+              <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
+                {user.fullName.split(" ")[0].charAt(0) +
+                  user.fullName.split(" ")[1]?.charAt(0)}
+              </span>
               <Link href={"/update-profile"}>
                 <Image
                   src={"/icons/profile.png"}

@@ -28,8 +28,8 @@ export default async function ShopPage({ params, searchParams }: any) {
     const allCategoryFilter = getUniqueCategories(tabData);
     return (
       <ShopLandingPage
-        products={data.products}
-        tabs={allCategoryFilter}
+        products={data.products ?? []}
+        tabs={allCategoryFilter ?? []}
         slug={slugArray}
       />
     );
@@ -49,8 +49,8 @@ export default async function ShopPage({ params, searchParams }: any) {
 
     return (
       <ShopLandingPage
-        products={data.products}
-        tabs={allSubcategories}
+        products={data.products ?? []}
+        tabs={allSubcategories ?? []}
         slug={slugArray}
       />
     );
@@ -71,7 +71,11 @@ export default async function ShopPage({ params, searchParams }: any) {
     );
 
     return (
-      <ShopLandingPage products={products} tabs={allTypes} slug={slugArray} />
+      <ShopLandingPage
+        products={products ?? []}
+        tabs={allTypes ?? []}
+        slug={slugArray}
+      />
     );
   }
 
@@ -81,7 +85,9 @@ export default async function ShopPage({ params, searchParams }: any) {
       `${API_BASE_URL}/products/type/${type}`
     ).then((res) => res.json());
 
-    return <ShopLandingPage products={products} tabs={[]} slug={slugArray} />;
+    return (
+      <ShopLandingPage products={products ?? []} tabs={[]} slug={slugArray} />
+    );
   }
 
   if (slugArray.length === 4) {
@@ -93,7 +99,7 @@ export default async function ShopPage({ params, searchParams }: any) {
 
     console.log(product);
 
-    return <ProductDetails slug={[...slugArray]} product={product} />;
+    return <ProductDetails slug={[...slugArray]} product={product ?? []} />;
   }
 
   return notFound();

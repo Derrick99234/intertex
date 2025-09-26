@@ -74,7 +74,14 @@ function KidDropdown(props: {
                 </h4>
                 <ul className="space-y-1">
                   {section.items.map((item) => (
-                    <li key={item.slug}>{item.label}</li>
+                    <li key={item.slug}>
+                      <Link
+                        href={`/shop/${categorySlug}/${section.slug}/${item.slug}`}
+                        onClick={() => props.setShowKidNavMenu(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
                   ))}
                 </ul>
               </div>
