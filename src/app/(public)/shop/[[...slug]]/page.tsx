@@ -7,8 +7,13 @@ import ShopLandingPage, {
 } from "@/components/shop/shop-page";
 import ProductDetails from "@/components/shop/product-details";
 
-export default async function ShopPage({ params, searchParams }: any) {
-  const slugArray = params?.slug ?? [];
+export default async function ShopPage({
+  params,
+}: {
+  params: Promise<{ slug?: string[] }>;
+}) {
+  const { slug } = await params;
+  const slugArray = slug ?? [];
 
   if (slugArray.length === 0) {
     const response = await fetch(`${API_BASE_URL}/products`);
@@ -96,8 +101,6 @@ export default async function ShopPage({ params, searchParams }: any) {
     const { product } = await fetch(
       `${API_BASE_URL}/products/product/${productSlug}`
     ).then((res) => res.json());
-
-    console.log(product);
 
     return <ProductDetails slug={[...slugArray]} product={product ?? []} />;
   }

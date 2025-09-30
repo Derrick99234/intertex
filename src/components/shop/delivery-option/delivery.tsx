@@ -1,25 +1,30 @@
 function Delivery() {
   return (
-    <div className="max-w-full mx-auto">
-      <div className="flex justify-between items-center my-4">
-        <h3 className="font-bold text-lg">Delivary Fee</h3>
+    <div className="max-w-lg mx-auto">
+      <div className="flex justify-between items-center my-4 text-sm">
+        <h3 className="flex justify-between text-gray-600">Delivary Fee</h3>
         <span className="font-semibold">$50.00</span>
       </div>
-      <hr className="h-[2px] bg-gray-300 max-w-xl mx-auto text-gray-300" />
-      <h3 className="my-5 mt-7">Your Delivery Address</h3>
-      <hr className="h-[2px] bg-gray-300 mx-auto text-gray-300" />
-      <address className="mt-7">
+      <input
+        type="text"
+        placeholder="Delivery Address"
+        className="my-4 block border-b-2 border-gray-400 outline-none w-full py-2 px-4"
+      />
+      <address className="text-gray-600 text-sm">
         17, Kayodo Asrikawe street, Ikosi Ketu, Lagos Nigeria
       </address>
-      <button className="bg-secondary text-white py-2 px-4 rounded-md mt-4">
+      <button className="bg-secondary text-white py-2 px-4 rounded-md mt-4 text-sm cursor-pointer">
         Change Address
       </button>
-      <h3 className="my-5 mt-7">Your Contact Phone Number</h3>
-      <hr className="h-[2px] bg-gray-300 max-w-xl mx-auto text-gray-300" />
-      <p className="mt-7">090368244706</p>
-      <button className="bg-secondary text-white py-2 px-14 rounded-md mt-4">
-        Add
-      </button>
+      {/* <input
+        type="text"
+        placeholder="Your Contact Phone Number"
+        className="my-4 block border-b-2 border-gray-400 outline-none w-full py-2 px-4"
+      />
+      <p className="mt-7 text-sm">090368244706</p>
+      <button className="bg-secondary text-white py-2 px-14 rounded-md mt-4 text-sm cursor-pointer">
+        Change Contact Info
+      </button> */}
     </div>
   );
 }

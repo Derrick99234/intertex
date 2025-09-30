@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Product } from "../admin/products/view-product";
+import { API_BASE_URL } from "@/lib/constants";
 
 const tabData = [
   {
@@ -248,6 +249,58 @@ function ProductDetails({
     }),
   ];
   const images = [product.imageUrl, ...product.otherImages];
+
+  const handleAddToCart = async () => {
+    try {
+      // Build items from variationCounts
+      const itemsToAdd = Object.entries(variationCounts)
+        .filter(([_, qty]) => qty > 0) // only keep > 0
+        .map(([size, qty]) => ({
+          product: product._id, // your product ID
+          size,
+          quantity: qty,
+        }));
+
+      if (itemsToAdd.length === 0) {
+        alert("Please select at least one variation");
+        return;
+      }
+
+      const token = localStorage.getItem("intertex-token");
+      if (!token) {
+        router.push(`/login?redirect=/shop/cart`);
+        return;
+      }
+      const responses = await Promise.all(
+        itemsToAdd.map((item) =>
+          fetch(`${API_BASE_URL}/cart`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(item),
+          })
+        )
+      );
+
+      if (responses.some((res) => res.status === 401)) {
+        router.push(`/login?redirect=/shop/cart`);
+        return;
+      }
+
+      const allOk = responses.every((res) => res.ok);
+
+      if (allOk) {
+        router.push("/shop/cart");
+      } else {
+        console.error("Some items failed to add:", responses);
+        alert("Something went wrong while adding to cart. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
 
   return (
     <div className="max-w-[1400px] mx-auto md:py-8 px-2 md:px-8">
@@ -650,7 +703,7 @@ function ProductDetails({
                 </button>
                 <button
                   className="bg-[#091697] text-white md:px-10 px-2 cursor-pointer py-2 rounded-md font-bold hover:bg-[#0f1e6a] md:w-[300px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center md:text-[19px] text-xs"
-                  onClick={() => console.log(variationCounts)}
+                  onClick={handleAddToCart}
                 >
                   Go to Cart
                 </button>

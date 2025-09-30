@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   // output: "export",
-  assetPrefix: "",
   images: {
     unoptimized: true,
     remotePatterns: [

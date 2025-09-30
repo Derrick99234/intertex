@@ -95,8 +95,8 @@ export default function CartSummary() {
   const total = subtotal + taxes;
 
   return (
-    <div className="flex justify-center">
-      <div className="max-w-xl mx-auto bg-white shadow-md rounded-lg p-6">
+    <div className="flex justify-center min-h-screen pt-6">
+      <div className="max-w-2xl w-full mx-auto bg-white">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Cart Summary
         </h2>
@@ -173,9 +173,9 @@ export default function CartSummary() {
         </div>
 
         {/* Checkout Button */}
-        <button className="mt-6 w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-md">
+        {/* <button className="mt-6 w-full bg-secondary hover:bg-secondary/80 cursor-pointer text-white font-semibold py-3 rounded-md">
           Checkout
-        </button>
+        </button> */}
       </div>
       <DeliveryOption />
     </div>

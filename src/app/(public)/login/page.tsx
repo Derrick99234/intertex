@@ -6,7 +6,7 @@ import Facebook from "@/components/other-authentication-method/facebook";
 import Google from "@/components/other-authentication-method/google";
 import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
 function Login() {
@@ -22,6 +22,8 @@ function Login() {
     message: "",
     type: "info",
   });
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/update-profile";
 
   const showNotification = (
     message: string,
@@ -71,7 +73,7 @@ function Login() {
       }
       await new Promise((resolve) => setTimeout(resolve, 2000));
       showNotification("redirecting to profile page...", "info");
-      router.push("/update-profile");
+      router.push(redirectTo);
     } catch (error) {
       showNotification(
         "Something went wrong. Please try again later.",
