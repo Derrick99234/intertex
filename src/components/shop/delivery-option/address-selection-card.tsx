@@ -1,13 +1,12 @@
 // components/AddressSelectionCard.tsx
-
 import React from "react";
 
 // --- Types ---
 
-interface Address {
-  id: string;
+export interface Address {
+  _id: string;
   fullName: string;
-  deliveryLine: string;
+  deliveryAddress: string;
   location: string; // Combined City - Region
   phoneNumber: string;
   isDefault: boolean;
@@ -59,12 +58,12 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
           {addresses.map((address) => (
             // Individual Address Item
             <div
-              key={address.id}
-              onClick={() => onSelect(address.id)}
+              key={address._id}
+              onClick={() => onSelect(address._id)}
               className={`
               p-4 border-2 rounded-lg cursor-pointer transition duration-200
               ${
-                selectedAddressId === address.id
+                selectedAddressId === address._id
                   ? "border-secondary bg-secondary/5"
                   : "border-gray-200 hover:border-secondary/50"
               }
@@ -76,14 +75,14 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
                   {/* Custom Radio/Selector Circle */}
                   <div
                     className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
-                      selectedAddressId === address.id
+                      selectedAddressId === address._id
                         ? "border-secondary"
                         : "border-gray-400"
                     }`}
                   >
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        selectedAddressId === address.id ? "bg-secondary" : ""
+                        selectedAddressId === address._id ? "bg-secondary" : ""
                       }`}
                     />
                   </div>
@@ -94,7 +93,7 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
                       {address.fullName}
                     </div>
                     <p className="text-sm text-gray-600">
-                      {address.deliveryLine} | {address.location}
+                      {address.deliveryAddress} | {address.location}
                     </p>
                     <p className="text-sm text-gray-600 mb-2">
                       {address.phoneNumber}
@@ -112,9 +111,9 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent the card selection when clicking edit
-                    onEdit(address.id);
+                    onEdit(address._id);
                   }}
-                  className="flex items-center text-sm text-secondary hover:text-secondary/60 transition duration-150"
+                  className="flex items-center cursor-pointer text-sm text-secondary hover:text-secondary/80 transition duration-150"
                 >
                   Edit <span className="ml-1">✏️</span>
                 </button>
@@ -135,7 +134,7 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
           <button
             onClick={onCancel}
-            className="text-gray-600 font-semibold px-6 py-3 rounded-md hover:text-gray-800 transition duration-150"
+            className="text-gray-600 font-semibold px-6 py-3 cursor-pointer rounded-md hover:text-gray-800 transition duration-150"
           >
             Cancel
           </button>
