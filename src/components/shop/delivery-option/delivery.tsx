@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddressForm from "./add-billing-information";
 import AddressSelectionCard from "./address-selection-card";
+import { API_BASE_URL } from "@/lib/constants";
 
 const initialAddresses = [
   {
@@ -24,23 +25,66 @@ const initialAddresses = [
 
 function Delivery() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [addressData, setAddressData] = useState(null);
+  const [addressData, setAddressData] = useState({
+    _id: "",
+    fullName: "",
+    deliveryAddress: "",
+    location: "",
+    phoneNumber: "",
+    isDefault: false,
+  });
 
   const handleSave = () => {
     setIsModalOpen(false);
   };
 
-  const [addresses, setAddresses] = useState(initialAddresses);
-  // Initialize selected address with the default one
+  const [addresses, setAddresses] = useState([
+    {
+      _id: "",
+      fullName: "",
+      deliveryAddress: "",
+      location: "",
+      phoneNumber: "",
+      isDefault: false,
+    },
+  ]);
+
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    initialAddresses.find((a) => a.isDefault)?.id || null
+    null
   );
+  useEffect(() => {
+    const fetchBilingInfo = async () => {
+      const res = await fetch(`${API_BASE_URL}/billing-information`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+
+      const updatedData = data.map((item: any) => {
+        return {
+          ...item,
+          location: `${item.city} - ${item.region}`,
+        };
+      });
+
+      const address = updatedData.find((item: any) => item.isDefault === true);
+      setAddressData(address);
+      setSelectedAddressId(address._id);
+      setAddresses(updatedData);
+    };
+    fetchBilingInfo();
+  }, []);
+
+  const handleCancel = () => setIsModalOpen(false);
 
   const handleFinalSelect = (id: string | null) => {
-    if (id) {
-      console.log(`Address ID ${id} selected for checkout.`);
-      // Proceed to the next step of the checkout process
+    const address = addresses.find((item) => item._id === id);
+    if (address) {
+      setAddressData(address);
     }
+    handleCancel();
   };
 
   const handleEdit = (id: string) => {
@@ -53,10 +97,6 @@ function Delivery() {
     // In a real app, you'd open the AddressFormModal here
   };
 
-  const handleCancel = () => {
-    console.log("Selection canceled, returning to previous screen.");
-    // Logic to close the card or return to the previous view
-  };
   return (
     <div className="max-w-lg mx-auto">
       <div className="flex justify-between items-center my-4 text-sm">
@@ -69,10 +109,10 @@ function Delivery() {
         className="my-4 block border-b-2 border-gray-400 outline-none w-full py-2 px-4"
       /> */}
       <h3 className="bg-gray-300 text-sm py-1 rounded-t-md px-2">
-        Olatunbosun Olashubomi
+        {addressData.fullName}
       </h3>
       <address className="text-gray-500 border-gray-300 border-2 p-2 text-sm rounded-b-md">
-        17, Kayodo Asrikawe street, Ikosi Ketu, Lagos Nigeria
+        {addressData.deliveryAddress + addressData.location}
       </address>
       <button
         className="bg-secondary text-white py-2 px-4 rounded-md mt-4 text-sm cursor-pointer"
@@ -82,7 +122,7 @@ function Delivery() {
       </button>
       {isModalOpen && (
         <AddressSelectionCard
-          onCancel={() => setIsModalOpen(false)}
+          onCancel={handleCancel}
           addresses={addresses}
           selectedAddressId={selectedAddressId}
           onSelect={setSelectedAddressId} // Update local state on click

@@ -4,6 +4,9 @@ import Image from "next/image";
 import { BsTrash2 } from "react-icons/bs";
 import { API_BASE_URL } from "@/lib/constants";
 import DeliveryOption from "../delivery-option/page";
+import { NotificationSystem } from "@/components/notification-popup";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { AiOutlineDelete } from "react-icons/ai";
 
 interface CartProduct {
   _id: string;
@@ -32,8 +35,25 @@ export default function CartSummary() {
     size: "",
   });
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("intertex-token");
+
+  // const [isLoading, setIsLoading] = useState(false);
+  const [notifications, setNotifications] = useState({
+    status: false,
+    message: "",
+    type: "info",
+  });
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "info"
+  ) => {
+    setNotifications({ message, type, status: true });
+
+    setTimeout(() => {
+      setNotifications((prev) => ({ ...prev, status: false }));
+    }, 2000);
+  };
   async function fetchCart() {
+    const token = localStorage.getItem("intertex-token");
     try {
       const res = await fetch(`${API_BASE_URL}/cart`, {
         headers: {
@@ -41,6 +61,14 @@ export default function CartSummary() {
           "Content-Type": "application/json",
         },
       });
+      if (!res.ok) {
+        const errorData = await res.json();
+        showNotification(
+          `Login failed: ${errorData.message || "Invalid credentials"}`,
+          "error"
+        );
+        return;
+      }
       const data = await res.json();
       setCart(data);
     } catch (err) {
@@ -54,6 +82,8 @@ export default function CartSummary() {
   }, []);
 
   async function handleDelete(productId: string, size: string) {
+    setLoading(true);
+    const token = localStorage.getItem("intertex-token");
     try {
       setDeleting({
         productId,
@@ -67,19 +97,17 @@ export default function CartSummary() {
         method: "DELETE",
       });
       // Refresh cart after deletion
+      showNotification(`Cart Item deleted successfully`, "success");
       await fetchCart();
     } catch (err) {
-      console.error("Error deleting item:", err);
+      showNotification(`Error deleting item: ${err}`, "error");
     } finally {
+      setLoading(false);
       setDeleting({
         productId: "",
         size: "",
       });
     }
-  }
-
-  if (loading) {
-    return <p className="text-center py-6">Loading cart...</p>;
   }
 
   if (!cart || cart.items.length === 0) {
@@ -95,7 +123,7 @@ export default function CartSummary() {
   const total = subtotal + taxes;
 
   return (
-    <div className="flex justify-center min-h-screen pt-6">
+    <div className="flex justify-center min-h-screen py-6">
       <div className="max-w-2xl w-full mx-auto bg-white">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Cart Summary
@@ -133,10 +161,10 @@ export default function CartSummary() {
                   ₦{(item.product.price * item.quantity).toLocaleString()}
                 </span>
                 <button
-                  className="text-gray-400 hover:text-red-500 cursor-pointer"
+                  className="text-gray-400 hover:text-red-600 cursor-pointer"
                   onClick={() => handleDelete(item.product._id, item.size)}
                 >
-                  <BsTrash2 size={18} />
+                  <AiOutlineDelete size={18} />
                 </button>
               </div>
             </div>
@@ -178,6 +206,13 @@ export default function CartSummary() {
         </button> */}
       </div>
       <DeliveryOption />
+      {notifications.status && (
+        <NotificationSystem
+          message={notifications.message}
+          type={notifications.type as "success" | "error" | "info"}
+        />
+      )}
+      <LoadingSpinner isLoading={loading} />
     </div>
   );
 }
