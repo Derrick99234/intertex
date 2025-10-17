@@ -81,6 +81,36 @@ export default function CartSummary() {
     fetchCart();
   }, []);
 
+  const [user, setUser] = useState({
+    fullName: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("intertex-token");
+    if (!token) {
+      return;
+    }
+    setLoading(true);
+    const fetchUserData = async () => {
+      const response = await fetch(`${API_BASE_URL}/user/get-user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setLoading(false);
+        setUser(data);
+      }
+      setLoading(false);
+    };
+
+    fetchUserData();
+  }, []);
+
+  const [deliveryOption, setDeliveryOption] = useState("delivery");
+
   async function handleDelete(productId: string, size: string) {
     setLoading(true);
     const token = localStorage.getItem("intertex-token");
@@ -121,6 +151,51 @@ export default function CartSummary() {
   );
   const taxes = subtotal * 0.05; // Example 5% tax
   const total = subtotal + taxes;
+
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+
+      const amount = total * 100; // Convert to kobo
+
+      const payload = {
+        email: user.email,
+        amount,
+        metadata: {
+          customer_name: user.fullName,
+          deliveryOption,
+          cart: cart.items.map((item) => ({
+            product_id: item._id,
+            name: item.product.slug,
+            quantity: item.quantity,
+            price: item.product.price,
+          })),
+        },
+      };
+
+      const res = await fetch(`${API_BASE_URL}/paystack/initialize`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (data.status && data.data.authorization_url) {
+        window.location.href = data.data.authorization_url;
+      } else {
+        alert("Unable to initialize payment");
+        console.error("Paystack response:", data);
+      }
+    } catch (error) {
+      console.error("Error initializing payment:", error);
+      alert("Payment failed to start.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex justify-center min-h-screen py-6">
@@ -205,7 +280,11 @@ export default function CartSummary() {
           Checkout
         </button> */}
       </div>
-      <DeliveryOption />
+      <DeliveryOption
+        deliveryOption={deliveryOption}
+        setDeliveryOption={setDeliveryOption}
+        handlePayment={handlePayment}
+      />
       {notifications.status && (
         <NotificationSystem
           message={notifications.message}
