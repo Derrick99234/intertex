@@ -185,7 +185,6 @@ function ProductDetails({
   slug: string[];
   product: Product;
 }) {
-  // const searchParams = useSearchParams();
   const router = useRouter();
   const hhh = "classic-tshirt-blue";
   let foundProduct = null;

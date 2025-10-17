@@ -6,8 +6,8 @@ import Facebook from "@/components/other-authentication-method/facebook";
 import Google from "@/components/other-authentication-method/google";
 import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 function Login() {
   const router = useRouter();
@@ -22,8 +22,13 @@ function Login() {
     message: "",
     type: "info",
   });
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/update-profile";
+  const [redirectTo, setRedirectTo] = useState("/update-profile");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect) setRedirectTo(redirect);
+  }, []);
 
   const showNotification = (
     message: string,
