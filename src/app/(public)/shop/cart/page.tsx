@@ -1,12 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { BsTrash2 } from "react-icons/bs";
 import { API_BASE_URL } from "@/lib/constants";
-import DeliveryOption from "../delivery-option/page";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { AiOutlineDelete } from "react-icons/ai";
+import DeliveryOption from "@/components/shop/delivery-option/delivery-option";
 
 interface CartProduct {
   _id: string;
