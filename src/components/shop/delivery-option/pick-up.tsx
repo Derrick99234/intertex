@@ -10,9 +10,7 @@ function Pickup() {
       <hr className="h-[2px] bg-gray-300 max-w-xl mx-auto text-gray-300" /> */}
       <h3 className="my-5">Find the nearest store location close to you</h3>
       <select className="border-none w-full bg-gray-100 py-2 px-4 rounded-md outline-none">
-        <option value="" disabled selected>
-          Select a store location
-        </option>
+        <option value="">Select a store location</option>
         <option>17, Kayodo Asrikawe street, Ikosi Ketu, Lagos Nigeria</option>
         <option>123, Victoria Island, Lagos Nigeria</option>
         <option>456, Lekki Phase 1, Lagos Nigeria</option>
