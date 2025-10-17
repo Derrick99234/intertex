@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../loading-spinner";
 import { API_BASE_URL } from "@/lib/constants";
 import { Product } from "../admin/products/view-product";
