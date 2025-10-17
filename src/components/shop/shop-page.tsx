@@ -458,7 +458,7 @@ function ShopLandingPage({
                   </div>
 
                   <Link href={`/shop/${[...slug, product.slug].join("/")}`}>
-                    <button className="bg-[#1739B7] text-white md:px-6 px-2 py-2 rounded-[3px] font-bold text-[8px] md:text-[13px] md:w-[113px] w-[60px] md:h-[31px] h-[16px] flex items-center justify-center">
+                    <button className="bg-[#1739B7] cursor-pointer text-white md:px-6 px-2 py-2 rounded-[3px] font-bold text-[8px] md:text-[13px] md:w-[113px] w-[60px] md:h-[31px] h-[16px] flex items-center justify-center">
                       Shop Now
                     </button>
                   </Link>

@@ -10,7 +10,7 @@ export default function DeliveryOption({
   handlePayment,
 }: {
   deliveryOption: string;
-  setDeliveryOption: (option: string) => void;
+  setDeliveryOption: React.Dispatch<React.SetStateAction<string>>;
   handlePayment: () => void;
 }) {
   const [loading, setLoading] = useState(false);
