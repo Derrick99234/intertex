@@ -2,7 +2,7 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import UserProfileComponent from "@/components/admin/users/user-profile";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
 function UserProfile() {
@@ -121,7 +121,9 @@ function UserProfile() {
         ) : activeTab === "activity-log" ? (
           <h2>hello</h2>
         ) : (
-          <UserProfileComponent />
+          <Suspense fallback={<div>Loading user profile...</div>}>
+            <UserProfileComponent />
+          </Suspense>
         )}
       </div>
     </section>
