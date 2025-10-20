@@ -45,7 +45,7 @@ export default async function ShopPage({
       `${API_BASE_URL}/products/category/${slugArray[0]}`
     );
     const data = await response.json();
-
+    console.log(data);
     const subcategories = await fetch(`${API_BASE_URL}/subcategories`);
     const tabData = await subcategories.json();
     const allSubcategories = tabData.filter(
@@ -96,7 +96,6 @@ export default async function ShopPage({
   }
 
   if (slugArray.length === 4) {
-    // /shop/men/tops/t-shirts/some-product-slug
     const productSlug = slugArray[3];
     const { product } = await fetch(
       `${API_BASE_URL}/products/product/${productSlug}`
