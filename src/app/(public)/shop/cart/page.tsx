@@ -6,6 +6,7 @@ import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { AiOutlineDelete } from "react-icons/ai";
 import DeliveryOption from "@/components/shop/delivery-option/delivery-option";
+import EmptyCartPage from "@/components/shop/empty-shopping-cart";
 
 interface CartProduct {
   _id: string;
@@ -83,6 +84,7 @@ export default function CartSummary() {
   const [user, setUser] = useState({
     fullName: "",
     email: "",
+    _id: "",
   });
 
   useEffect(() => {
@@ -140,7 +142,7 @@ export default function CartSummary() {
   }
 
   if (!cart || cart.items.length === 0) {
-    return <p className="text-center py-6">Your cart is empty</p>;
+    return <EmptyCartPage />;
   }
 
   // Calculate subtotal, taxes, total
@@ -157,12 +159,41 @@ export default function CartSummary() {
 
       const amount = total * 100; // Convert to kobo
 
+      const orderDetailstoSend = {
+        userId: user._id,
+        deliveryMethod: deliveryOption,
+        amount: total,
+        status: "pending",
+        products: cart.items.map((item) => ({
+          productId: item.product._id,
+          quantity: item.quantity,
+          size: item.size,
+        })),
+      };
+
+      const orderRes = await fetch(`${API_BASE_URL}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderDetailstoSend),
+      });
+
+      const orderResponse = await orderRes.json();
+
+      if (!orderRes.ok) {
+        console.error("Order creation failed:", orderResponse);
+        alert("Could not create order. Please try again.");
+        return;
+      }
+
       const payload = {
         email: user.email,
         amount,
         metadata: {
           customer_name: user.fullName,
           deliveryOption,
+          orderId: orderResponse._id,
           cart: cart.items.map((item) => ({
             product_id: item._id,
             name: item.product.slug,
