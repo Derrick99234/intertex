@@ -9,6 +9,7 @@ import KidDropdown from "./kid-dropdown";
 import { LoadingSpinner } from "../loading-spinner";
 import { NotificationSystem } from "../notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import MobileMenu from "./mobile-header";
 
 function Header() {
   const router = useRouter();
@@ -112,7 +113,7 @@ function Header() {
         </nav>
         <div className="flex gap-5 items-center">
           <Link
-            href={"#"}
+            href={"/order"}
             className="track-order flex items-center gap-3 border p-2 px-4 rounded-md border-gray-200"
           >
             <Image
@@ -135,13 +136,18 @@ function Header() {
             />
             <span className="font-semibold text-sm">Search</span>
           </Link>
-          <Image
-            src={"/icons/cart.png"}
-            alt="cart"
-            width={30}
-            height={10}
-            className="cursor-pointer"
-          />
+          <Link
+            href={"/shop/cart"}
+            className="search flex items-center gap-4 border p-2 px-4 rounded-md border-gray-200"
+          >
+            <Image
+              src={"/icons/cart.png"}
+              alt="cart"
+              width={30}
+              height={10}
+              className="cursor-pointer"
+            />
+          </Link>
           {user.fullName ? (
             <>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
@@ -212,7 +218,7 @@ function Header() {
       </header>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
+      {/* {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 bg-white z-50 overflow-y-auto">
           <div className="flex justify-between items-center px-4 py-4 border-b">
             <div className="logo">
@@ -297,7 +303,7 @@ function Header() {
                   </button>
                 </li>
                 <li>
-                  <Link href={"/mens-wear"}>Accessories</Link>
+                  <Link href={"/shop"}>Accessories</Link>
                 </li>
                 <li>
                   <Link href={"/our-factory"}>Our Factory</Link>
@@ -326,19 +332,25 @@ function Header() {
                     {mobileCasualOpen && (
                       <ul className="space-y-2 text-sm text-[#091697] ml-4">
                         <li>
-                          <Link href="/mens-wear/t-shirts">T-shirts</Link>
+                          <Link href="/shop/casual-wear/t-shirts">
+                            T-shirts
+                          </Link>
                         </li>
                         <li>
-                          <Link href="/mens-wear/polos">Polos</Link>
+                          <Link href="/shop/casual-wear/polos">Polos</Link>
                         </li>
                         <li>
-                          <Link href="/mens-wear/sweatshirts">Sweatshirts</Link>
+                          <Link href="/shop/casual-wear/sweatshirts">
+                            Sweatshirts
+                          </Link>
                         </li>
                         <li>
-                          <Link href="/mens-wear/hoodies">Hoodies</Link>
+                          <Link href="/shop/casual-wear/hoodies">Hoodies</Link>
                         </li>
                         <li>
-                          <Link href="/mens-wear/denim-jeans">Denim Jeans</Link>
+                          <Link href="/shop/casual-wear/denim-jeans">
+                            Denim Jeans
+                          </Link>
                         </li>
                       </ul>
                     )}
@@ -911,14 +923,19 @@ function Header() {
                   width={16}
                   height={16}
                 />
-                <Link href="#" className="text-[#091697] underline">
+                <Link href="/order" className="text-[#091697] underline">
                   Track Order
                 </Link>
               </div>
             </div>
           </div>
         </div>
-      )}
+      )} */}
+
+      <MobileMenu
+        toggleMobileMenu={toggleMobileMenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+      />
       <LoadingSpinner isLoading={isLoading} />
 
       {/* Desktop Dropdowns */}

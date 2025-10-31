@@ -83,6 +83,15 @@ function KidDropdown(props: {
                       </Link>
                     </li>
                   ))}
+                  <li>
+                    <Link href={"/shop"}>Accessories</Link>
+                  </li>
+                  <li>
+                    <Link href={"/our-factory"}>Our Factory</Link>
+                  </li>
+                  <li>
+                    <Link href={"/our-stores"}>Our Stores</Link>
+                  </li>
                 </ul>
               </div>
             ))}

@@ -222,6 +222,7 @@ export default function CartSummary() {
     } catch (error) {
       console.error("Error initializing payment:", error);
       alert("Payment failed to start.");
+      window.location.href = "/order";
     } finally {
       setLoading(false);
     }

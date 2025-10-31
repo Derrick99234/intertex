@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/constants";
 import { IoEyeOutline } from "react-icons/io5";
 import { Subcategory, Type } from "@/components/shop/shop-page";
+import { ArrowLeft } from "lucide-react";
 
 interface TabData {
   id: string;
@@ -16,6 +17,12 @@ interface TabData {
 interface ProductTabsProps {
   onDataChange?: (tabId: string, data: any) => void;
   productId: string;
+  setViewProduct: React.Dispatch<
+    React.SetStateAction<{
+      status: boolean;
+      productId: string;
+    }>
+  >;
 }
 
 export interface Product {
@@ -41,7 +48,10 @@ export interface Product {
   __v?: number;
 }
 
-export default function ViewProduct({ productId }: ProductTabsProps) {
+export default function ViewProduct({
+  productId,
+  setViewProduct,
+}: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState("product-details");
   const [product, setProduct] = useState<Product>({
     _id: "",
@@ -275,6 +285,15 @@ export default function ViewProduct({ productId }: ProductTabsProps) {
   return (
     <div className="bg-white rounded-lg shadow">
       {/* Tab Headers */}
+      <ArrowLeft
+        className="ml-4 mt-4 block cursor-pointer"
+        onClick={() =>
+          setViewProduct({
+            status: false,
+            productId: "",
+          })
+        }
+      />
       <div className="border-b border-gray-200">
         <div className="flex space-x-8 px-6">
           {tabs.map((tab) => (
@@ -333,9 +352,9 @@ export default function ViewProduct({ productId }: ProductTabsProps) {
           {images.map((image, index) => (
             <div className="text-center" key={index}>
               <Image
-                src={image.url}
+                src={image.url || ""}
                 className="h-[10rem] w-[16rem] object-cover object-top border rounded border-gray-300"
-                alt={image.label} // make sure you do the right thing here
+                alt={image.label}
                 width={400}
                 height={400}
               />

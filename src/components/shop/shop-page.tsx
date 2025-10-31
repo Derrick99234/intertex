@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LoadingSpinner } from "../loading-spinner";
 import { API_BASE_URL } from "@/lib/constants";
 import { Product } from "../admin/products/view-product";
@@ -153,6 +153,7 @@ export interface Type {
   description?: string;
   slug?: string;
   status?: boolean;
+  searchTerm?: boolean;
   subcategory: Subcategory;
 }
 
@@ -165,7 +166,34 @@ function ShopLandingPage({
   tabs: any[];
   slug: string[];
 }) {
-  const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const searchParams = useSearchParams(); // Get the URL search parameters
+  const pathname = usePathname();
+
+  // Update the search term based on the query params
+  useEffect(() => {
+    const searchQuery = searchParams.get("keyword") || "";
+    setSearchTerm(searchQuery);
+  }, [searchParams]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    // Determine where to perform the search
+    let basePath = "/shop";
+
+    // ✅ If user is already within /shop, preserve that subpath
+    if (pathname.startsWith("/shop")) {
+      basePath = pathname;
+    }
+
+    // Construct the new search URL safely
+    const newUrl = `${basePath}/search?keyword=${encodeURIComponent(value)}`;
+
+    // Push the new URL
+    router.push(newUrl);
+  };
 
   const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
     {}
@@ -317,8 +345,10 @@ function ShopLandingPage({
         <input
           type="text"
           placeholder="Quick Search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          // value={search}
+          // onChange={(e) => setSearch(e.target.value)}
+          value={searchTerm}
+          onChange={handleSearchChange}
           className="w-full bg-transparent outline-none border-none text-xs text-[#152F24] placeholder-[#000000]"
         />
       </div>
@@ -377,8 +407,8 @@ function ShopLandingPage({
             <input
               type="text"
               placeholder="Quick Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchTerm}
+              onChange={handleSearchChange}
               className="w-full bg-transparent outline-none border-none text-base text-[#152F24] placeholder-[#152F24]"
             />
           </div>
