@@ -13,6 +13,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { Product } from "./view-product";
+import { IoEyeOutline } from "react-icons/io5";
 
 function AddNewProducts({
   setAddNewProduct,
@@ -185,6 +186,7 @@ function AddNewProducts({
       formDataToSend.append("price", String(Number(formData.price)));
       formDataToSend.append("productName", formData.productName);
       formDataToSend.append("productType", formData.productType);
+      formDataToSend.append("subcategory", selectedSubcategory);
       formDataToSend.append("ratings", formData.ratings.toString());
       formDataToSend.append("materials", formData.materials);
       formDataToSend.append("process", formData.process);
@@ -228,8 +230,10 @@ function AddNewProducts({
         {
           ...product,
           inStock: product.inStock.length,
+          id: product._id,
           category: product?.productType?.name,
           status: "Active",
+          more: <IoEyeOutline />,
         },
         ...prev,
       ]);

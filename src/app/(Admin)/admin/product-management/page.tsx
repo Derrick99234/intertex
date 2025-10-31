@@ -175,7 +175,7 @@ function ProductManagement() {
         if (!res.ok) throw new Error(message || "Failed to fetch product");
 
         const transformedUsers = products.map((product: Product) => ({
-          _id: product._id,
+          id: product._id,
           // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           productName: product.productName || "N/A",
           category: product?.productType?.name,
@@ -199,6 +199,43 @@ function ProductManagement() {
     fetchProducts();
   }, []);
 
+  const fetchActiveTab = async (href: string) => {
+    if (href === "all") {
+      const res = await fetch(`${API_BASE_URL}/products`);
+      const { products, message } = await res.json();
+      if (!res.ok) throw new Error(message || "Failed to fetch product");
+
+      const transformedUsers = products.map((product: Product) => ({
+        id: product._id,
+        // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
+        productName: product.productName || "N/A",
+        category: product?.productType?.name,
+        price: product.price,
+        inStock: product.inStock.length,
+        status: "Active",
+        more: <IoEyeOutline />,
+      }));
+      setProducts(transformedUsers);
+      return;
+    }
+
+    const res = await fetch(`${API_BASE_URL}/products/category/${href}`);
+    const { products, message } = await res.json();
+
+    if (!res.ok) throw new Error(message || "Failed to fetch product");
+
+    const transformedUsers = products.map((product: Product) => ({
+      _id: product._id,
+      productName: product.productName || "N/A",
+      category: product?.productType?.name,
+      price: product.price,
+      inStock: product.inStock.length,
+      status: "Active",
+      more: <IoEyeOutline />,
+    }));
+    setProducts(transformedUsers);
+  };
+
   return (
     <section className="flex mt-20">
       <AdminSidebar />
@@ -206,7 +243,10 @@ function ProductManagement() {
         {productTabs ? (
           <ProductTabs />
         ) : viewProduct.status ? (
-          <ViewProduct productId={viewProduct.productId} />
+          <ViewProduct
+            productId={viewProduct.productId}
+            setViewProduct={setViewProduct}
+          />
         ) : (
           <>
             <DisplayStats />
@@ -215,7 +255,7 @@ function ProductManagement() {
               columns={[
                 { key: "checkbox", label: "", type: "checkbox" as const },
                 { key: "no", label: "NO" },
-                { key: "_id", label: "ID", type: "id" },
+                { key: "id", label: "ID", type: "id" },
                 { key: "productName", label: "Product Name" },
                 { key: "category", label: "Category" },
                 { key: "price", label: "Price" },
@@ -225,6 +265,7 @@ function ProductManagement() {
               ]}
               data={products}
               onAction={(id: string) => {
+                console.log("id: ", id);
                 setViewProduct({
                   status: true,
                   productId: id,
@@ -234,27 +275,28 @@ function ProductManagement() {
               // itemProduct={5}
               searchPlaceholder="Search by name, ID..."
               showViewAll={true}
+              fetchActiveTab={fetchActiveTab}
               onViewAll={() => setAddNewProduct(true)}
               navigations={[
                 {
                   name: "All Products",
-                  href: "/admin/product-management",
+                  href: "all",
                 },
                 {
                   name: "Men",
-                  href: "/admin/products",
+                  href: "men",
                 },
                 {
                   name: "Women",
-                  href: "/admin/products",
+                  href: "women",
                 },
                 {
                   name: "Kids",
-                  href: "/admin/products",
+                  href: "kids",
                 },
                 {
                   name: "Accessories",
-                  href: "/admin/products",
+                  href: "accessories",
                 },
               ]}
             />

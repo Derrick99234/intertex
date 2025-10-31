@@ -16,9 +16,11 @@ interface TableProps {
   data: any[];
   searchPlaceholder?: string;
   showViewAll?: boolean;
+  showSearch?: boolean;
   onViewAll?: () => void;
   itemsPerPage?: number;
   onAction: (id: string) => void;
+  fetchActiveTab?: (id: string) => void;
   navigations?: {
     name: string;
     href: string;
@@ -31,6 +33,8 @@ export default function DynamicTable({
   data,
   searchPlaceholder = "Search...",
   showViewAll = true,
+  showSearch = true,
+  fetchActiveTab,
   onViewAll,
   navigations,
   onAction,
@@ -91,7 +95,10 @@ export default function DynamicTable({
               {navigations.map((nav, index) => (
                 <button
                   key={index}
-                  onClick={() => setActiveTab(nav.href)}
+                  onClick={() => {
+                    setActiveTab(nav.href);
+                    fetchActiveTab?.(nav.href);
+                  }}
                   className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm cursor-pointer ${
                     activeTab === nav.href ? "bg-secondary text-white" : ""
                   }`}
@@ -115,27 +122,29 @@ export default function DynamicTable({
       </div>
 
       <div className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex gap-5 items-center">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search by date, email..."
-                className="border rounded px-3 py-2 pl-8 outline-none w-64 placeholder:text-black"
-              />
-              <span className="absolute left-2 top-3">
-                <CiSearch className="font-bold text-xl" />
-              </span>
+        {showSearch && (
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex gap-5 items-center">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by date, email..."
+                  className="border rounded px-3 py-2 pl-8 outline-none w-64 placeholder:text-black"
+                />
+                <span className="absolute left-2 top-3">
+                  <CiSearch className="font-bold text-xl" />
+                </span>
+              </div>
+              <button
+                className="flex items-center space-x-1 border rounded px-3 py-2 cursor-pointer"
+                onClick={() => setShowFilter(!showFilter)}
+              >
+                <span className="font-semibold">Filter</span>
+                <LuListFilter className="font-bold" />
+              </button>
             </div>
-            <button
-              className="flex items-center space-x-1 border rounded px-3 py-2 cursor-pointer"
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <span className="font-semibold">Filter</span>
-              <LuListFilter className="font-bold" />
-            </button>
           </div>
-        </div>
+        )}
 
         <div className="overflow-x-auto">
           <table className="w-full">

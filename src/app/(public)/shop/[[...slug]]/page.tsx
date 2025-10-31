@@ -7,54 +7,83 @@ import ShopLandingPage, {
 } from "@/components/shop/shop-page";
 import ProductDetails from "@/components/shop/product-details";
 
-export default async function ShopPage({
-  params,
-}: {
+export default async function ShopPage(props: {
   params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<Record<string, string>>;
 }) {
-  const { slug } = await params;
+  const { slug } = await props.params;
+  const searchParams = await props.searchParams;
+
+  const searchTerm = searchParams?.keyword || ""; // Default to empty string if not provided
   const slugArray = slug ?? [];
 
-  if (slugArray.length === 0) {
-    const response = await fetch(`${API_BASE_URL}/products`);
-    const data = await response.json();
-    const tabs = await fetch(`${API_BASE_URL}/subcategories`);
-    const tabData = await tabs.json();
-
-    function getUniqueCategories(subcategories: Subcategory[]): Category[] {
-      return subcategories
-        .map((sub) => sub.category)
-        .filter(
-          (cat, index, self) =>
-            index === self.findIndex((c) => c._id === cat._id)
-        );
+  // Helper: fetch products from backend
+  async function fetchProducts(endpoint: string, query?: string) {
+    let url = endpoint;
+    if (query) {
+      const queryParams = new URLSearchParams({ keyword: query });
+      url += `?${queryParams.toString()}`;
     }
+    const res = await fetch(url);
+    const data = await res.json();
+    return data ?? [];
+  }
 
+  // Helper: extract unique categories from subcategories
+  function getUniqueCategories(subcategories: Subcategory[]): Category[] {
+    return subcategories
+      .map((sub) => sub.category)
+      .filter(
+        (cat, index, self) => index === self.findIndex((c) => c._id === cat._id)
+      );
+  }
+
+  // Handle search if searchTerm exists
+  if (searchTerm) {
+    const products = await fetchProducts(
+      `${API_BASE_URL}/products/search`,
+      searchTerm
+    );
+
+    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
+    const tabData: Subcategory[] = await tabsRes.json();
     const allCategoryFilter = getUniqueCategories(tabData);
+
+    return <ShopLandingPage products={products} tabs={[]} slug={slugArray} />;
+  }
+
+  // If no search, handle normal slug-based routing
+  if (slugArray.length === 0) {
+    const { products } = await fetchProducts(`${API_BASE_URL}/products`);
+    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
+    const tabData: Subcategory[] = await tabsRes.json();
+    const allCategoryFilter = getUniqueCategories(tabData);
+
     return (
       <ShopLandingPage
-        products={data.products ?? []}
-        tabs={allCategoryFilter ?? []}
+        products={products ?? []}
+        tabs={allCategoryFilter}
         slug={slugArray}
       />
     );
   }
 
   if (slugArray.length === 1) {
-    const response = await fetch(
-      `${API_BASE_URL}/products/category/${slugArray[0]}`
+    const categorySlug = slugArray[0];
+    const res = await fetch(
+      `${API_BASE_URL}/products/category/${categorySlug}`
     );
-    const data = await response.json();
-    console.log(data);
-    const subcategories = await fetch(`${API_BASE_URL}/subcategories`);
-    const tabData = await subcategories.json();
+    const { products } = await res.json();
+
+    const subcategoriesRes = await fetch(`${API_BASE_URL}/subcategories`);
+    const tabData: Subcategory[] = await subcategoriesRes.json();
     const allSubcategories = tabData.filter(
-      (sub: Subcategory) => sub.category.slug === slugArray[0]
+      (sub) => sub.category.slug === categorySlug
     );
 
     return (
       <ShopLandingPage
-        products={data.products ?? []}
+        products={products ?? []}
         tabs={allSubcategories ?? []}
         slug={slugArray}
       />
@@ -63,12 +92,13 @@ export default async function ShopPage({
 
   if (slugArray.length === 2) {
     const [category, subcategory] = slugArray;
-    const { products } = await fetch(
+    const res = await fetch(
       `${API_BASE_URL}/products/subcategory/${category}/${subcategory}`
-    ).then((res) => res.json());
+    );
+    const { products } = await res.json();
 
-    const types = await fetch(`${API_BASE_URL}/types`);
-    const { data: typeData } = await types.json();
+    const typesRes = await fetch(`${API_BASE_URL}/types`);
+    const { data: typeData } = await typesRes.json();
     const allTypes = typeData.filter(
       (type: Type) =>
         type.subcategory.slug === subcategory &&
@@ -85,10 +115,9 @@ export default async function ShopPage({
   }
 
   if (slugArray.length === 3) {
-    const [category, subcategory, type] = slugArray;
-    const { products } = await fetch(
-      `${API_BASE_URL}/products/type/${type}`
-    ).then((res) => res.json());
+    const typeSlug = slugArray[2];
+    const res = await fetch(`${API_BASE_URL}/products/type/${typeSlug}`);
+    const { products } = await res.json();
 
     return (
       <ShopLandingPage products={products ?? []} tabs={[]} slug={slugArray} />
@@ -97,12 +126,120 @@ export default async function ShopPage({
 
   if (slugArray.length === 4) {
     const productSlug = slugArray[3];
-    const { product } = await fetch(
-      `${API_BASE_URL}/products/product/${productSlug}`
-    ).then((res) => res.json());
+    const res = await fetch(`${API_BASE_URL}/products/product/${productSlug}`);
+    const { product } = await res.json();
 
-    return <ProductDetails slug={[...slugArray]} product={product ?? []} />;
+    return <ProductDetails slug={slugArray} product={product ?? []} />;
   }
 
   return notFound();
 }
+
+// import { notFound } from "next/navigation";
+// import { API_BASE_URL } from "@/lib/constants";
+// import ShopLandingPage, {
+//   Category,
+//   Subcategory,
+//   Type,
+// } from "@/components/shop/shop-page";
+// import ProductDetails from "@/components/shop/product-details";
+
+// export default async function ShopPage({
+//   params,
+// }: {
+//   params: Promise<{ slug?: string[] }>;
+// }) {
+//   const { slug } = await params;
+//   const slugArray = slug ?? [];
+
+//   if (slugArray.length === 0) {
+//     const response = await fetch(`${API_BASE_URL}/products`);
+//     const data = await response.json();
+//     const tabs = await fetch(`${API_BASE_URL}/subcategories`);
+//     const tabData = await tabs.json();
+
+//     function getUniqueCategories(subcategories: Subcategory[]): Category[] {
+//       return subcategories
+//         .map((sub) => sub.category)
+//         .filter(
+//           (cat, index, self) =>
+//             index === self.findIndex((c) => c._id === cat._id)
+//         );
+//     }
+
+//     const allCategoryFilter = getUniqueCategories(tabData);
+//     return (
+//       <ShopLandingPage
+//         products={data.products ?? []}
+//         tabs={allCategoryFilter ?? []}
+//         slug={slugArray}
+//       />
+//     );
+//   }
+
+//   if (slugArray.length === 1) {
+//     const response = await fetch(
+//       `${API_BASE_URL}/products/category/${slugArray[0]}`
+//     );
+//     const data = await response.json();
+//     console.log(data);
+//     const subcategories = await fetch(`${API_BASE_URL}/subcategories`);
+//     const tabData = await subcategories.json();
+//     const allSubcategories = tabData.filter(
+//       (sub: Subcategory) => sub.category.slug === slugArray[0]
+//     );
+
+//     return (
+//       <ShopLandingPage
+//         products={data.products ?? []}
+//         tabs={allSubcategories ?? []}
+//         slug={slugArray}
+//       />
+//     );
+//   }
+
+//   if (slugArray.length === 2) {
+//     const [category, subcategory] = slugArray;
+//     const { products } = await fetch(
+//       `${API_BASE_URL}/products/subcategory/${category}/${subcategory}`
+//     ).then((res) => res.json());
+
+//     const types = await fetch(`${API_BASE_URL}/types`);
+//     const { data: typeData } = await types.json();
+//     const allTypes = typeData.filter(
+//       (type: Type) =>
+//         type.subcategory.slug === subcategory &&
+//         type.subcategory.category.slug === category
+//     );
+
+//     return (
+//       <ShopLandingPage
+//         products={products ?? []}
+//         tabs={allTypes ?? []}
+//         slug={slugArray}
+//       />
+//     );
+//   }
+
+//   if (slugArray.length === 3) {
+//     const [category, subcategory, type] = slugArray;
+//     const { products } = await fetch(
+//       `${API_BASE_URL}/products/type/${type}`
+//     ).then((res) => res.json());
+
+//     return (
+//       <ShopLandingPage products={products ?? []} tabs={[]} slug={slugArray} />
+//     );
+//   }
+
+//   if (slugArray.length === 4) {
+//     const productSlug = slugArray[3];
+//     const { product } = await fetch(
+//       `${API_BASE_URL}/products/product/${productSlug}`
+//     ).then((res) => res.json());
+
+//     return <ProductDetails slug={[...slugArray]} product={product ?? []} />;
+//   }
+
+//   return notFound();
+// }
