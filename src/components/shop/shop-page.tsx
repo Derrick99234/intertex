@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { LoadingSpinner } from "../loading-spinner";
-import { API_BASE_URL } from "@/lib/constants";
-import { Product } from "../admin/products/view-product";
+// import { LoadingSpinner } from "../loading-spinner";
+// import { API_BASE_URL } from "@/lib/constants";
+// import { Product } from "../admin/products/view-product";
 
 // const tabData = [
 //   {
@@ -167,7 +167,7 @@ function ShopLandingPage({
   slug: string[];
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const searchParams = useSearchParams(); // Get the URL search parameters
+  const searchParams = useSearchParams();
   const pathname = usePathname();
 
   // Update the search term based on the query params
