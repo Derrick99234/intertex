@@ -105,7 +105,7 @@ function HeroPage() {
         }
         content="Discover the perfect blend of style, quality, and affordability at INTERTEX. From trendy outfits to timeless classics, we bring you the best in fashion, delivered right to your doorstep. Shop with confidence and elevate your wardrobe effortlessly."
         buttonText="Explore Man Fashion"
-        buttonLink="/mems-wear"
+        buttonLink="/shop/men"
       />
       <ElevatedStyle
         header="The ultimate onlinE clothing store in Nigeria."
@@ -117,7 +117,7 @@ function HeroPage() {
         }
         content="Discover the perfect blend of style, quality, and affordability at INTERTEX. From trendy outfits to timeless classics, we bring you the best in fashion, delivered right to your doorstep. Shop with confidence and elevate your wardrobe effortlessly."
         buttonText="Explore Woman Fashion"
-        buttonLink="/mems-wear"
+        buttonLink="/shop/women"
       />
       <section className="min-h-screen flex justify-center items-center gap-14 max-[1246px]:p-4 p-8 max-[1246px]:flex-wrap">
         <div className="bg-light-blue w-1/2 max-[1240px]:w-full">
@@ -162,9 +162,7 @@ function HeroPage() {
             child looks great and feels even better—every day, every adventure.
           </p>
           <Link
-            href={
-              "/mems-wear" // Replace with the actual link to the kids' fashion section
-            }
+            href={"/shop/kids"}
             className="inline-block mt-4 px-6 py-2 bg-primary text-white hover:bg-secondary-700 transition-colors"
           >
             Explore Kids Fashion
@@ -193,7 +191,7 @@ function HeroPage() {
           Experience the artistry behind every stitch!
         </p>
         <Link
-          href={"/factory"}
+          href={"/our-factory"}
           className="inline-block px-6 py-2 bg-white text-primary hover:bg-primary/90 hover:text-white mt-5 transition-colors"
         >
           Explore Our Factory
