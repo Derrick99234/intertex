@@ -183,13 +183,18 @@ function Header() {
           />
         </div>
         <div className="flex items-center gap-4">
-          <Image
-            src={"/icons/cart.png"}
-            alt="cart"
-            width={24}
-            height={24}
-            className="cursor-pointer"
-          />
+          <Link
+            href={"/shop/cart"}
+            className="search flex items-center gap-4 border p-2 px-4 rounded-md border-gray-200"
+          >
+            <Image
+              src={"/icons/cart.png"}
+              alt="cart"
+              width={24}
+              height={24}
+              className="cursor-pointer"
+            />
+          </Link>
           <Link href={"/login"}>
             <Image
               src={"/icons/profile.png"}
