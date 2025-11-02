@@ -229,8 +229,8 @@ export default function CartSummary() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen py-6">
-      <div className="max-w-2xl w-full mx-auto bg-white">
+    <div className="flex justify-center min-h-screen py-6 flex-wrap">
+      <div className="max-w-2xl w-full mx-auto bg-white p-4">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Cart Summary
         </h2>
