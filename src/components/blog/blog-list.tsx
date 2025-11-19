@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/constants";
 
 export const blogPosts = [
   {
@@ -166,14 +167,47 @@ export const blogPosts = [
   },
 ];
 
+function generateSlug(title: string): string {
+  let slug = title.toLowerCase();
+
+  slug = slug.replace(/\s+/g, "-");
+
+  slug = slug.replace(/[^a-z0-9\-]/g, "");
+
+  slug = slug.replace(/-\d+$/, "");
+
+  return slug;
+}
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  description: string;
+  imageCover: string;
+  slug: string;
+  createdAt: string;
+}
+
 const BlogList = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
 
-  const filteredPosts = blogPosts.filter(
+  const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+      post.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const fetchBlogPosts = async () => {
+    const res = await fetch(`${API_BASE_URL}/blog`);
+    const data = await res.json();
+    console.log(data);
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
 
   return (
     <div className="min-h-screen md:px-4 mb-12">
@@ -246,12 +280,12 @@ const BlogList = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[27px] w-full justify-items-center ">
             {filteredPosts.map((post) => (
               <div
-                key={post.id}
+                key={post._id}
                 className="bg-white rounded-xl overflow-hidden md:w-[303px] md:h-[321px] w-[303px] h-[281px] p-2 shadow-[0px_0px_32px_0px_#0000000F]"
               >
                 <div className="relative h-48">
                   <Image
-                    src={post.image}
+                    src={post.imageCover}
                     alt={post.title}
                     fill
                     className="object-cover rounded-lg md:w-[288px] md:h-[205px] w-[288px] h-[205px]"
@@ -259,11 +293,10 @@ const BlogList = () => {
                 </div>
                 <div className="">
                   <h2 className="md:text-[13px] text-[12px] font-bold mb-2 mt-2">
-                    <span className="">New | </span>
                     {post.title}
                   </h2>
                   <Link
-                    href={`/blog/${post.slug}`}
+                    href={`/blog/${post.title ? generateSlug(post.title) : ""}`}
                     className="inline-block text-[#525252] md:text-[14px] font-normal text-[14px]"
                   >
                     Click to view
