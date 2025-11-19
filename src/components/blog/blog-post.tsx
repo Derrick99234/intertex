@@ -1,7 +1,10 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import BlogSuggestions from "./blog-suggestions";
 import ShowcaseSection from "../showcase/showcase-section";
+import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/constants";
 
 interface BlogPostProps {
   slug: string;
@@ -72,7 +75,18 @@ const getBlogPost = (slug: string) => {
 };
 
 const BlogPost = ({ slug }: BlogPostProps) => {
-  const post = getBlogPost(slug);
+  // const post = getBlogPost(slug);
+  const [post, setPost] = useState<any>(null);
+
+  const fetchBlogPosts = async () => {
+    const res = await fetch(`${API_BASE_URL}/blog/slug/${slug}`);
+    const data = await res.json();
+    setPost(data);
+  };
+
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
 
   if (!post) {
     return <div>Post not found</div>;
@@ -131,7 +145,7 @@ const BlogPost = ({ slug }: BlogPostProps) => {
             {post.title}
           </h1>
           <div className="md:w-[90%] w-[90%] flex items-start text-base md:text-3xl font-normal ">
-            <span>{post.date}</span>
+            <span>{new Date(post.createdAt).toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -139,7 +153,7 @@ const BlogPost = ({ slug }: BlogPostProps) => {
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative h-[199px] md:h-[549px] md:mb-8 mb-4">
           <Image
-            src={post.image}
+            src={post.imageCover}
             alt={post.title}
             fill
             className="object-cover rounded-lg"
@@ -147,7 +161,7 @@ const BlogPost = ({ slug }: BlogPostProps) => {
         </div>
         <div
           className="prose prose-lg max-w-none text-xs md:text-2xl font-normal "
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: post.description }}
         />
       </div>
       <BlogSuggestions excludeSlug={slug} />
