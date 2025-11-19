@@ -43,6 +43,7 @@ export default function DynamicTable({
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Filter data based on search term
   const filteredData = data.filter((item) =>
     Object.values(item).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
@@ -85,7 +86,7 @@ export default function DynamicTable({
   );
 
   const [showFilter, setShowFilter] = useState(false);
-  // const pathname = usePathname();
+
   return (
     <div className="bg-white rounded-lg shadow">
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -128,7 +129,9 @@ export default function DynamicTable({
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search by date, email..."
+                  value={searchTerm} // bind the input value to searchTerm state
+                  onChange={(e) => setSearchTerm(e.target.value)} // update searchTerm on change
+                  placeholder={searchPlaceholder}
                   className="border rounded px-3 py-2 pl-8 outline-none w-64 placeholder:text-black"
                 />
                 <span className="absolute left-2 top-3">
@@ -197,7 +200,7 @@ export default function DynamicTable({
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
-                  className={`px-3 py-1 border rounded  cursor-pointer  ${
+                  className={`px-3 py-1 border rounded cursor-pointer  ${
                     currentPage === pageNum ? "bg-secondary text-white" : ""
                   }`}
                 >

@@ -117,7 +117,7 @@ function Header() {
             <span className="font-bold text-sm">Track Order</span>
           </Link>
           <Link
-            href={"#"}
+            href={"/shop"}
             className="search flex items-center gap-4 border p-2 px-4 rounded-md border-gray-200"
           >
             <Image
@@ -195,14 +195,33 @@ function Header() {
               className="cursor-pointer"
             />
           </Link>
-          <Link href={"/login"}>
-            <Image
-              src={"/icons/profile.png"}
-              alt="user profile"
-              width={24}
-              height={24}
-            />
-          </Link>
+          {user.fullName ? (
+            <>
+              <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
+                {user.fullName.split(" ")[0].charAt(0) +
+                  user.fullName.split(" ")[1]?.charAt(0)}
+              </span>
+              <Link href={"/update-profile"}>
+                <Image
+                  src={"/icons/profile.png"}
+                  alt="user profile"
+                  width={30}
+                  height={30}
+                  className="cursor-pointer"
+                />
+              </Link>
+            </>
+          ) : (
+            <Link href={"/login"}>
+              <Image
+                src={"/icons/profile.png"}
+                alt="user profile"
+                width={30}
+                height={30}
+                className="cursor-pointer"
+              />
+            </Link>
+          )}
           <button
             onClick={toggleMobileMenu}
             className="hamburger-menu flex flex-col gap-1 p-2"

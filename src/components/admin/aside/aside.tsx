@@ -42,13 +42,13 @@ const menuItems = [
     icon: <FaBox />,
     href: "/admin/inventory",
   },
-  {
-    label: "Sales & Accounting",
-    icon: <FaChartLine />,
-    href: "/admin/sales-account",
-  },
-  { label: "Admin Users", icon: <FaUserShield />, href: "/admin/admin-users" },
-  { label: "Roles & Permission", icon: <FaCogs />, href: "/admin/roles" },
+  // {
+  //   label: "Sales & Accounting",
+  //   icon: <FaChartLine />,
+  //   href: "/admin/sales-account",
+  // },
+  // { label: "Admin Users", icon: <FaUserShield />, href: "/admin/admin-users" },
+  // { label: "Roles & Permission", icon: <FaCogs />, href: "/admin/roles" },
   {
     label: "Blogs Management",
     icon: <FaBlog />,

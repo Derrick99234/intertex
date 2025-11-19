@@ -12,6 +12,8 @@ function OrderPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("allOrders");
   const [viewOrder, setViewOrder] = useState({
     status: false,
     orderId: "",
@@ -24,39 +26,60 @@ function OrderPage() {
     });
   };
 
-  const fetchActiveTab = (href: string) => {
-    console.log(href);
-  };
-
   // Fetch Orders from API
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/orders`);
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        const data = await res.json();
-        // Format for table
-        const formatted = data.map((order: any, index: number) => ({
-          checkbox: false,
-          no: String(index + 1).padStart(2, "0"),
-          id: order._id,
-          item: order.products.length,
-          deliveryMethod: order.deliveryMethod,
-          amount: `₦${order.amount}`,
-          date: new Date(order.date).toLocaleDateString(),
-          status: order.status,
-          more: <IoEyeOutline className="cursor-pointer" />,
-        }));
-        setOrders(formatted);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchOrders = async () => {
+    const token = localStorage.getItem("intertex-token");
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/orders/user`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem("intertex-token");
+        window.location.href = "/login";
+        return;
       }
-    };
+      if (!res.ok) throw new Error("Failed to fetch orders");
+      const data = await res.json();
+      // Format for table
+      const formatted = data.map((order: any, index: number) => ({
+        checkbox: false,
+        no: String(index + 1).padStart(2, "0"),
+        id: order._id,
+        item: order.products.length,
+        deliveryMethod: order.deliveryMethod,
+        amount: `₦${order.amount}`,
+        date: new Date(order.date).toLocaleDateString(),
+        status: order.status,
+        more: <IoEyeOutline className="cursor-pointer" />,
+      }));
+      setOrders(formatted);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchOrders();
   }, []);
+
+  useEffect(() => {
+    let filtered = orders;
+    if (activeTab === "pending-orders") {
+      filtered = orders.filter((o) => o.status === "pending");
+    } else if (activeTab === "succesful-orders") {
+      filtered = orders.filter((o) => o.status === "successful");
+    } else if (activeTab === "failed-orders") {
+      filtered = orders.filter((o) => o.status === "cancelled");
+    }
+
+    setFilteredOrders(filtered);
+  }, [orders, activeTab]);
 
   // Handle action click
   const handleViewOrder = (id: string) => {
@@ -103,6 +126,10 @@ function OrderPage() {
       </motion.div>
     );
   }
+
+  const fetchActiveTab = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   return (
     <div className="p-5">
@@ -248,7 +275,7 @@ function OrderPage() {
             { key: "status", label: "Status" },
             { key: "more", label: "More", type: "action" },
           ]}
-          data={orders}
+          data={filteredOrders}
           title="Orders"
           itemsPerPage={5}
           onAction={(id: string) => handleViewOrder(id)}

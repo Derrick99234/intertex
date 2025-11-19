@@ -6,19 +6,19 @@ function Footer() {
   const productLinks = [
     {
       productName: "Men",
-      productLink: "/mens-wear",
+      productLink: "/shop/men",
     },
     {
       productName: "Women",
-      productLink: "/womens-wear",
+      productLink: "/shop/women",
     },
     {
       productName: "Kids",
-      productLink: "/kids-wear",
+      productLink: "/shop/kids",
     },
     {
       productName: "Accessories",
-      productLink: "/accessories",
+      productLink: "/shop/accessories",
     },
     {
       productName: "Our Factory",
@@ -131,8 +131,8 @@ function Footer() {
           <div className="mt-6">
             <h3 className="font-bold mb-2">Head Office Address:</h3>
             <p className="text-gray-300 text-sm">
-              Your company Head Office address would be here surly if there is
-              one
+              ONE SOURCE MART, Plot 12 Ligali Ayorinde Street, Victoria Island,
+              Lagos.
             </p>
             <Image
               src={"/logo/intertex_logo_2.png"}
