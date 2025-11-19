@@ -27,7 +27,7 @@ function BlogManagement() {
   const router = useRouter();
 
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
+  const [blogToDelete, setBlogToDelete] = useState<string>("");
 
   const handleDelete = async (id: string) => {
     const res = await fetch(`${API_BASE_URL}/blog/${id}`, {
@@ -148,7 +148,7 @@ function BlogManagement() {
         <DeleteBlogPost
           onClose={() => setShowDeletePopup(false)}
           onDelete={() => {
-            handleDelete(blogToDelete!);
+            handleDelete(blogToDelete);
             setShowDeletePopup(false);
           }}
         />

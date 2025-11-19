@@ -2,11 +2,12 @@
 import AdminSidebar from "@/components/admin/aside/aside";
 import { API_BASE_URL } from "@/lib/constants";
 import { useState, useRef, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 export default function EditBlog() {
-  const { id } = useParams();
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const router = useRouter();
 
   const [title, setTitle] = useState("");
