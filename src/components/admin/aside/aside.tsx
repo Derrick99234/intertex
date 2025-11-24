@@ -23,6 +23,11 @@ import {
 const menuItems = [
   { label: "Dashboard", icon: <FaTachometerAlt />, href: "/admin/dashboard" },
   {
+    label: "Manage Category",
+    icon: <FaBox />,
+    href: "/admin/manage-category",
+  },
+  {
     label: "Product Management",
     icon: <FaBox />,
     href: "/admin/product-management",

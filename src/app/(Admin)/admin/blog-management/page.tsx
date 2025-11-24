@@ -1,6 +1,6 @@
 "use client";
 import AdminSidebar from "@/components/admin/aside/aside";
-import DeleteBlogPost from "@/components/admin/blog/delete-blog-popup";
+import DeletePopup from "@/components/admin/blog/delete-popup";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
@@ -145,7 +145,9 @@ function BlogManagement() {
         />
       </div>
       {showDeletePopup && (
-        <DeleteBlogPost
+        <DeletePopup
+          title="Delete Blog Post"
+          text="Are you sure you want to delete this blog post? This action can't be undone."
           onClose={() => setShowDeletePopup(false)}
           onDelete={() => {
             handleDelete(blogToDelete);
