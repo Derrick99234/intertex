@@ -81,14 +81,14 @@ function Header() {
                 Woman
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href={"#"} onClick={() => setShowKidNavMenu(true)}>
                 Kids
               </Link>
             </li>
             <li>
               <Link href={"/mens-wear"}>Accessories</Link>
-            </li>
+            </li> */}
             <li>
               <Link href={"/our-factory"}>Our Factory</Link>
             </li>

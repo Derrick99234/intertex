@@ -138,74 +138,74 @@ export const categories: Category[] = [
       },
     ],
   },
-  {
-    title: "Kids",
-    slug: "kids",
-    sections: [
-      {
-        title: "Casual Wear",
-        slug: "casual-wear",
-        items: [
-          { label: "T-shirts", slug: "t-shirts" },
-          { label: "Shorts", slug: "shorts" },
-          { label: "Jeans", slug: "jeans" },
-          { label: "Dresses", slug: "dresses" },
-          { label: "Skirts", slug: "skirts" },
-        ],
-      },
-      {
-        title: "School Wear",
-        slug: "school-wear",
-        items: [
-          { label: "Uniform Shirts", slug: "uniform-shirts" },
-          { label: "Pinafores", slug: "pinafores" },
-          { label: "Trousers", slug: "trousers" },
-          { label: "Cardigans", slug: "cardigans" },
-          { label: "School Shoes", slug: "school-shoes" },
-        ],
-      },
-      {
-        title: "Playtime Wear",
-        slug: "playtime-wear",
-        items: [
-          { label: "Tracksuits", slug: "tracksuits" },
-          { label: "Sweatshirts", slug: "sweatshirts" },
-          { label: "Joggers", slug: "joggers" },
-          { label: "Active Shorts", slug: "active-shorts" },
-          { label: "Hoodies", slug: "hoodies" },
-        ],
-      },
-      {
-        title: "Outerwear",
-        slug: "outerwear",
-        items: [
-          { label: "Jackets", slug: "jackets" },
-          { label: "Coats", slug: "coats" },
-          { label: "Raincoats", slug: "raincoats" },
-          { label: "Sweaters", slug: "sweaters" },
-        ],
-      },
-      {
-        title: "Sleepwear",
-        slug: "sleepwear",
-        items: [
-          { label: "Pyjamas", slug: "pyjamas" },
-          { label: "Nightgowns", slug: "nightgowns" },
-          { label: "Onesies", slug: "onesies" },
-          { label: "Rompers", slug: "rompers" },
-        ],
-      },
-      {
-        title: "Accessories",
-        slug: "accessories",
-        items: [
-          { label: "Hats", slug: "hats" },
-          { label: "Socks", slug: "socks" },
-          { label: "Backpacks", slug: "backpacks" },
-          { label: "Belts", slug: "belts" },
-          { label: "Scarves & Gloves", slug: "scarves-gloves" },
-        ],
-      },
-    ],
-  },
+  // {
+  //   title: "Kids",
+  //   slug: "kids",
+  //   sections: [
+  //     {
+  //       title: "Casual Wear",
+  //       slug: "casual-wear",
+  //       items: [
+  //         { label: "T-shirts", slug: "t-shirts" },
+  //         { label: "Shorts", slug: "shorts" },
+  //         { label: "Jeans", slug: "jeans" },
+  //         { label: "Dresses", slug: "dresses" },
+  //         { label: "Skirts", slug: "skirts" },
+  //       ],
+  //     },
+  //     {
+  //       title: "School Wear",
+  //       slug: "school-wear",
+  //       items: [
+  //         { label: "Uniform Shirts", slug: "uniform-shirts" },
+  //         { label: "Pinafores", slug: "pinafores" },
+  //         { label: "Trousers", slug: "trousers" },
+  //         { label: "Cardigans", slug: "cardigans" },
+  //         { label: "School Shoes", slug: "school-shoes" },
+  //       ],
+  //     },
+  //     {
+  //       title: "Playtime Wear",
+  //       slug: "playtime-wear",
+  //       items: [
+  //         { label: "Tracksuits", slug: "tracksuits" },
+  //         { label: "Sweatshirts", slug: "sweatshirts" },
+  //         { label: "Joggers", slug: "joggers" },
+  //         { label: "Active Shorts", slug: "active-shorts" },
+  //         { label: "Hoodies", slug: "hoodies" },
+  //       ],
+  //     },
+  //     {
+  //       title: "Outerwear",
+  //       slug: "outerwear",
+  //       items: [
+  //         { label: "Jackets", slug: "jackets" },
+  //         { label: "Coats", slug: "coats" },
+  //         { label: "Raincoats", slug: "raincoats" },
+  //         { label: "Sweaters", slug: "sweaters" },
+  //       ],
+  //     },
+  //     {
+  //       title: "Sleepwear",
+  //       slug: "sleepwear",
+  //       items: [
+  //         { label: "Pyjamas", slug: "pyjamas" },
+  //         { label: "Nightgowns", slug: "nightgowns" },
+  //         { label: "Onesies", slug: "onesies" },
+  //         { label: "Rompers", slug: "rompers" },
+  //       ],
+  //     },
+  //     {
+  //       title: "Accessories",
+  //       slug: "accessories",
+  //       items: [
+  //         { label: "Hats", slug: "hats" },
+  //         { label: "Socks", slug: "socks" },
+  //         { label: "Backpacks", slug: "backpacks" },
+  //         { label: "Belts", slug: "belts" },
+  //         { label: "Scarves & Gloves", slug: "scarves-gloves" },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];

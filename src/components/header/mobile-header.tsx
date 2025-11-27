@@ -110,9 +110,9 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
                   </button>
                 </li>
               ))}
-              <li>
+              {/* <li>
                 <Link href={"/shop"}>Accessories</Link>
-              </li>
+              </li> */}
               <li>
                 <Link href={"/our-factory"}>Our Factory</Link>
               </li>
