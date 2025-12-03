@@ -202,7 +202,13 @@ export async function createProductType(data: {
 
 export async function updateProductType(
   id: string,
-  data: { name?: string; slug?: string; description?: string; status?: boolean }
+  data: {
+    name?: string;
+    slug?: string;
+    description?: string;
+    status?: boolean;
+    subcategory?: string;
+  }
 ) {
   const res = await fetch(`${API_BASE_URL}/types/${id}`, {
     method: "PATCH",
