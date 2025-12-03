@@ -434,6 +434,7 @@ function ShopLandingPage({
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center justify-between">
           {products.map((product) => {
             const imgIdx = imageIndexes[product._id];
+            const allImages = [product.imageUrl, ...product?.otherImages];
             return (
               <div
                 key={product._id}
@@ -441,15 +442,13 @@ function ShopLandingPage({
               >
                 <div
                   className="w-full md:h-[506px] h-[208px]  flex flex-col items-center justify-between bg-gray-100 select-none rounded-[6px]"
-                  onClick={() =>
-                    handleImageClick(product._id, product.otherImages)
-                  }
+                  onClick={() => handleImageClick(product._id, allImages)}
                   style={{ cursor: "pointer" }}
                 >
                   <Image
                     src={
-                      product.otherImages && product.otherImages.length > 0
-                        ? product.otherImages[imgIdx ?? 0]
+                      allImages && allImages.length > 0
+                        ? allImages[imgIdx ?? 0]
                         : product.imageUrl
                     }
                     alt={product.productName}
@@ -459,8 +458,8 @@ function ShopLandingPage({
                   />
 
                   <div className="flex gap-2 md:w-[73px] w-[57px] md:h-[40px] h-[20px]">
-                    {product.otherImages &&
-                      product.otherImages.map((_: any, idx: any) => (
+                    {allImages &&
+                      allImages.map((_: any, idx: any) => (
                         <button
                           key={idx}
                           aria-label={`Show image ${idx + 1}`}
@@ -499,6 +498,7 @@ function ShopLandingPage({
           })}
         </div>
       )}
+
       {/* <LoadingSpinner isLoading={isLoading} /> */}
     </div>
   );
