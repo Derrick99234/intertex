@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "Intertex",
@@ -18,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Header />
-        {children}
+        <Providers>{children}</Providers>
         <Footer />
       </body>
     </html>
