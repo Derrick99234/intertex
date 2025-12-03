@@ -100,7 +100,7 @@ async function saveEntity(type: EntityType, data: any): Promise<any> {
   const slug = getSlug(data.name);
 
   if (isUpdate) {
-    console.log(type);
+    console.log(data);
     const res =
       type === "categories"
         ? updateCategory(data._id, {
@@ -122,6 +122,7 @@ async function saveEntity(type: EntityType, data: any): Promise<any> {
             slug,
             description: data.description,
             status: data.status,
+            subcategory: data.subcategory?._id || data.subcategory,
           })
         : console.log("update product type");
 
