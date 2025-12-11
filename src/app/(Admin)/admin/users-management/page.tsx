@@ -107,10 +107,10 @@ function UserManagement() {
             //   name: "Inactive Users",
             //   href: "inactive-users",
             // },
-            {
-              name: "Deactivated Users",
-              href: "deactivated-users",
-            },
+            // {
+            //   name: "Deactivated Users",
+            //   href: "deactivated-users",
+            // },
           ]}
           // onViewAll={() => console.log("View all users")}
         />
