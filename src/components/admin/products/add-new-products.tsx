@@ -21,7 +21,6 @@ function AddNewProducts({
   products,
 }: {
   setAddNewProduct: React.Dispatch<React.SetStateAction<boolean>>;
-  setProductTabs: React.Dispatch<React.SetStateAction<boolean>>;
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   products: Product[];
 }) {
@@ -246,6 +245,14 @@ function AddNewProducts({
     }
   };
 
+  const inStock = formData.inStock.map((variant, index) => {
+    return {
+      size: variant.size,
+      quantity: variant.quantity,
+      id: String(index + 1),
+    };
+  });
+
   return (
     <div className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50">
       <CgClose
@@ -335,7 +342,7 @@ function AddNewProducts({
 
           {currentPage === 3 && (
             <ProductSize
-              sizes={formData.inStock}
+              sizes={inStock}
               setSizes={(sizes) => setFormData({ ...formData, inStock: sizes })}
             />
           )}

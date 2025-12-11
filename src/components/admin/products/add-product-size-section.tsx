@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 
-interface ProductVariant {
+export interface ProductVariant {
   id: string;
   size: string;
   quantity: number;

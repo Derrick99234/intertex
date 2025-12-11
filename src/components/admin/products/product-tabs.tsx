@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DisplayDetails from "../display-details";
 import Image from "next/image";
+import { API_BASE_URL } from "@/lib/constants";
+import { useRouter } from "next/navigation";
+import AddNewProducts from "./add-new-products";
+import EditProduct from "./edit-product";
 
 interface TabData {
   id: string;
@@ -9,62 +13,69 @@ interface TabData {
 }
 
 interface ProductTabsProps {
-  onDataChange?: (tabId: string, data: any) => void;
+  productId: string;
+  setViewProduct: React.Dispatch<
+    React.SetStateAction<{
+      status: boolean;
+      productId: string;
+    }>
+  >;
 }
 
-export default function ProductTabs({ onDataChange }: ProductTabsProps) {
+export default function ProductTabs({
+  productId,
+  setViewProduct,
+}: ProductTabsProps) {
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState("categories");
-  // const [formData, setFormData] = useState({
-  //   categories: {
-  //     category: "Men",
-  //     subCategory: "Casual Wear",
-  //     type: "T-Shirts",
-  //   },
-  //   images: [],
-  //   details: {},
-  //   sizeQuantities: [],
-  // });
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [editProduct, setEditProduct] = useState(false);
 
-  // const categoryOptions = {
-  //   categories: ["Men", "Women", "Kids", "Unisex"],
-  //   subCategories: {
-  //     Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
-  //     Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
-  //     Kids: ["Boys", "Girls", "Infants"],
-  //     Unisex: ["Accessories", "Footwear", "Bags"],
-  //   },
-  //   types: {
-  //     "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
-  //     "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
-  //     "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
-  //     "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
-  //   },
-  // };
+  const fetchProduct = async () => {
+    const token = localStorage.getItem("adminToken");
 
-  // const handleCategoryChange = (field: string, value: string) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     categories: { ...prev.categories, [field]: value },
-  //   }));
+    if (!token) {
+      router.push("/admin");
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/${productId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const { product, message } = await res.json();
 
-  //   if (onDataChange) {
-  //     onDataChange("categories", { ...formData.categories, [field]: value });
-  //   }
-  // };
+      if (!res.ok) throw new Error(message || "Failed to fetch product");
+      setProduct(product);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
 
   const renderCategoriesTab = () => {
     const data = [
       {
         label: "Category",
-        value: "Men",
+        value: product?.subcategory?.category?.name || "",
       },
       {
-        label: "Sub-Categories",
-        value: "casual Wears",
+        label: "Sub-Category",
+        value: product?.subcategory?.name || "",
       },
       {
-        label: "Types",
-        value: "T-shirts",
+        label: "Type",
+        value: product?.productType?.name || "",
       },
     ];
     return (
@@ -75,19 +86,18 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
   };
 
   const renderImagesTab = () => {
+    console.log("otherImages", product);
+    const otherImages = product?.otherImages?.map(
+      (image: string, index: number) => {
+        return { url: image, label: `Other Image ${index + 1}` };
+      }
+    );
     const images = [
       {
-        url: "/images/design1.jpeg",
-        label: "Image 1",
+        url: product?.imageUrl,
+        label: "Product Main Image",
       },
-      {
-        url: "/images/design2.jpeg",
-        label: "Image 2",
-      },
-      {
-        url: "/images/design3.jpeg",
-        label: "Image 3",
-      },
+      ...otherImages,
     ];
 
     return (
@@ -112,31 +122,31 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
     const data = [
       {
         label: "Products Name",
-        value: "Men",
+        value: product?.productName || "",
       },
       {
         label: "Products Price",
-        value: "N30,000",
+        value: "N" + (product?.price || ""),
       },
       {
         label: "Materials",
-        value: "Lorem, ipsum dolor sit amet consectetur adipisicing elit...",
+        value: product?.materials || "",
       },
       {
         label: "Process",
-        value: "Lorem, ipsum dolor sit amet consectetur adipisicing elit...",
+        value: product?.process || "",
       },
       {
         label: "Offer",
-        value: "20%",
+        value: product?.offer || "",
       },
       {
         label: "Product Description",
-        value: "Lorem ipsum dolor sit...",
+        value: product?.description || "",
       },
       {
         label: "Product Features",
-        value: "Lorem ipsum dolor sit...",
+        value: product?.features || "",
       },
     ];
     return (
@@ -187,11 +197,11 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
       label: "Products Categories",
       component: renderCategoriesTab(),
     },
-    {
-      id: "images",
-      label: "Images",
-      component: renderImagesTab(),
-    },
+    // // {
+    // //   id: "images",
+    // //   label: "Images",
+    // //   component: renderImagesTab(),
+    // },
     {
       id: "details",
       label: "Products Details",
@@ -272,10 +282,20 @@ export default function ProductTabs({ onDataChange }: ProductTabsProps) {
           </button>
         </div>
 
-        <button className="px-6 py-2 cursor-pointer bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-          Create New Product
+        <button
+          className="px-6 py-2 cursor-pointer bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          onClick={() => setEditProduct(true)}
+        >
+          Update Product
         </button>
       </div>
+      {editProduct && (
+        <EditProduct
+          setEditProduct={setEditProduct}
+          product={product}
+          setProducts={setProduct}
+        />
+      )}
     </div>
   );
 }
