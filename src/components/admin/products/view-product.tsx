@@ -324,12 +324,11 @@ export default function ViewProduct({
               >
                 Buyers Details
               </Link>
+              <button className="border border-b-secondary py-2 px-6 text-secondary font-semibold rounded cursor-pointer">
+                Edit
+              </button>
               <button className="border border-red-500 bg-red-500 py-2 px-8 text-white font-semibold rounded cursor-pointer">
                 Delete
-              </button>
-
-              <button className="border border-b-secondary py-2 px-6 text-secondary font-semibold rounded cursor-pointer">
-                Upload
               </button>
             </div>
 

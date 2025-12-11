@@ -13,119 +13,6 @@ import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
 function ProductManagement() {
-  // const productsData = [
-  //   {
-  //     checkbox: true,
-  //     no: "01",
-  //     productId: "PRD001",
-  //     productName: "Cotton T-Shirt",
-  //     category: "Apparel",
-  //     price: "$25.99",
-  //     stock: 150,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "02",
-  //     productId: "PRD002",
-  //     productName: "Denim Jeans",
-  //     category: "Apparel",
-  //     price: "$59.99",
-  //     stock: 75,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "03",
-  //     productId: "PRD003",
-  //     productName: "Leather Shoes",
-  //     category: "Footwear",
-  //     price: "$89.99",
-  //     stock: 30,
-  //     status: "Low Stock",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "04",
-  //     productId: "PRD004",
-  //     productName: "Silk Scarf",
-  //     category: "Accessories",
-  //     price: "$19.99",
-  //     stock: 200,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "05",
-  //     productId: "PRD005",
-  //     productName: "Running Sneakers",
-  //     category: "Footwear",
-  //     price: "$74.99",
-  //     stock: 20,
-  //     status: "Low Stock",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "06",
-  //     productId: "PRD006",
-  //     productName: "Leather Wallet",
-  //     category: "Accessories",
-  //     price: "$39.99",
-  //     stock: 0,
-  //     status: "Out of Stock",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "07",
-  //     productId: "PRD007",
-  //     productName: "Graphic Hoodie",
-  //     category: "Apparel",
-  //     price: "$49.99",
-  //     stock: 95,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "08",
-  //     productId: "PRD008",
-  //     productName: "Baseball Cap",
-  //     category: "Accessories",
-  //     price: "$15.00",
-  //     stock: 300,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "09",
-  //     productId: "PRD009",
-  //     productName: "Formal Shirt",
-  //     category: "Apparel",
-  //     price: "$45.00",
-  //     stock: 110,
-  //     status: "Active",
-  //     more: <IoEyeOutline />,
-  //   },
-  //   {
-  //     checkbox: true,
-  //     no: "10",
-  //     productId: "PRD010",
-  //     productName: "Canvas Backpack",
-  //     category: "Bags",
-  //     price: "$60.00",
-  //     stock: 48,
-  //     status: "Low Stock",
-  //     more: <IoEyeOutline />,
-  //   },
-  // ];
-
   const [productTabs, setProductTabs] = useState(false);
   const [viewProduct, setViewProduct] = useState({
     status: false,
@@ -240,14 +127,16 @@ function ProductManagement() {
     <section className="flex mt-20">
       <AdminSidebar />
       <div className="p-5 flex-1 ml-64">
-        {productTabs ? (
-          <ProductTabs />
-        ) : viewProduct.status ? (
-          <ViewProduct
+        {viewProduct.status ? (
+          <ProductTabs
             productId={viewProduct.productId}
             setViewProduct={setViewProduct}
           />
         ) : (
+          // <ViewProduct
+          //   productId={viewProduct.productId}
+          //   setViewProduct={setViewProduct}
+          // />
           <>
             <DisplayStats />
 
@@ -265,7 +154,6 @@ function ProductManagement() {
               ]}
               data={products}
               onAction={(id: string) => {
-                console.log("id: ", id);
                 setViewProduct({
                   status: true,
                   productId: id,
@@ -303,7 +191,6 @@ function ProductManagement() {
             {addNewProduct && (
               <AddNewProducts
                 setAddNewProduct={setAddNewProduct}
-                setProductTabs={setProductTabs}
                 products={products}
                 setProducts={setProducts}
               />
