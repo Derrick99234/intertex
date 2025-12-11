@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import AddNewProducts from "./add-new-products";
 import EditProduct from "./edit-product";
+import { ArrowLeft } from "lucide-react";
 
 interface TabData {
   id: string;
@@ -86,7 +87,6 @@ export default function ProductTabs({
   };
 
   const renderImagesTab = () => {
-    console.log("otherImages", product);
     const otherImages = product?.otherImages?.map(
       (image: string, index: number) => {
         return { url: image, label: `Other Image ${index + 1}` };
@@ -97,7 +97,7 @@ export default function ProductTabs({
         url: product?.imageUrl,
         label: "Product Main Image",
       },
-      ...otherImages,
+      ...(otherImages || []),
     ];
 
     return (
@@ -157,33 +157,10 @@ export default function ProductTabs({
   };
 
   const renderSizeQuantitiesTab = () => {
-    const data = [
-      {
-        label: "XXL",
-        value: 5,
-        thirdValue: "-",
-      },
-      {
-        label: "S",
-        value: 7,
-        thirdValue: "-",
-      },
-      {
-        label: "M",
-        value: 3,
-        thirdValue: "-",
-      },
-      {
-        label: "L",
-        value: 4,
-        thirdValue: "-",
-      },
-      {
-        label: "Total",
-        value: 19,
-        thirdValue: "-",
-      },
-    ];
+    const data = product?.inStock?.map((item: any) => ({
+      label: item.size,
+      value: item.quantity,
+    }));
     return (
       <div className="space-y-6 p-6">
         <DisplayDetails data={data} />
@@ -197,11 +174,11 @@ export default function ProductTabs({
       label: "Products Categories",
       component: renderCategoriesTab(),
     },
-    // // {
-    // //   id: "images",
-    // //   label: "Images",
-    // //   component: renderImagesTab(),
-    // },
+    {
+      id: "images",
+      label: "Images",
+      component: renderImagesTab(),
+    },
     {
       id: "details",
       label: "Products Details",
@@ -232,25 +209,32 @@ export default function ProductTabs({
     <div className="bg-white rounded-lg shadow">
       {/* Tab Headers */}
       <div className="border-b border-gray-200">
-        <div className="flex space-x-8 px-6">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors cursor-pointer ${
-                activeTab === tab.id
-                  ? "border-blue-600 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center cursor-pointer px-8">
+          <ArrowLeft
+            onClick={() => setViewProduct({ status: false, productId: "" })}
+            className="mr-4 h-6 w-6 text-gray-600 hover:text-gray-800"
+          />
+
+          <div className="flex space-x-8 px-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors cursor-pointer ${
+                  activeTab === tab.id
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-[400px]">
+      <div className="min-h-[400px] text-gray-600">
         {tabs.find((tab) => tab.id === activeTab)?.component}
       </div>
 
@@ -278,12 +262,12 @@ export default function ProductTabs({
                 : "bg-[#FEB313] text-white hover:bg-[#FEB313]/70"
             }`}
           >
-            {currentTabIndex === tabs.length - 1 ? "Finish" : "Next"}
+            {currentTabIndex === tabs.length - 1 ? "" : "Next"}
           </button>
         </div>
 
         <button
-          className="px-6 py-2 cursor-pointer bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="px-6 py-2 cursor-pointer bg-secondary text-white rounded-lg font-medium hover:bg-secondary/75 transition-colors"
           onClick={() => setEditProduct(true)}
         >
           Update Product
