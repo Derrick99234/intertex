@@ -361,12 +361,12 @@ function ShopLandingPage({
             </span>
           </button>
           <div className="hidden relative md:flex items-center justify-center">
-            <select className="text-[19px] font-bold appearance-none bg-transparent outline-none cursor-pointer border px-6 py-2 rounded-[3px] text-gray-700 md:w-[145px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center">
+            {/* <select className="text-[19px] font-bold appearance-none bg-transparent outline-none cursor-pointer border px-6 py-2 rounded-[3px] text-gray-700 md:w-[145px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center">
               <option>Size</option>
               <option>Small</option>
               <option>Medium</option>
               <option>Large</option>
-            </select>
+            </select> */}
             <span className="absolute right-7 pointer-events-none flex items-center pr-1">
               <Image
                 src="/icons/arrow-down.png"
@@ -397,7 +397,6 @@ function ShopLandingPage({
           </div>
           <div className=" relative flex items-center justify-center">
             <select className="md:text-[19px] text-xs font-bold appearance-none bg-transparent outline-none cursor-pointer border-1 md:px-4 px-2 py-2 rounded-[3px] text-[#152F24] md:w-[204px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center">
-              <option>Top Seller</option>
               <option>Newest</option>
               <option>Price: Low to High</option>
               <option>Price: High to Low</option>

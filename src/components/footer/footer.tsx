@@ -82,7 +82,7 @@ function Footer() {
     },
     {
       resourceName: "Security",
-      resourceLink: "/Security",
+      resourceLink: "/security",
     },
   ];
   const socialLinks = [
