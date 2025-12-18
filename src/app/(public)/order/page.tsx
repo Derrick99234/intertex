@@ -29,6 +29,10 @@ function OrderPage() {
   // Fetch Orders from API
   const fetchOrders = async () => {
     const token = localStorage.getItem("intertex-token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/orders/user`, {
