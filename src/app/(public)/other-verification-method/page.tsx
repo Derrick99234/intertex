@@ -2,7 +2,7 @@
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -34,6 +34,7 @@ export default function HomePage() {
     }, 2000);
   };
   useEffect(() => {
+    setIsLoading(true);
     const handleSubmit = async () => {
       if (session?.user) {
         const fullName = session?.user?.name || "";
@@ -56,11 +57,6 @@ export default function HomePage() {
         });
         if (!response.ok) {
           const errorData = await response.json();
-          alert(`Error: ${errorData.message}`);
-          return;
-        }
-        if (!response.ok) {
-          const errorData = await response.json();
           showNotification(
             `Login failed: ${errorData.message || "Invalid credentials"}`,
             "error"
@@ -71,6 +67,7 @@ export default function HomePage() {
         const data = await response.json();
         if (data.accessToken) {
           localStorage.setItem("intertex-token", data.accessToken);
+          await signOut({ redirect: false });
         }
         await new Promise((resolve) => setTimeout(resolve, 2000));
         showNotification("redirecting to profile page...", "info");
@@ -81,14 +78,7 @@ export default function HomePage() {
   }, [session]);
   return (
     <div>
-      {session?.user ? (
-        <>
-          <h1>Welcome, {session.user.name}</h1>
-          <p>{session.user.email}</p>
-        </>
-      ) : (
-        <h1>Loading...</h1>
-      )}
+      {session?.user && <h1>Loading...</h1>}
       {notifications.status && (
         <NotificationSystem
           message={notifications.message}
