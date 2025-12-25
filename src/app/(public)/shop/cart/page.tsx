@@ -87,6 +87,11 @@ export default function CartSummary() {
     _id: "",
   });
 
+  const [deliveryInformation, setDeliveryInformation] = useState({
+    deliveryAddress: "",
+    phoneNumber: "",
+  });
+
   useEffect(() => {
     const token = localStorage.getItem("intertex-token");
     if (!token) {
@@ -163,6 +168,10 @@ export default function CartSummary() {
         userId: user._id,
         deliveryMethod: deliveryOption,
         amount: total,
+        deliveryInformation: {
+          deliveryAddress: deliveryInformation.deliveryAddress,
+          phoneNumber: deliveryInformation.phoneNumber,
+        },
         status: "pending",
         products: cart.items.map((item) => ({
           productId: item.product._id,
@@ -308,13 +317,15 @@ export default function CartSummary() {
 
         {/* Checkout Button */}
         {/* <button className="mt-6 w-full bg-secondary hover:bg-secondary/80 cursor-pointer text-white font-semibold py-3 rounded-md">
-          Checkout
-        </button> */}
+            Checkout
+          </button> */}
       </div>
       <DeliveryOption
         deliveryOption={deliveryOption}
         setDeliveryOption={setDeliveryOption}
         handlePayment={handlePayment}
+        deliveryInformation={deliveryInformation}
+        setDeliveryInformation={setDeliveryInformation}
       />
       {notifications.status && (
         <NotificationSystem

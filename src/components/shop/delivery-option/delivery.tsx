@@ -4,26 +4,13 @@ import AddressForm from "./add-billing-information";
 import AddressSelectionCard from "./address-selection-card";
 import { API_BASE_URL } from "@/lib/constants";
 
-const initialAddresses = [
-  {
-    id: "addr_001",
-    fullName: "Olatunbosun Olashubomi",
-    deliveryLine: "32 seriki aro street under bridge ikeja lagos",
-    location: "Ikeja (computer village) - Lagos",
-    phoneNumber: "+234 7014189693",
-    isDefault: true,
-  },
-  {
-    id: "addr_002",
-    fullName: "Jane Doe",
-    deliveryLine: "15 Admiralty Way",
-    location: "Lekki - Lagos",
-    phoneNumber: "+234 8021234567",
-    isDefault: false,
-  },
-];
-
-function Delivery() {
+function Delivery({
+  deliveryInformation,
+  setDeliveryInformation,
+}: {
+  deliveryInformation: any;
+  setDeliveryInformation: React.Dispatch<React.SetStateAction<any>>;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addressData, setAddressData] = useState({
     _id: "",
@@ -32,10 +19,71 @@ function Delivery() {
     location: "",
     phoneNumber: "",
     isDefault: false,
+    additionalInformation: "",
+    secondPhoneNumber: "",
+    user: {
+      _id: "",
+      email: "",
+      fullName: "",
+    },
+    region: "",
+    city: "",
   });
 
-  const handleSave = () => {
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+
+  const handleSave = async (formData: any) => {
+    const method = isEditMode ? "PATCH" : "POST";
+    const endpoint = isEditMode
+      ? `${API_BASE_URL}/billing-information/${editingAddressId}`
+      : `${API_BASE_URL}/billing-information`;
+
+    const res = await fetch(endpoint, {
+      method,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fullName: formData.fullName,
+        deliveryAddress: formData.deliveryAddress,
+        phoneNumber: formData.phoneNumber,
+        secondPhoneNumber: formData.secondPhoneNumber,
+        additionalInformation: formData.additionalInformation,
+        region: formData.region,
+        city: formData.city,
+        isDefault: formData.isDefault,
+        user: addressData.user._id,
+      }),
+    });
+
+    if (!res.ok) {
+      alert("Failed to save address");
+      return;
+    }
+
+    // Refresh addresses
+    const updated = await fetch(`${API_BASE_URL}/billing-information`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
+      },
+    });
+
+    const data = await updated.json();
+
+    const mapped = data.map((item: any) => ({
+      ...item,
+      location: `${item.city} - ${item.region}`,
+    }));
+
+    setAddresses(mapped);
+
     setIsModalOpen(false);
+    setIsEditMode(false);
+    setIsCreateMode(false);
+    setEditingAddressId(null);
   };
 
   const [addresses, setAddresses] = useState([
@@ -46,6 +94,15 @@ function Delivery() {
       location: "",
       phoneNumber: "",
       isDefault: false,
+      additionalInformation: "",
+      secondPhoneNumber: "",
+      user: {
+        _id: "",
+        email: "",
+        fullName: "",
+      },
+      region: "",
+      city: "",
     },
   ]);
 
@@ -73,6 +130,12 @@ function Delivery() {
       setAddressData(address);
       setSelectedAddressId(address._id);
       setAddresses(updatedData);
+
+      const deliveryAddress = address?.deliveryAddress + address?.location;
+      setDeliveryInformation({
+        deliveryAddress,
+        phoneNumber: address?.phoneNumber,
+      });
     };
     fetchBilingInfo();
   }, []);
@@ -83,18 +146,45 @@ function Delivery() {
     const address = addresses.find((item) => item._id === id);
     if (address) {
       setAddressData(address);
+      const deliveryAddress = address?.deliveryAddress + address?.location;
+      setDeliveryInformation({
+        deliveryAddress,
+        phoneNumber: address?.phoneNumber,
+      });
     }
     handleCancel();
   };
 
   const handleEdit = (id: string) => {
-    console.log(`Editing address: ${id}`);
-    // In a real app, you'd open the AddressFormModal here
+    const addressToEdit = addresses.find((addr) => addr._id === id);
+    if (!addressToEdit) return;
+
+    setAddressData(addressToEdit); // preload form
+    setEditingAddressId(id);
+    setIsCreateMode(false);
+    setIsEditMode(true);
+    setIsModalOpen(true);
   };
 
   const handleAdd = () => {
-    console.log("Adding new address...");
-    // In a real app, you'd open the AddressFormModal here
+    setAddressData({
+      _id: "",
+      fullName: "",
+      deliveryAddress: "",
+      location: "",
+      phoneNumber: "",
+      isDefault: false,
+      additionalInformation: "",
+      secondPhoneNumber: "",
+      region: "",
+      city: "",
+      user: addressData.user,
+    });
+
+    setEditingAddressId(null);
+    setIsEditMode(false);
+    setIsCreateMode(true);
+    // setIsModalOpen(true);
   };
 
   return (
@@ -129,6 +219,17 @@ function Delivery() {
           onEdit={handleEdit}
           onAdd={handleAdd}
           onFinalSelect={handleFinalSelect}
+        />
+      )}
+      {(isEditMode || isCreateMode) && (
+        <AddressForm
+          initialData={addressData}
+          onCancel={() => {
+            setIsEditMode(false);
+            setIsCreateMode(false);
+            setEditingAddressId(null);
+          }}
+          onSave={handleSave}
         />
       )}
     </div>
