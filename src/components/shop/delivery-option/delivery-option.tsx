@@ -4,10 +4,14 @@ import Pickup from "@/components/shop/delivery-option/pick-up";
 export default function DeliveryOption({
   deliveryOption,
   setDeliveryOption,
+  deliveryInformation,
+  setDeliveryInformation,
   handlePayment,
 }: {
   deliveryOption: string;
   setDeliveryOption: React.Dispatch<React.SetStateAction<string>>;
+  deliveryInformation: any;
+  setDeliveryInformation: React.Dispatch<React.SetStateAction<any>>;
   handlePayment: () => void;
 }) {
   return (
@@ -39,7 +43,17 @@ export default function DeliveryOption({
         </button>
       </div>
 
-      {deliveryOption === "delivery" ? <Delivery /> : <Pickup />}
+      {deliveryOption === "delivery" ? (
+        <Delivery
+          deliveryInformation={deliveryInformation}
+          setDeliveryInformation={setDeliveryInformation}
+        />
+      ) : (
+        <Pickup
+          deliveryInformation={deliveryInformation}
+          setDeliveryInformation={setDeliveryInformation}
+        />
+      )}
 
       <div className="flex gap-4 mt-10 text-sm">
         <button className="border border-secondary py-2 w-full">Back</button>

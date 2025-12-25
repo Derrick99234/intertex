@@ -125,7 +125,7 @@ const AddressSelectionCard: React.FC<AddressSelectionCardProps> = ({
         {/* Add Address Link */}
         <button
           onClick={onAdd}
-          className="flex items-center text-secondary font-semibold hover:text-secondary/60 transition duration-150 mb-8"
+          className="flex cursor-pointer items-center text-secondary font-semibold hover:text-secondary/60 transition duration-150 mb-8"
         >
           <span className="text-xl mr-2">+</span> Add address
         </button>

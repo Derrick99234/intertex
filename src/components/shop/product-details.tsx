@@ -260,10 +260,10 @@ function ProductDetails({
           quantity: qty,
         }));
 
-      // if (itemsToAdd.length === 0) {
-      //   alert("Please select at least one variation");
-      //   return;
-      // }
+      if (itemsToAdd.length === 0) {
+        alert("Please select at least one variation");
+        return;
+      }
 
       const token = localStorage.getItem("intertex-token");
       if (!token) {
