@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DisplayDetails from "../display-details";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,49 +9,12 @@ interface TabData {
   component: React.ReactNode;
 }
 
-interface ProductTabsProps {
-  onDataChange?: (tabId: string, data: any) => void;
-}
-
-export default function ViewOrder({ onDataChange }: ProductTabsProps) {
+export default function ViewOrder({ order }: any) {
   const [activeTab, setActiveTab] = useState("product-details");
-  // const [formData, setFormData] = useState({
-  //   categories: {
-  //     category: "Men",
-  //     subCategory: "Casual Wear",
-  //     type: "T-Shirts",
-  //   },
-  //   images: [],
-  //   details: {},
-  //   sizeQuantities: [],
-  // });
 
-  // const categoryOptions = {
-  //   categories: ["Men", "Women", "Kids", "Unisex"],
-  //   subCategories: {
-  //     Men: ["Casual Wear", "Formal Wear", "Sports Wear", "Winter Wear"],
-  //     Women: ["Casual Wear", "Formal Wear", "Party Wear", "Traditional"],
-  //     Kids: ["Boys", "Girls", "Infants"],
-  //     Unisex: ["Accessories", "Footwear", "Bags"],
-  //   },
-  //   types: {
-  //     "Casual Wear": ["T-Shirts", "Jeans", "Shorts", "Polo Shirts"],
-  //     "Formal Wear": ["Shirts", "Trousers", "Blazers", "Suits"],
-  //     "Sports Wear": ["Track Suits", "Jerseys", "Shorts", "Tank Tops"],
-  //     "Winter Wear": ["Jackets", "Sweaters", "Hoodies", "Coats"],
-  //   },
-  // };
-
-  // const handleCategoryChange = (field: string, value: string) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     categories: { ...prev.categories, [field]: value },
-  //   }));
-
-  //   if (onDataChange) {
-  //     onDataChange("categories", { ...formData.categories, [field]: value });
-  //   }
-  // };
+  useEffect(() => {
+    console.log("Order data:", order);
+  }, []);
 
   const renderProductDetailsTab = () => {
     const data = [
@@ -125,31 +88,31 @@ export default function ViewOrder({ onDataChange }: ProductTabsProps) {
     const data = [
       {
         label: "Order ID",
-        value: "ORD123456",
+        value: order.id,
       },
       {
         label: "Delivery Method",
-        value: "Pick-Up",
+        value: order.deliveryMethod,
       },
       {
         label: "Delivery Address",
-        value: "123 Main St, City, Country",
+        value: order.deliveryInformation?.deliveryAddress,
       },
       {
         label: "Contact Phone",
-        value: "123-456-7890",
+        value: order.deliveryInformation?.phoneNumber,
       },
       {
         label: "Alternative Call Line",
-        value: "098-765-4321",
+        value: "-",
       },
       {
         label: "Delivery Fee",
-        value: "$400",
+        value: "-",
       },
       {
         label: "Order Status",
-        value: "Pending",
+        value: order.status,
       },
       {
         label: "Delivery/Pick-up Date",
@@ -235,7 +198,7 @@ export default function ViewOrder({ onDataChange }: ProductTabsProps) {
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-[400px] flex justify-between">
+      <div className="min-h-100 flex justify-between">
         <div className="flex flex-col w-full">
           {tabs.find((tab) => tab.id === activeTab)?.component}
           <div className="flex justify-between items-center p-6 border-t border-gray-200">
@@ -257,7 +220,7 @@ export default function ViewOrder({ onDataChange }: ProductTabsProps) {
             <div className="text-center" key={index}>
               <Image
                 src={image.url}
-                className="h-[10rem] w-[16rem] object-cover object-top border rounded border-gray-300"
+                className="h-40 w-[16rem] object-cover object-top border rounded border-gray-300"
                 alt={image.label} // make sure you do the right thing here
                 width={400}
                 height={400}

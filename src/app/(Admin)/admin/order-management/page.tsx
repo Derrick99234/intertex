@@ -32,6 +32,7 @@ function OrderManagement() {
         userId: order.userId,
         item: order.products.length,
         deliveryMethod: order.deliveryMethod,
+        deliveryInformation: order.deliveryInformation,
         amount: `₦${order.amount}`,
         date: new Date(order.date).toLocaleDateString(),
         status: order.status,
@@ -75,13 +76,19 @@ function OrderManagement() {
     setActiveTab(tab);
   };
 
+  const handleViewOrder = () => {
+    const order = orders.find((o) => o.id === viewOrder.orderId);
+    if (!order) return <p>Order not found</p>;
+    return <ViewOrder order={order} />;
+  };
+
   return (
     <section className="flex mt-20">
       <AdminSidebar />
 
       <div className="p-5 flex-1 ml-64">
         {viewOrder.status ? (
-          <ViewOrder />
+          handleViewOrder()
         ) : (
           <div>
             <DisplayStats />

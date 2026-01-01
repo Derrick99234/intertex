@@ -10,6 +10,8 @@ import { LoadingSpinner } from "../loading-spinner";
 import { NotificationSystem } from "../notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
 import MobileMenu from "./mobile-header";
+import { LogInIcon } from "lucide-react";
+import { BiCart } from "react-icons/bi";
 
 function Header() {
   const router = useRouter();
@@ -58,10 +60,10 @@ function Header() {
 
   return (
     <>
-      <header className="hidden lg:flex justify-between items-center px-10 text-[#091697] py-6 w-full">
+      <header className="hidden lg:flex justify-between items-center px-10 text-secondary py-6 w-full">
         <div className="logo">
           <Image
-            src={"/logo/intertex-logo.png"}
+            src={"/logo/intertex-new-logo.png"}
             onClick={handleClick}
             alt="intertex logo"
             className="cursor-pointer"
@@ -132,13 +134,7 @@ function Header() {
             href={"/shop/cart"}
             className="search flex items-center gap-4 border p-2 px-4 rounded-md border-gray-200"
           >
-            <Image
-              src={"/icons/cart.png"}
-              alt="cart"
-              width={30}
-              height={10}
-              className="cursor-pointer"
-            />
+            <BiCart size={20} />
           </Link>
           {user.fullName ? (
             <>
@@ -158,20 +154,14 @@ function Header() {
             </>
           ) : (
             <Link href={"/login"}>
-              <Image
-                src={"/icons/profile.png"}
-                alt="user profile"
-                width={30}
-                height={30}
-                className="cursor-pointer"
-              />
+              <LogInIcon size={20} />
             </Link>
           )}
         </div>
       </header>
 
       {/* Mobile Header */}
-      <header className="lg:hidden flex justify-between items-center px-4 py-4 bg-white text-[#091697]">
+      <header className="lg:hidden flex justify-between items-center px-4 py-4 bg-white text-s">
         <div className="logo">
           <Image
             src={"/logo/intertex-logo.png"}
@@ -226,9 +216,9 @@ function Header() {
             onClick={toggleMobileMenu}
             className="hamburger-menu flex flex-col gap-1 p-2"
           >
-            <span className="block w-6 h-0.5 bg-[#091697]"></span>
-            <span className="block w-6 h-0.5 bg-[#091697]"></span>
-            <span className="block w-6 h-0.5 bg-[#091697]"></span>
+            <span className="block w-6 h-0.5 bg-secondary"></span>
+            <span className="block w-6 h-0.5 bg-secondary"></span>
+            <span className="block w-6 h-0.5 bg-secondary"></span>
           </button>
         </div>
       </header>

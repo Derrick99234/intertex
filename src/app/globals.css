@@ -10,7 +10,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --color-secondary: #091697;
+  --color-secondary: #000;
+  /* --color-secondary: #091697; */
   --color-primary: #152f24;
   --color-light-blue: #91b5c5;
   --font-mono: var(--font-geist-mono);
