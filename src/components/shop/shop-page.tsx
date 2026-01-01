@@ -44,6 +44,7 @@ function ShopLandingPage({
   slug: string[];
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sort, setSort] = useState<string>("newest");
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -51,25 +52,49 @@ function ShopLandingPage({
   useEffect(() => {
     const searchQuery = searchParams.get("keyword") || "";
     setSearchTerm(searchQuery);
-  }, [searchParams]);
+
+    const sortQuery = searchParams.get("sort") || "newest";
+    setSort(sortQuery);
+  }, [searchParams, sort]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
 
-    // Determine where to perform the search
+    // 👇 guarantee shop root
     let basePath = "/shop";
-
-    // ✅ If user is already within /shop, preserve that subpath
     if (pathname.startsWith("/shop")) {
       basePath = pathname;
     }
 
-    // Construct the new search URL safely
-    const newUrl = `${basePath}?keyword=${encodeURIComponent(value)}`;
+    const params = new URLSearchParams(searchParams.toString());
 
-    // Push the new URL
-    router.push(newUrl);
+    if (value) {
+      params.set("keyword", value);
+    } else {
+      params.delete("keyword");
+    }
+
+    router.push(`${basePath}?${params.toString()}`);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+
+    let basePath = "/shop";
+    if (pathname.startsWith("/shop")) {
+      basePath = pathname;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value) {
+      params.set("sort", value);
+    } else {
+      params.delete("sort");
+    }
+
+    router.push(`${basePath}?${params.toString()}`);
   };
 
   const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
@@ -110,7 +135,7 @@ function ShopLandingPage({
                 className={`hover:underline ${
                   idx === segments.length - 1
                     ? "text-[#A3A3A3]" // current page style
-                    : "text-[#091697]"
+                    : "text-secondary"
                 } font-normal text-lg`}
               >
                 {seg.name}
@@ -160,11 +185,11 @@ function ShopLandingPage({
           </button>
         ))}
       </div>
-      <hr className="w-full border-1  border-[#ECECEC] md:mb-8 mb-4" />
+      <hr className="w-full border  border-[#ECECEC] md:mb-8 mb-4" />
       {/* Controls */}
 
       <div className="">
-        <div className=" mb-4 h-[49px] text-xs font-bold md:hidden flex items-center bg-white px-4 py-2 border-[0.5px]">
+        <div className=" mb-4 h-12.25 text-xs font-bold md:hidden flex items-center bg-white px-4 py-2 border-[0.5px]">
           <Image
             src="/icons/search.png"
             alt="Search"
@@ -203,7 +228,7 @@ function ShopLandingPage({
             </div> */}
 
           <div className="flex gap-3">
-            <div className="w-[200px] md:w-[344px] md:text-[19px] text-[10px] font-bold hidden md:flex flex-row-reverse items-center justify-between bg-white rounded-[3px] px-4 py-2 border">
+            <div className="w-50 md:w-86 md:text-[19px] text-[10px] font-bold hidden md:flex flex-row-reverse items-center justify-between bg-white rounded-[3px] px-4 py-2 border">
               <Image
                 src="/icons/search.png"
                 alt="Search"
@@ -220,11 +245,16 @@ function ShopLandingPage({
               />
             </div>
             <div className=" relative flex items-center justify-center">
-              <select className="md:text-[19px] text-xs font-bold appearance-none bg-transparent outline-none cursor-pointer border-1 md:px-4 px-2 py-2 rounded-[3px] text-[#152F24] md:w-[204px] w-[116px] md:h-[64px] h-[34px] flex items-center justify-center">
-                <option>Newest</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
+              <select
+                onChange={handleSortChange}
+                value={sort}
+                className="md:text-[19px] text-xs font-bold appearance-none bg-transparent outline-none cursor-pointer border md:px-4 px-2 py-2 rounded-[3px] text-[#152F24] md:w-51 w-29 md:h-16 h-8.5"
+              >
+                <option value="newest">Newest</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
               </select>
+
               <span className="absolute md:right-4 right-1 pointer-events-none flex items-center pr-1">
                 <Image
                   src="/icons/arrow-down.png"
@@ -264,11 +294,11 @@ function ShopLandingPage({
                   className="group rounded-xl flex flex-col bg-white transition hover:shadow-lg"
                 >
                   <div
-                    className="w-full select-none rounded-[6px] overflow-hidden"
+                    className="w-full select-none rounded-md overflow-hidden"
                     onClick={() => handleImageClick(product._id, allImages)}
                   >
                     {/* IMAGE WRAPPER */}
-                    <div className="relative w-full h-[280px] md:h-[320px]">
+                    <div className="relative w-full h-70 md:h-80">
                       <Image
                         src={
                           allImages && allImages.length > 0
@@ -300,7 +330,7 @@ function ShopLandingPage({
                   </div>
 
                   {/* Text Section  */}
-                  <div className="w-full flex flex-col justify-between h-[90px] md:h-[110px] px-2">
+                  <div className="w-full flex flex-col justify-between h-22.5 md:h-27.5 px-2">
                     <div className="text-left text-xs md:text-base line-clamp-2">
                       {product.productName}
                       <div className="text-xs md:text-sm text-gray-500">
@@ -311,7 +341,7 @@ function ShopLandingPage({
                     <Link
                       href={`/shop/${product.subcategory.category.slug}/${product.subcategory.slug}/${product.productType.slug}/${product.slug}`}
                     >
-                      <button className="bg-[#1739B7] text-white w-full py-2 rounded font-bold text-xs md:text-sm">
+                      <button className="bg-[#1739B7] cursor-pointer text-white w-full py-2 rounded font-bold text-xs md:text-sm">
                         Shop Now
                       </button>
                     </Link>

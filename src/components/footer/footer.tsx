@@ -135,7 +135,7 @@ function Footer() {
               Lagos.
             </p>
             <Image
-              src={"/logo/intertex_logo_2.png"}
+              src={"/logo/intertex-logo.png"}
               alt="intertex logo"
               className="mt-4"
               width={150}
