@@ -147,7 +147,7 @@ function HeroPage() {
           New Arrivals
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-between px-20">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-between md:px-20">
           {products &&
             products.slice(0, 4).map((product) => {
               const imgIdx = imageIndexes[product._id];
