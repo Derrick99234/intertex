@@ -51,7 +51,7 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
         <div className="flex justify-between items-center px-4 py-4 border-b">
           <div className="logo">
             <Image
-              src={"/logo/intertex-logo.png"}
+              src={"/logo/intertex-new-logo.png"}
               onClick={() => {}}
               alt="intertex logo"
               className="cursor-pointer"
@@ -61,7 +61,7 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
           </div>
           <button
             onClick={toggleMobileMenu}
-            className="text-2xl text-[#091697]"
+            className="text-3xl text-secondary"
           >
             ×
           </button>
@@ -94,7 +94,7 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
                   key={category.slug}
                   className={`pb-1 ${
                     activeMobileCategory === category.slug
-                      ? "border-b-2 border-[#091697]"
+                      ? "border-b-2 border-s"
                       : ""
                   }`}
                 >
@@ -135,7 +135,7 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
                         className="flex justify-between items-center mb-3 cursor-pointer"
                         onClick={() => handleSectionToggle(section.slug)}
                       >
-                        <h3 className="font-semibold text-[#091697]">
+                        <h3 className="font-semibold text-s">
                           {section.title}:
                         </h3>
                         <span className="text-xl">
@@ -143,7 +143,7 @@ const MobileMenu = ({ toggleMobileMenu }: { toggleMobileMenu: () => void }) => {
                         </span>
                       </div>
                       {openStates[section.slug] && (
-                        <ul className="space-y-2 text-sm text-[#091697] ml-4 mt-3">
+                        <ul className="space-y-2 text-sm text-s ml-4 mt-3">
                           {section.items.map((item) => (
                             <li key={item.slug}>
                               <Link
