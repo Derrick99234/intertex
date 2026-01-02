@@ -12,6 +12,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import MobileMenu from "./mobile-header";
 import { LogInIcon } from "lucide-react";
 import { BiCart } from "react-icons/bi";
+import { CgProfile } from "react-icons/cg";
 
 function Header() {
   const router = useRouter();
@@ -143,13 +144,7 @@ function Header() {
                   user.fullName.split(" ")[1]?.charAt(0)}
               </span>
               <Link href={"/update-profile"}>
-                <Image
-                  src={"/icons/profile.png"}
-                  alt="user profile"
-                  width={30}
-                  height={30}
-                  className="cursor-pointer"
-                />
+                <CgProfile size={20} />
               </Link>
             </>
           ) : (
@@ -164,7 +159,7 @@ function Header() {
       <header className="lg:hidden flex justify-between items-center px-4 py-4 bg-white text-s">
         <div className="logo">
           <Image
-            src={"/logo/intertex-logo.png"}
+            src={"/logo/intertex-new-logo.png"}
             onClick={handleClick}
             alt="intertex logo"
             className="cursor-pointer"
@@ -177,13 +172,7 @@ function Header() {
             href={"/shop/cart"}
             className="search flex items-center gap-4 border p-2 px-4 rounded-md border-gray-200"
           >
-            <Image
-              src={"/icons/cart.png"}
-              alt="cart"
-              width={24}
-              height={24}
-              className="cursor-pointer"
-            />
+            <BiCart size={20} />
           </Link>
           {user.fullName ? (
             <>
@@ -192,24 +181,12 @@ function Header() {
                   user.fullName.split(" ")[1]?.charAt(0)}
               </span>
               <Link href={"/update-profile"}>
-                <Image
-                  src={"/icons/profile.png"}
-                  alt="user profile"
-                  width={30}
-                  height={30}
-                  className="cursor-pointer"
-                />
+                <CgProfile size={20} />
               </Link>
             </>
           ) : (
             <Link href={"/login"}>
-              <Image
-                src={"/icons/profile.png"}
-                alt="user profile"
-                width={30}
-                height={30}
-                className="cursor-pointer"
-              />
+              <CgProfile size={20} />
             </Link>
           )}
           <button
