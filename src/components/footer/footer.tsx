@@ -22,7 +22,7 @@ function Footer() {
     },
     {
       productName: "Our Factory",
-      productLink: "/our-factory",
+      productLink: "factory.intertexng.com",
     },
   ];
   const companyLinks = [
@@ -36,27 +36,27 @@ function Footer() {
     },
     {
       companyName: "Wholesale",
-      companyLink: "/wholesale-enquiries",
+      companyLink: "/enquiries/wholesale-enquiries",
     },
     {
       companyName: "Uniform",
-      companyLink: "/uniforms",
+      companyLink: "/enquiries/uniforms",
     },
     {
       companyName: "Become a Distributor",
-      companyLink: "/distributor",
+      companyLink: "/enquiries/distributor",
     },
     {
       companyName: "Customize Labels",
-      companyLink: "/customize-labels",
+      companyLink: "/enquiries/customize-labels",
     },
     {
       companyName: "Packaging",
-      companyLink: "/packaging",
+      companyLink: "/enquiries/packaging",
     },
     {
       companyName: "Become an Investor",
-      companyLink: "/terms-of-service",
+      companyLink: "/enquiries/become-an-investor",
     },
   ];
   const resourcesLinks = [

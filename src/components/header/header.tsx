@@ -93,7 +93,7 @@ function Header() {
               <Link href={"/mens-wear"}>Accessories</Link>
             </li> */}
             <li>
-              <Link href={"/our-factory"}>Our Factory</Link>
+              <Link href={"factory.intertexng.com"}>Our Factory</Link>
             </li>
             <li>
               <Link href={"/our-stores"}>Our Stores</Link>
