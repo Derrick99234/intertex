@@ -75,11 +75,11 @@ function AdminHeader() {
   return (
     <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0">
       <Image
-        src={"/logo/intertex_logo_2.png"}
+        src={"/logo/intertex-new-logo.png"}
         alt="Admin Login"
         width={200}
         height={200}
-        className="w-36 h-auto mt-4 ml-4"
+        className="w-26 h-auto mt-4 ml-4"
       />
 
       <div className="flex justify-center gap-4 items-center">

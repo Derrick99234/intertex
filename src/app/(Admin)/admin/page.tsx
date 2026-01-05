@@ -70,7 +70,7 @@ function AdminLogin() {
       <div className="flex justify-center max-w-5xl w-full">
         <div className="bg-secondary w-full">
           <Image
-            src={"/logo/intertex_logo_2.png"}
+            src={"/logo/intertex-new-logo.png"}
             alt="Admin Login"
             width={200}
             height={200}

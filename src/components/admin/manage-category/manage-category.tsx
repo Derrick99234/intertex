@@ -340,7 +340,7 @@ function EntityTable<T extends BaseEntity>({
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                   <button
                     onClick={() => onEdit(item)}
-                    className="text-indigo-600 hover:text-indigo-900 p-1 rounded-full hover:bg-indigo-100 transition-colors"
+                    className="text-secondary hover:text-white p-1 rounded-full hover:bg-secondary transition-colors"
                     aria-label="Edit"
                   >
                     <Edit className="w-5 h-5" />
@@ -484,7 +484,7 @@ const GenericForm = ({
             value={parentId}
             onChange={(e) => setParentId(e.target.value)}
             required
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-indigo-500 focus:border-indigo-500 appearance-none pr-10"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-secondary focus:border-secondary appearance-none pr-10"
             disabled={parentOptions.length === 0}
           >
             {parentOptions.length === 0 && (
@@ -517,7 +517,7 @@ const GenericForm = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-secondary focus:border-secondary"
         />
       </div>
 
@@ -534,7 +534,7 @@ const GenericForm = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 focus:ring-secondary focus:border-secondary"
         />
       </div>
 
@@ -545,7 +545,7 @@ const GenericForm = ({
           type="checkbox"
           checked={status}
           onChange={(e) => setStatus(e.target.checked)}
-          className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+          className="h-5 w-5 text-secondary border-gray-300 rounded focus:ring-secondary"
         />
         <label htmlFor="status" className="ml-3 block text-base text-gray-900">
           Active
@@ -567,7 +567,7 @@ const GenericForm = ({
             (entityType !== "categories" && parentOptions.length === 0)
           }
           className={`px-5 py-2 rounded-lg text-white font-semibold transition-colors shadow-md ${
-            loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+            loading ? "bg-gray-400" : "bg-secondary hover:bg-secondary"
           }`}
         >
           {loading
@@ -676,9 +676,9 @@ export default function AdminManagementPageProp() {
           <button
             key={key}
             onClick={() => setActiveTab(key as EntityType)}
-            className={`flex items-center px-6 py-3 text-lg font-medium transition-colors border-b-4 ${
+            className={`flex  cursor-pointer items-center px-6 py-3 text-lg font-medium transition-colors border-b-4 ${
               activeTab === key
-                ? "text-indigo-600 border-indigo-600 bg-indigo-50"
+                ? "text-white border-secondary bg-secondary"
                 : "text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300"
             }`}
           >
@@ -704,7 +704,7 @@ export default function AdminManagementPageProp() {
           className={`px-5 py-2 text-white rounded-xl transition-all flex items-center shadow-lg font-medium ${
             parentDependenciesMissing
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700 hover:shadow-xl"
+              : "bg-secondary hover:bg-secondary hover:shadow-xl"
           }`}
         >
           <PlusCircle className="w-5 h-5 mr-2" />
