@@ -3,8 +3,8 @@ import React from "react";
 function DisplayStats() {
   return (
     <div className="mb-10">
-      <div className="flex items-center justify-between mb-4 border p-4 rounded-sm border-gray-200 pr-16 pl-8">
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 border p-4 rounded-sm border-gray-200 md:pr-16 md:pl-8">
+        <div className="flex items-center space-x-4 mb-4 md:mb-0">
           <span className="text-sm text-gray-600 font-semibold">
             Display Stats
           </span>
@@ -14,7 +14,7 @@ function DisplayStats() {
           </label>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
           <span className="text-sm text-gray-600">Duration</span>
           <div className="flex items-center space-x-2">
             <span className="text-sm">From</span>
