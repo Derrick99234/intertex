@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import { LuListFilter } from "react-icons/lu";
@@ -25,7 +25,65 @@ interface TableProps {
     name: string;
     href: string;
   }[];
+  filterDateKey?: string;
+  filterCategoryKey?: string;
+  filterCategoryOptions?: string[];
 }
+
+type TableFilters = {
+  startDate: string;
+  endDate: string;
+  categories: string[];
+} | null;
+
+const toISODateLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const parseISODateOnlyLocal = (value: string) => {
+  const parts = value.split("-");
+  if (parts.length !== 3) return null;
+  const [year, month, day] = parts.map((p) => Number(p));
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+};
+
+const parseAnyDate = (value: unknown) => {
+  if (value instanceof Date) return value;
+  if (typeof value === "number" && Number.isFinite(value)) return new Date(value);
+  if (typeof value !== "string") return null;
+
+  const raw = value.trim();
+  if (!raw) return null;
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+    const d = parseISODateOnlyLocal(raw.slice(0, 10));
+    return d ?? null;
+  }
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+    const [dd, mm, yyyy] = raw.split("/").map(Number);
+    return new Date(yyyy, mm - 1, dd);
+  }
+
+  if (/^\d{2}-\d{2}-\d{4}$/.test(raw)) {
+    const [dd, mm, yyyy] = raw.split("-").map(Number);
+    return new Date(yyyy, mm - 1, dd);
+  }
+
+  const fallback = new Date(raw);
+  if (Number.isNaN(fallback.getTime())) return null;
+  return fallback;
+};
+
+const startOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+const endOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
 
 export default function DynamicTable({
   title,
@@ -39,16 +97,62 @@ export default function DynamicTable({
   navigations,
   onAction,
   itemsPerPage = 5,
+  filterDateKey,
+  filterCategoryKey,
+  filterCategoryOptions,
 }: TableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [tableFilters, setTableFilters] = useState<TableFilters>(null);
 
-  // Filter data based on search term
-  const filteredData = data.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const inferredDateKey = useMemo(() => {
+    if (filterDateKey) return filterDateKey;
+    const fromType = columns.find((c) => c.type === "date")?.key;
+    if (fromType) return fromType;
+    const fromName = columns.find((c) => /date/i.test(c.key))?.key;
+    if (fromName) return fromName;
+    return undefined;
+  }, [columns, filterDateKey]);
+
+  const dataAfterAdvancedFilters = useMemo(() => {
+    let next = data;
+
+    if (tableFilters?.startDate && tableFilters?.endDate && inferredDateKey) {
+      const start = parseISODateOnlyLocal(tableFilters.startDate);
+      const end = parseISODateOnlyLocal(tableFilters.endDate);
+      if (start && end) {
+        const startTime = startOfDay(start).getTime();
+        const endTime = endOfDay(end).getTime();
+        next = next.filter((item) => {
+          const rowDate = parseAnyDate(item?.[inferredDateKey]);
+          if (!rowDate) return false;
+          const t = rowDate.getTime();
+          return t >= startTime && t <= endTime;
+        });
+      }
+    }
+
+    if (
+      tableFilters?.categories &&
+      tableFilters.categories.length > 0 &&
+      filterCategoryKey
+    ) {
+      const selected = new Set(tableFilters.categories);
+      next = next.filter((item) => selected.has(String(item?.[filterCategoryKey])));
+    }
+
+    return next;
+  }, [data, filterCategoryKey, inferredDateKey, tableFilters]);
+
+  const filteredData = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return dataAfterAdvancedFilters;
+    return dataAfterAdvancedFilters.filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(term)
+      )
+    );
+  }, [dataAfterAdvancedFilters, searchTerm]);
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -86,6 +190,16 @@ export default function DynamicTable({
   );
 
   const [showFilter, setShowFilter] = useState(false);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, tableFilters, itemsPerPage, data.length]);
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   return (
     <div className="bg-white rounded-lg shadow">
@@ -221,7 +335,31 @@ export default function DynamicTable({
           </div>
         </div>
       </div>
-      {showFilter && <Filter setShowFilter={setShowFilter} />}
+      {showFilter && (
+        <Filter
+          setShowFilter={setShowFilter}
+          defaultStartDate={
+            tableFilters?.startDate ??
+            (() => {
+              const end = new Date();
+              const start = new Date();
+              start.setDate(end.getDate() - 7);
+              return toISODateLocal(start);
+            })()
+          }
+          defaultEndDate={tableFilters?.endDate ?? toISODateLocal(new Date())}
+          defaultCategories={tableFilters?.categories ?? []}
+          categoryOptions={filterCategoryOptions}
+          onClear={() => setTableFilters(null)}
+          onApply={({ startDate, endDate, categories }) =>
+            setTableFilters({
+              startDate,
+              endDate,
+              categories,
+            })
+          }
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DeletePopup from "@/components/admin/blog/delete-popup";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
@@ -100,50 +99,29 @@ function BlogManagement() {
   }, []);
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-      <div className="p-5 flex-1 ml-64">
-        <DisplayStats />
-        <DynamicTable
-          columns={[
-            { key: "checkbox", label: "", type: "checkbox" as const },
-            { key: "no", label: "NO" },
-            { key: "initiatorId", label: "Initiator ID" },
-            { key: "topic", label: "Topic" },
-            { key: "datePosted", label: "Date Posted" },
-            { key: "edit", label: "Edit" },
-            { key: "action", label: "Action" },
-            { key: "more", label: "More", type: "action" },
-          ]}
-          data={blogs}
-          title="New Blog"
-          itemsPerPage={5}
-          onAction={(id: string) => {
-            console.log("Action on order ID:", id);
-          }}
-          searchPlaceholder="Search by date, email..."
-          showViewAll={true}
-          //   navigations={[
-          //     {
-          //       name: "All Orders",
-          //       href: "all-order",
-          //     },
-          //     {
-          //       name: "Pending Orders",
-          //       href: "pending-orders",
-          //     },
-          //     {
-          //       name: "Successful orders",
-          //       href: "succesful-orders",
-          //     },
-          //     {
-          //       name: "Failed orders",
-          //       href: "failed-orders",
-          //     },
-          //   ]}
-          onViewAll={() => router.push("/admin/blog-management/create")}
-        />
-      </div>
+    <section className="py-5">
+      <DisplayStats />
+      <DynamicTable
+        columns={[
+          { key: "checkbox", label: "", type: "checkbox" as const },
+          { key: "no", label: "NO" },
+          { key: "initiatorId", label: "Initiator ID" },
+          { key: "topic", label: "Topic" },
+          { key: "datePosted", label: "Date Posted" },
+          { key: "edit", label: "Edit" },
+          { key: "action", label: "Action" },
+          { key: "more", label: "More", type: "action" },
+        ]}
+        data={blogs}
+        title="New Blog"
+        itemsPerPage={5}
+        onAction={(id: string) => {
+          console.log("Action on order ID:", id);
+        }}
+        searchPlaceholder="Search by date, email..."
+        showViewAll={true}
+        onViewAll={() => router.push("/admin/blog-management/create")}
+      />
       {showDeletePopup && (
         <DeletePopup
           title="Delete Blog Post"

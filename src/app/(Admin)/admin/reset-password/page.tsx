@@ -2,9 +2,9 @@ import React from "react";
 
 function ResetPassword() {
   return (
-    <section>
-      <div className="flex justify-center items-center">
-        <form className="bg-white flex-col py-20 px-10 min-w-md">
+    <section className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <form className="bg-white flex-col py-12 sm:py-16 px-6 sm:px-10 rounded">
           <h2 className="text-3xl font-bold mb-4 text-center">
             Reset Password
           </h2>

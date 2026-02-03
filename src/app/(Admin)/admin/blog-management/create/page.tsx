@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import { API_BASE_URL } from "@/lib/constants";
 import { useState, useRef } from "react";
 
@@ -50,12 +49,10 @@ function CreateBlog() {
   };
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-      <div className="p-5 flex-1 ml-64">
-        <div className="max-w-4xl mx-auto p-6 bg-white">
+    <section className="py-5">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white">
           {/* Title and Tags Row */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Title
@@ -85,7 +82,7 @@ function CreateBlog() {
           {/* Rich Text Editor */}
           <div className="border border-gray-300 rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="bg-gray-50 border-b border-gray-300 p-2 flex items-center space-x-1">
+            <div className="bg-gray-50 border-b border-gray-300 p-2 flex flex-wrap items-center gap-1">
               {/* Font Family */}
               <select
                 onChange={(e) => formatText("fontName", e.target.value)}
@@ -101,7 +98,7 @@ function CreateBlog() {
               {/* Font Size */}
               <select
                 onChange={(e) => formatText("fontSize", e.target.value)}
-                className="px-2 py-1 border border-gray-300 rounded text-sm ml-2"
+                className="px-2 py-1 border border-gray-300 rounded text-sm"
                 defaultValue="3"
               >
                 <option value="1">8pt</option>
@@ -274,7 +271,6 @@ function CreateBlog() {
             </button>
           </div>
         </div>
-      </div>
     </section>
   );
 }

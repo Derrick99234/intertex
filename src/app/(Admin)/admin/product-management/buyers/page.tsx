@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DisplayDetails from "@/components/admin/display-details";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
@@ -35,36 +34,31 @@ const data = [
 ];
 export default function BuyerDetails() {
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-
-      <div className="p-5 flex-1 ml-64">
-        <div className="space-y-6 p-6 w-full max-w-lg">
-          <DisplayDetails data={data} />
-        </div>
-
-        <DynamicTable
-          columns={[
-            { key: "checkbox", label: "", type: "checkbox" as const },
-            { key: "no", label: "NO" },
-            { key: "userId", label: "User ID" },
-            { key: "fullName", label: "Full Name" },
-            { key: "email", label: "User Email", type: "email" as const },
-            { key: "quantity", label: "Quantity" },
-            { key: "amount", label: "Amount" },
-            { key: "deliveryMethod", label: "Delivery Method" },
-            { key: "date", label: "Date" },
-            { key: "review", label: "Review", type: "action" },
-          ]}
-          data={users}
-          title="Buyers"
-          itemsPerPage={5}
-          searchPlaceholder="Search by date, email..."
-          onAction={() => console.log("Click on action button")}
-          showViewAll={false}
-          // onViewAll={() => console.log("View all users")}
-        />
+    <section className="py-5">
+      <div className="space-y-6 p-4 sm:p-6 w-full max-w-lg">
+        <DisplayDetails data={data} />
       </div>
+
+      <DynamicTable
+        columns={[
+          { key: "checkbox", label: "", type: "checkbox" as const },
+          { key: "no", label: "NO" },
+          { key: "userId", label: "User ID" },
+          { key: "fullName", label: "Full Name" },
+          { key: "email", label: "User Email", type: "email" as const },
+          { key: "quantity", label: "Quantity" },
+          { key: "amount", label: "Amount" },
+          { key: "deliveryMethod", label: "Delivery Method" },
+          { key: "date", label: "Date" },
+          { key: "review", label: "Review", type: "action" },
+        ]}
+        data={users}
+        title="Buyers"
+        itemsPerPage={5}
+        searchPlaceholder="Search by date, email..."
+        onAction={() => console.log("Click on action button")}
+        showViewAll={false}
+      />
     </section>
   );
 }

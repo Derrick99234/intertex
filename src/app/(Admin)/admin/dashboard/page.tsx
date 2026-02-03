@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { LoadingSpinner } from "@/components/loading-spinner";
@@ -166,33 +165,28 @@ function Dashboard() {
   }, []);
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
+    <section className="py-5">
+      <DisplayStats />
 
-      <div className="p-5 flex-1 ml-64">
-        <DisplayStats />
-
-        {/* Recent Users Section */}
-        <DynamicTable
-          columns={[
-            { key: "checkbox", label: "", type: "checkbox" as const },
-            { key: "no", label: "NO" },
-            { key: "userId", label: "User ID" },
-            { key: "fullName", label: "Full Name" },
-            { key: "email", label: "Email", type: "email" as const },
-            { key: "dateJoined", label: "Date Joined" },
-            { key: "totalOrders", label: "Total Orders" },
-            { key: "more", label: "More" },
-          ]}
-          data={users}
-          title="View All Users"
-          itemsPerPage={5}
-          searchPlaceholder="Search by date, email..."
-          onAction={() => console.log("Click on action button")}
-          showViewAll={true}
-          onViewAll={() => router.push("/admin/users-management")}
-        />
-      </div>
+      <DynamicTable
+        columns={[
+          { key: "checkbox", label: "", type: "checkbox" as const },
+          { key: "no", label: "NO" },
+          { key: "userId", label: "User ID" },
+          { key: "fullName", label: "Full Name" },
+          { key: "email", label: "Email", type: "email" as const },
+          { key: "dateJoined", label: "Date Joined", type: "date" as const },
+          { key: "totalOrders", label: "Total Orders" },
+          { key: "more", label: "More" },
+        ]}
+        data={users}
+        title="View All Users"
+        itemsPerPage={5}
+        searchPlaceholder="Search by date, email..."
+        onAction={() => console.log("Click on action button")}
+        showViewAll={true}
+        onViewAll={() => router.push("/admin/users-management")}
+      />
       {notifications.status && (
         <NotificationSystem
           message={notifications.message}
