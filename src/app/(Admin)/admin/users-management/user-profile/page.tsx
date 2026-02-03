@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import UserProfileComponent from "@/components/admin/users/user-profile";
 import React, { Suspense, useState } from "react";
@@ -71,61 +70,56 @@ function UserProfile() {
     },
   ];
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-      <div className="p-5 w-full ml-64">
-        <div className="flex gap-5 font-semibold text-lg mb-5 border border-gray-300 rounded p-3">
-          {[
-            { name: "Profile", href: "profile" },
-            { name: "Orders", href: "orders" },
-            { name: "Activity Log", href: "activity-log" },
-          ].map((nav, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(nav.href)}
-              className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm cursor-pointer ${
-                activeTab === nav.href ? "bg-secondary text-white" : ""
-              }`}
-            >
-              {nav.name}
-            </button>
-          ))}
-        </div>
-        {activeTab === "orders" ? (
-          <>
-            <DynamicTable
-              columns={[
-                { key: "checkbox", label: "", type: "checkbox" as const },
-                { key: "no", label: "NO" },
-                { key: "productId", label: "Product ID" },
-                { key: "productName", label: "Product Name" },
-                { key: "quantity", label: "Quantity" },
-                { key: "deliveryMethod", label: "Delivery Method" },
-                { key: "date", label: "Date" },
-                { key: "status", label: "Status" },
-                { key: "review", label: "Review", type: "action" },
-              ]}
-              data={productsData}
-              onAction={(id: string) => {
-                setViewProduct({
-                  status: true,
-                  productId: id,
-                });
-              }}
-              title="Orders"
-              itemsPerPage={5}
-              searchPlaceholder="Search by name, ID..."
-              showViewAll={false}
-            />
-          </>
-        ) : activeTab === "activity-log" ? (
-          <h2>hello</h2>
-        ) : (
-          <Suspense fallback={<div>Loading user profile...</div>}>
-            <UserProfileComponent />
-          </Suspense>
-        )}
+    <section className="py-5">
+      <div className="flex gap-3 sm:gap-5 font-semibold text-lg mb-5 border border-gray-300 rounded p-3 overflow-x-auto">
+        {[
+          { name: "Profile", href: "profile" },
+          { name: "Orders", href: "orders" },
+          { name: "Activity Log", href: "activity-log" },
+        ].map((nav, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveTab(nav.href)}
+            className={`border border-secondary py-1 rounded-sm text-secondary px-4 text-sm cursor-pointer whitespace-nowrap ${
+              activeTab === nav.href ? "bg-secondary text-white" : ""
+            }`}
+          >
+            {nav.name}
+          </button>
+        ))}
       </div>
+      {activeTab === "orders" ? (
+        <DynamicTable
+          columns={[
+            { key: "checkbox", label: "", type: "checkbox" as const },
+            { key: "no", label: "NO" },
+            { key: "productId", label: "Product ID" },
+            { key: "productName", label: "Product Name" },
+            { key: "quantity", label: "Quantity" },
+            { key: "deliveryMethod", label: "Delivery Method" },
+            { key: "date", label: "Date" },
+            { key: "status", label: "Status" },
+            { key: "review", label: "Review", type: "action" },
+          ]}
+          data={productsData}
+          onAction={(id: string) => {
+            setViewProduct({
+              status: true,
+              productId: id,
+            });
+          }}
+          title="Orders"
+          itemsPerPage={5}
+          searchPlaceholder="Search by name, ID..."
+          showViewAll={false}
+        />
+      ) : activeTab === "activity-log" ? (
+        <h2>hello</h2>
+      ) : (
+        <Suspense fallback={<div>Loading user profile...</div>}>
+          <UserProfileComponent />
+        </Suspense>
+      )}
     </section>
   );
 }

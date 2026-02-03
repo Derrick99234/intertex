@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
@@ -67,54 +66,39 @@ function UserManagement() {
   if (loading) return <p className="text-center py-10">Loading...</p>;
   if (error) return <p className="text-center text-red-500 py-10">{error}</p>;
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
+    <section className="py-5">
+      <DisplayStats />
 
-      <div className="p-5 flex-1 ml-64">
-        <DisplayStats />
-
-        {/* Recent Users Section */}
-        <DynamicTable
-          columns={[
-            { key: "checkbox", label: "", type: "checkbox" as const },
-            { key: "no", label: "NO" },
-            // { key: "userId", label: "User ID" },
-            { key: "id", label: "ID", type: "id" },
-            { key: "fullName", label: "Full Name" },
-            { key: "email", label: "Email", type: "email" as const },
-            { key: "dateJoined", label: "Date Joined" },
-            { key: "totalOrders", label: "Total Orders" },
-            { key: "more", label: "More", type: "action" },
-          ]}
-          data={users}
-          title="Recent Users"
-          itemsPerPage={5}
-          onAction={(userId: string) =>
-            router.push(`/admin/users-management/user-profile?id=${userId}`)
-          }
-          searchPlaceholder="Search by date, email..."
-          showViewAll={false}
-          navigations={[
-            {
-              name: "All Users",
-              href: "all-users",
-            },
-            {
-              name: "Top Users",
-              href: "top-users",
-            },
-            // {
-            //   name: "Inactive Users",
-            //   href: "inactive-users",
-            // },
-            // {
-            //   name: "Deactivated Users",
-            //   href: "deactivated-users",
-            // },
-          ]}
-          // onViewAll={() => console.log("View all users")}
-        />
-      </div>
+      <DynamicTable
+        columns={[
+          { key: "checkbox", label: "", type: "checkbox" as const },
+          { key: "no", label: "NO" },
+          { key: "id", label: "ID", type: "id" },
+          { key: "fullName", label: "Full Name" },
+          { key: "email", label: "Email", type: "email" as const },
+          { key: "dateJoined", label: "Date Joined" },
+          { key: "totalOrders", label: "Total Orders" },
+          { key: "more", label: "More", type: "action" },
+        ]}
+        data={users}
+        title="Recent Users"
+        itemsPerPage={5}
+        onAction={(userId: string) =>
+          router.push(`/admin/users-management/user-profile?id=${userId}`)
+        }
+        searchPlaceholder="Search by date, email..."
+        showViewAll={false}
+        navigations={[
+          {
+            name: "All Users",
+            href: "all-users",
+          },
+          {
+            name: "Top Users",
+            href: "top-users",
+          },
+        ]}
+      />
     </section>
   );
 }

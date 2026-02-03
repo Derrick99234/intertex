@@ -4,6 +4,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { FiMenu } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 
@@ -14,7 +15,11 @@ interface User {
   email: string;
 }
 
-function AdminHeader() {
+function AdminHeader({
+  onToggleSidebar,
+}: {
+  onToggleSidebar?: () => void;
+}) {
   const [user, setUser] = useState<User>();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -73,16 +78,27 @@ function AdminHeader() {
   if (!user) return;
 
   return (
-    <header className="flex justify-between items-center bg-white px-4 py-2 fixed w-full top-0">
-      <Image
-        src={"/logo/intertex-new-logo.png"}
-        alt="Admin Login"
-        width={200}
-        height={200}
-        className="w-26 h-auto mt-4 ml-4"
-      />
+    <header className="flex justify-between items-center bg-white px-4 py-3 fixed w-full top-0 z-50">
+      <div className="flex items-center gap-3">
+        {onToggleSidebar && (
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="md:hidden p-2 border rounded cursor-pointer"
+          >
+            <FiMenu />
+          </button>
+        )}
+        <Image
+          src={"/logo/intertex-new-logo.png"}
+          alt="Admin Login"
+          width={200}
+          height={200}
+          className="w-28 sm:w-36 h-auto"
+        />
+      </div>
 
-      <div className="flex justify-center gap-4 items-center">
+      <div className="flex justify-center gap-3 sm:gap-4 items-center">
         <IoMdNotificationsOutline />
         <Image
           src="/images/bg-cloth.jpg"
@@ -91,7 +107,9 @@ function AdminHeader() {
           height={40}
           className="w-10 h-10 rounded-full ml-4"
         />
-        <span>{user?.firstName + " " + user?.lastName}</span>
+        <span className="hidden sm:inline">
+          {user?.firstName + " " + user?.lastName}
+        </span>
         <MdOutlineArrowDropDown />
       </div>
       {notifications.status && (

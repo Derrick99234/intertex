@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import ViewOrder from "@/components/admin/order/view-order";
 import DisplayStats from "@/components/display-stats/display-stats";
@@ -83,62 +82,57 @@ function OrderManagement() {
   };
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-
-      <div className="p-5 flex-1 ml-64">
-        {viewOrder.status ? (
-          handleViewOrder()
-        ) : (
-          <div>
-            <DisplayStats />
-            <DynamicTable
-              columns={[
-                { key: "checkbox", label: "", type: "checkbox" as const },
-                { key: "no", label: "NO" },
-                { key: "userId", label: "User ID" },
-                { key: "id", label: "Order ID" },
-                { key: "deliveryMethod", label: "Delivery Method" },
-                { key: "amount", label: "Amount" },
-                { key: "date", label: "Date" },
-                { key: "status", label: "Status" },
-                { key: "more", label: "More", type: "action" },
-              ]}
-              data={filteredOrders}
-              title="Orders"
-              itemsPerPage={5}
-              onAction={(id: string) => {
-                setViewOrder({
-                  status: true,
-                  orderId: id,
-                });
-              }}
-              searchPlaceholder="Search by date, email..."
-              showViewAll={false}
-              fetchActiveTab={fetchActiveTab}
-              navigations={[
-                {
-                  name: "All Orders",
-                  href: "allOrder",
-                },
-                {
-                  name: "Pending Orders",
-                  href: "pending-orders",
-                },
-                {
-                  name: "Successful orders",
-                  href: "succesful-orders",
-                },
-                {
-                  name: "Failed orders",
-                  href: "failed-orders",
-                },
-              ]}
-              // onViewAll={() => console.log("View all users")}
-            />
-          </div>
-        )}
-      </div>
+    <section className="py-5">
+      {viewOrder.status ? (
+        handleViewOrder()
+      ) : (
+        <div>
+          <DisplayStats />
+          <DynamicTable
+            columns={[
+              { key: "checkbox", label: "", type: "checkbox" as const },
+              { key: "no", label: "NO" },
+              { key: "userId", label: "User ID" },
+              { key: "id", label: "Order ID" },
+              { key: "deliveryMethod", label: "Delivery Method" },
+              { key: "amount", label: "Amount" },
+              { key: "date", label: "Date" },
+              { key: "status", label: "Status" },
+              { key: "more", label: "More", type: "action" },
+            ]}
+            data={filteredOrders}
+            title="Orders"
+            itemsPerPage={5}
+            onAction={(id: string) => {
+              setViewOrder({
+                status: true,
+                orderId: id,
+              });
+            }}
+            searchPlaceholder="Search by date, email..."
+            showViewAll={false}
+            fetchActiveTab={fetchActiveTab}
+            navigations={[
+              {
+                name: "All Orders",
+                href: "allOrder",
+              },
+              {
+                name: "Pending Orders",
+                href: "pending-orders",
+              },
+              {
+                name: "Successful orders",
+                href: "succesful-orders",
+              },
+              {
+                name: "Failed orders",
+                href: "failed-orders",
+              },
+            ]}
+          />
+        </div>
+      )}
     </section>
   );
 }

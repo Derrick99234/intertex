@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import ViewInventory from "@/components/admin/inventory/view-inventory";
 import DisplayStats from "@/components/display-stats/display-stats";
@@ -72,58 +71,52 @@ function Inventory() {
   };
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-
-      <div className="p-5 flex-1 ml-64">
-        {viewOrder.status ? (
-          <ViewInventory />
-        ) : (
-          <div>
-            <DisplayStats />
-            <DynamicTable
-              columns={[
-                { key: "checkbox", label: "", type: "checkbox" as const },
-                { key: "no", label: "NO" },
-                { key: "productId", label: "Product ID" },
-                { key: "productName", label: "Product Name" },
-                { key: "totalItems", label: "Total Items" },
-                // { key: "itemsLeft", label: "Items Left" },
-                { key: "totalSold", label: "Total Sold" },
-                { key: "dateAdded", label: "Date Added" },
-                { key: "more", label: "More", type: "action" },
-              ]}
-              data={filteredProductTypes}
-              title="Orders"
-              itemsPerPage={5}
-              onAction={(id: string) => {
-                setViewOrder({
-                  status: true,
-                  productId: id,
-                });
-              }}
-              fetchActiveTab={fetchActiveTab}
-              searchPlaceholder="Search by date, email..."
-              showViewAll={false}
-              navigations={[
-                {
-                  name: "All Inventory",
-                  href: "all-inventory",
-                },
-                {
-                  name: "Low Inventory",
-                  href: "low-inventory",
-                },
-                {
-                  name: "Wishlist",
-                  href: "wishlist",
-                },
-              ]}
-              // onViewAll={() => console.log("View all users")}
-            />
-          </div>
-        )}
-      </div>
+    <section className="py-5">
+      {viewOrder.status ? (
+        <ViewInventory />
+      ) : (
+        <div>
+          <DisplayStats />
+          <DynamicTable
+            columns={[
+              { key: "checkbox", label: "", type: "checkbox" as const },
+              { key: "no", label: "NO" },
+              { key: "productId", label: "Product ID" },
+              { key: "productName", label: "Product Name" },
+              { key: "totalItems", label: "Total Items" },
+              { key: "totalSold", label: "Total Sold" },
+              { key: "dateAdded", label: "Date Added" },
+              { key: "more", label: "More", type: "action" },
+            ]}
+            data={filteredProductTypes}
+            title="Orders"
+            itemsPerPage={5}
+            onAction={(id: string) => {
+              setViewOrder({
+                status: true,
+                productId: id,
+              });
+            }}
+            fetchActiveTab={fetchActiveTab}
+            searchPlaceholder="Search by date, email..."
+            showViewAll={false}
+            navigations={[
+              {
+                name: "All Inventory",
+                href: "all-inventory",
+              },
+              {
+                name: "Low Inventory",
+                href: "low-inventory",
+              },
+              {
+                name: "Wishlist",
+                href: "wishlist",
+              },
+            ]}
+          />
+        </div>
+      )}
     </section>
   );
 }

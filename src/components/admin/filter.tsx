@@ -2,22 +2,57 @@
 import React, { useState } from "react";
 import { HiOutlineCalendarDateRange } from "react-icons/hi2";
 
+type AppliedFilters = {
+  startDate: string;
+  endDate: string;
+  categories: string[];
+};
+
+const toISODateLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getDefaultDateRange = () => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - 7);
+  return { startDate: toISODateLocal(start), endDate: toISODateLocal(end) };
+};
+
 function Filter({
   setShowFilter,
   onDateChange,
-  defaultStartDate = "2023-09-15",
-  defaultEndDate = "2023-09-20",
+  onApply,
+  onClear,
+  categoryOptions,
+  defaultCategories = [],
+  defaultStartDate,
+  defaultEndDate,
 }: {
   setShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
   onDateChange?: (startDate: string, endDate: string) => void;
+  onApply?: (filters: AppliedFilters) => void;
+  onClear?: () => void;
+  categoryOptions?: string[];
   defaultStartDate?: string;
   defaultEndDate?: string;
+  defaultCategories?: string[];
 }) {
-  const [startDate, setStartDate] = useState(defaultStartDate);
-  const [endDate, setEndDate] = useState(defaultEndDate);
+  const initialRange = getDefaultDateRange();
+  const [startDate, setStartDate] = useState(
+    defaultStartDate ?? initialRange.startDate
+  );
+  const [endDate, setEndDate] = useState(defaultEndDate ?? initialRange.endDate);
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(defaultCategories);
+  const [activePeriod, setActivePeriod] = useState<string | null>(null);
 
   const handleStartDateChange = (date: string) => {
     setStartDate(date);
+    setActivePeriod("Custom");
     if (onDateChange) {
       onDateChange(date, endDate);
     }
@@ -25,9 +60,43 @@ function Filter({
 
   const handleEndDateChange = (date: string) => {
     setEndDate(date);
+    setActivePeriod("Custom");
     if (onDateChange) {
       onDateChange(startDate, date);
     }
+  };
+
+  const applyPreset = (preset: string) => {
+    const now = new Date();
+    let start = new Date(now);
+    let end = new Date(now);
+
+    if (preset === "Today") {
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (preset === "This week") {
+      const day = now.getDay();
+      const diff = (day + 6) % 7;
+      start = new Date(now);
+      start.setDate(now.getDate() - diff);
+      end = new Date(now);
+    } else if (preset === "This Month") {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now);
+    } else if (preset === "Previous Month") {
+      start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      end = new Date(now.getFullYear(), now.getMonth(), 0);
+    } else if (preset === "This Year") {
+      start = new Date(now.getFullYear(), 0, 1);
+      end = new Date(now);
+    }
+
+    const nextStart = toISODateLocal(start);
+    const nextEnd = toISODateLocal(end);
+    setStartDate(nextStart);
+    setEndDate(nextEnd);
+    setActivePeriod(preset);
+    onDateChange?.(nextStart, nextEnd);
   };
 
   const formatDisplayDate = (dateString: string) => {
@@ -72,21 +141,25 @@ function Filter({
         <h2 className="text-lg mb-4">Filters</h2>
         <h3 className="text-sm font-medium">Period</h3>
         <div className="flex flex-wrap gap-5 mt-3">
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Today
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            This week
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            This Month
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Previous Month
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            This Year
-          </span>
+          {["Today", "This week", "This Month", "Previous Month", "This Year"].map(
+            (label) => {
+              const isSelected = activePeriod === label;
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  className={`border text-sm py-[2px] px-2 rounded-xs cursor-pointer ${
+                    isSelected
+                      ? "border-secondary bg-secondary text-white"
+                      : "border-gray-300 hover:bg-gray-50"
+                  }`}
+                  onClick={() => applyPreset(label)}
+                >
+                  {label}
+                </button>
+              );
+            }
+          )}
         </div>
         <h3 className="text-sm font-medium my-5">Select Period</h3>
 
@@ -128,24 +201,66 @@ function Filter({
             />
           </div>
         </div>
-        <h3 className="text-sm font-medium my-5">Categories</h3>
-        <div className="flex flex-wrap gap-5 mt-3">
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Men
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Women
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Kids
-          </span>
-          <span className="border  border-gray-300 text-sm py-[2px] px-2 rounded-xs">
-            Accessories
-          </span>
+        {categoryOptions && categoryOptions.length > 0 && (
+          <>
+            <h3 className="text-sm font-medium my-5">Categories</h3>
+            <div className="flex flex-wrap gap-3 mt-3">
+              {categoryOptions.map((category) => {
+                const isSelected = selectedCategories.includes(category);
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() =>
+                      setSelectedCategories((prev) =>
+                        prev.includes(category)
+                          ? prev.filter((c) => c !== category)
+                          : [...prev, category]
+                      )
+                    }
+                    className={`border text-sm py-[2px] px-2 rounded-xs cursor-pointer ${isSelected
+                        ? "border-secondary bg-secondary text-white"
+                        : "border-gray-300 hover:bg-gray-50"
+                      }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+        <div className="grid grid-cols-2 gap-3 my-6">
+          <button
+            type="button"
+            className="w-full border border-gray-300 py-2 text-lg text-black rounded-md text-center"
+            onClick={() => {
+              const range = getDefaultDateRange();
+              setStartDate(range.startDate);
+              setEndDate(range.endDate);
+              setSelectedCategories([]);
+              setActivePeriod(null);
+              onClear?.();
+              setShowFilter(false);
+            }}
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            className="w-full bg-secondary py-2 text-lg text-white rounded-md text-center"
+            onClick={() => {
+              onApply?.({
+                startDate,
+                endDate,
+                categories: selectedCategories,
+              });
+              setShowFilter(false);
+            }}
+          >
+            Display
+          </button>
         </div>
-        <button className="w-full bg-secondary py-2 text-lg text-white rounded-md text-center my-6">
-          Display
-        </button>
       </div>
     </div>
   );

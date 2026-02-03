@@ -1,5 +1,4 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
 import DynamicTable from "@/components/admin/dynamic-table";
 import AddNewProducts from "@/components/admin/products/add-new-products";
 import ProductTabs from "@/components/admin/products/product-tabs";
@@ -67,6 +66,7 @@ function ProductManagement() {
           productName: product.productName || "N/A",
           category: product?.productType?.name,
           price: product.price,
+          createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
           inStock: product.inStock.length,
           status: "Active",
           more: <IoEyeOutline />,
@@ -98,6 +98,7 @@ function ProductManagement() {
         productName: product.productName || "N/A",
         category: product?.productType?.name,
         price: product.price,
+        createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
         inStock: product.inStock.length,
         status: "Active",
         more: <IoEyeOutline />,
@@ -115,6 +116,7 @@ function ProductManagement() {
       _id: product._id,
       productName: product.productName || "N/A",
       category: product?.productType?.name,
+      createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
       price: product.price,
       inStock: product.inStock.length,
       status: "Active",
@@ -124,80 +126,65 @@ function ProductManagement() {
   };
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-      <div className="p-5 flex-1 ml-64">
-        {viewProduct.status ? (
-          <ProductTabs
-            productId={viewProduct.productId}
-            setViewProduct={setViewProduct}
-          />
-        ) : (
-          // <ViewProduct
-          //   productId={viewProduct.productId}
-          //   setViewProduct={setViewProduct}
-          // />
-          <>
-            <DisplayStats />
+    <section className="py-5">
+      {viewProduct.status ? (
+        <ProductTabs
+          productId={viewProduct.productId}
+          setViewProduct={setViewProduct}
+        />
+      ) : (
+        <>
+          <DisplayStats />
 
-            <DynamicTable
-              columns={[
-                { key: "checkbox", label: "", type: "checkbox" as const },
-                { key: "no", label: "NO" },
-                { key: "id", label: "ID", type: "id" },
-                { key: "productName", label: "Product Name" },
-                { key: "category", label: "Category" },
-                { key: "price", label: "Price" },
-                { key: "inStock", label: "Stock" },
-                { key: "status", label: "Status" },
-                { key: "more", label: "More", type: "action" },
-              ]}
-              data={products}
-              onAction={(id: string) => {
-                setViewProduct({
-                  status: true,
-                  productId: id,
-                });
-              }}
-              title="Add New Products"
-              // itemProduct={5}
-              searchPlaceholder="Search by name, ID..."
-              showViewAll={true}
-              fetchActiveTab={fetchActiveTab}
-              onViewAll={() => setAddNewProduct(true)}
-              navigations={[
-                {
-                  name: "All Products",
-                  href: "all",
-                },
-                {
-                  name: "Men",
-                  href: "men",
-                },
-                {
-                  name: "Women",
-                  href: "women",
-                },
-                {
-                  name: "Kids",
-                  href: "kids",
-                },
-                {
-                  name: "Accessories",
-                  href: "accessories",
-                },
-              ]}
+          <DynamicTable
+            columns={[
+              { key: "checkbox", label: "", type: "checkbox" as const },
+              { key: "no", label: "NO" },
+              { key: "id", label: "ID", type: "id" },
+              { key: "productName", label: "Product Name" },
+              { key: "category", label: "Category" },
+              { key: "price", label: "Price" },
+              { key: "inStock", label: "Stock" },
+              { key: "createdAt", label: "Date Joined", type: "date" },
+              { key: "status", label: "Status" },
+              { key: "more", label: "More", type: "action" },
+            ]}
+            data={products}
+            onAction={(id: string) => {
+              setViewProduct({
+                status: true,
+                productId: id,
+              });
+            }}
+            title="Add New Products"
+            searchPlaceholder="Search by name, ID..."
+            showViewAll={true}
+            fetchActiveTab={fetchActiveTab}
+            onViewAll={() => setAddNewProduct(true)}
+            navigations={[
+              {
+                name: "All Products",
+                href: "all",
+              },
+              {
+                name: "Men",
+                href: "men",
+              },
+              {
+                name: "Women",
+                href: "women",
+              },
+            ]}
+          />
+          {addNewProduct && (
+            <AddNewProducts
+              setAddNewProduct={setAddNewProduct}
+              products={products}
+              setProducts={setProducts}
             />
-            {addNewProduct && (
-              <AddNewProducts
-                setAddNewProduct={setAddNewProduct}
-                products={products}
-                setProducts={setProducts}
-              />
-            )}
-          </>
-        )}
-      </div>
+          )}
+        </>
+      )}
       {notifications.status && (
         <NotificationSystem
           message={notifications.message}

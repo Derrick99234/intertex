@@ -67,27 +67,27 @@ function AdminLogin() {
 
   return (
     <section className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="flex justify-center max-w-5xl w-full">
-        <div className="bg-secondary w-full">
+      <div className="flex flex-col md:flex-row justify-center max-w-5xl w-full">
+        <div className="bg-secondary w-full md:w-1/2 flex flex-col items-center md:items-start">
           <Image
-            src={"/logo/intertex-new-logo.png"}
+            src={"/logo/intertex-logo.png"}
             alt="Admin Login"
             width={200}
             height={200}
-            className="w-36 h-auto mt-4 ml-4"
+            className="w-36 h-auto mt-6 md:mt-4 md:ml-4"
           />
           <Image
             src={"/images/admin-images/Shopping bag-bro.png"}
             alt="Admin Login"
             width={200}
             height={200}
-            className="w-[30rem] h-auto"
+            className="w-full max-w-md md:max-w-none h-auto"
           />
         </div>
 
         <form
           onSubmit={handleLogin}
-          className="bg-white flex-col py-20 px-10 min-w-md w-full relative"
+          className="bg-white flex-col py-12 sm:py-16 md:py-20 px-6 sm:px-10 w-full md:w-1/2 relative"
         >
           <Link
             href="/login"
@@ -137,7 +137,7 @@ function AdminLogin() {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-secondary text-lg text-white cursor-pointer w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-20"
+            className="bg-secondary text-lg text-white cursor-pointer w-full px-4 py-3 rounded hover:bg-secondary/60 transition duration-200 mt-10 sm:mt-14 md:mt-20"
           >
             {/* {loading ? "Signing in..." : "Sign In"} */}
             sign in
