@@ -12,61 +12,61 @@ function WomenDropdown(props: {
     slug: string;
     items: { label: string; slug: string }[];
   }[] = [
-    {
-      title: "Casual Wear",
-      slug: "casual-wear",
-      items: [
-        { label: "T-shirts", slug: "t-shirts" },
-        { label: "Blouses", slug: "blouses" },
-        { label: "Skirts", slug: "skirts" },
-        { label: "Pants", slug: "pants" },
-        { label: "Dresses", slug: "dresses" },
-      ],
-    },
-    {
-      title: "Formal Wear",
-      slug: "formal-wear",
-      items: [
-        { label: "Suits", slug: "suits" },
-        { label: "Tailored Blazers", slug: "tailored-blazers" },
-        { label: "Dress Shirts", slug: "dress-shirts" },
-        { label: "Office Skirts", slug: "office-skirts" },
-        { label: "Trousers", slug: "trousers" },
-      ],
-    },
-    {
-      title: "Evening Wear",
-      slug: "evening-wear",
-      items: [
-        { label: "Dresses", slug: "dresses" },
-        { label: "Gowns", slug: "gowns" },
-        { label: "Cocktail Dresses", slug: "cocktail-dresses" },
-        { label: "Special Occasion Wear", slug: "special-occasion-wear" },
-        { label: "Trousers", slug: "trousers" },
-      ],
-    },
-    {
-      title: "Outerwear",
-      slug: "outerwear",
-      items: [
-        { label: "Coats", slug: "coats" },
-        { label: "Jackets", slug: "jackets" },
-        { label: "Raincoats", slug: "raincoats" },
-        { label: "Capes", slug: "capes" },
-      ],
-    },
-    {
-      title: "Lingerie and Loungewear",
-      slug: "lingerie-and-loungewear",
-      items: [
-        { label: "Bras", slug: "bras" },
-        { label: "Panties", slug: "panties" },
-        { label: "Sleepwear", slug: "sleepwear" },
-        { label: "Robes", slug: "robes" },
-        { label: "Pyjama Sets", slug: "pyjama-sets" },
-      ],
-    },
-  ];
+      {
+        title: "Casual Wear",
+        slug: "casual-wear",
+        items: [
+          { label: "T-shirts", slug: "t-shirts" },
+          { label: "Blouses", slug: "blouses" },
+          { label: "Skirts", slug: "skirts" },
+          { label: "Pants", slug: "pants" },
+          { label: "Dresses", slug: "dresses" },
+        ],
+      },
+      {
+        title: "Formal Wear",
+        slug: "formal-wear",
+        items: [
+          { label: "Suits", slug: "suits" },
+          { label: "Tailored Blazers", slug: "tailored-blazers" },
+          { label: "Dress Shirts", slug: "dress-shirts" },
+          { label: "Office Skirts", slug: "office-skirts" },
+          { label: "Trousers", slug: "trousers" },
+        ],
+      },
+      {
+        title: "Evening Wear",
+        slug: "evening-wear",
+        items: [
+          { label: "Dresses", slug: "dresses" },
+          { label: "Gowns", slug: "gowns" },
+          { label: "Cocktail Dresses", slug: "cocktail-dresses" },
+          { label: "Special Occasion Wear", slug: "special-occasion-wear" },
+          { label: "Trousers", slug: "trousers" },
+        ],
+      },
+      {
+        title: "Outerwear",
+        slug: "outerwear",
+        items: [
+          { label: "Coats", slug: "coats" },
+          { label: "Jackets", slug: "jackets" },
+          { label: "Raincoats", slug: "raincoats" },
+          { label: "Capes", slug: "capes" },
+        ],
+      },
+      {
+        title: "Lingerie and Loungewear",
+        slug: "lingerie-and-loungewear",
+        items: [
+          { label: "Bras", slug: "bras" },
+          { label: "Panties", slug: "panties" },
+          { label: "Sleepwear", slug: "sleepwear" },
+          { label: "Robes", slug: "robes" },
+          { label: "Pyjama Sets", slug: "pyjama-sets" },
+        ],
+      },
+    ];
 
   return (
     <div
@@ -123,7 +123,6 @@ function WomenDropdown(props: {
             width={500}
             height={500}
             className="rounded-md object-cover"
-            unoptimized
           />
           <Image
             src="https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/A+lady+on+hat.jpg"
@@ -131,7 +130,6 @@ function WomenDropdown(props: {
             width={500}
             height={500}
             className="rounded-md object-cover"
-            unoptimized
           />
         </div>
       </div>
