@@ -9,6 +9,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { MdEdit, MdDelete } from "react-icons/md";
 
 interface Blog {
+  id: string;
   checkbox: boolean;
   no: string;
   initiatorId: string;
@@ -36,7 +37,7 @@ function BlogManagement() {
     const data = await res.json();
 
     if (res.ok) {
-      setBlogs((prev) => prev.filter((blog) => blog.initiatorId !== id));
+      setBlogs((prev) => prev.filter((blog) => blog.id !== id));
       alert("Blog deleted successfully");
     } else {
       setError(data.message || "Failed to delete blog");
@@ -64,6 +65,8 @@ function BlogManagement() {
 
         console.log(data);
         const transformedBlogs = data.map((blog: any, index: number) => ({
+          id: blog._id,
+          no: String(index + 1).padStart(2, "0"),
           initiatorId: `BLG-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           topic: blog.title || "N/A",
           datePosted: new Date(blog.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
@@ -115,9 +118,9 @@ function BlogManagement() {
         data={blogs}
         title="New Blog"
         itemsPerPage={5}
-        onAction={(id: string) => {
-          console.log("Action on order ID:", id);
-        }}
+        onAction={(id: string) =>
+          router.push(`/admin/blog-management/edit?id=${id}`)
+        }
         searchPlaceholder="Search by date, email..."
         showViewAll={true}
         onViewAll={() => router.push("/admin/blog-management/create")}

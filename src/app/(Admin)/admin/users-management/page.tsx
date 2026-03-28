@@ -43,12 +43,13 @@ function UserManagement() {
         if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
         const transformedUsers = data.map((user: any, index: number) => ({
+          no: String(index + 1).padStart(2, "0"),
           userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           fullName: user.fullName || "N/A",
           id: user._id,
           email: user.email,
           dateJoined: new Date(user.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
-          totalOrders: Math.floor(Math.random() * 20), // simulate total orders
+          totalOrders: user.totalOrders ?? user.orders?.length ?? 0,
           more: <IoEyeOutline />,
         }));
 

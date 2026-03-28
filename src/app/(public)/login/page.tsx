@@ -116,7 +116,7 @@ function Login() {
         <p className="text-[10.91px] text-gray-600 mb-4 font-semibold text-right">
           Forget password?{" "}
           <Link
-            href={"/password-reset"}
+            href={"/reset-password"}
             className="text-secondary hover:underline"
           >
             Reset now

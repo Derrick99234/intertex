@@ -7,73 +7,60 @@ import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
 function Inventory() {
-  // const inventory = [
-  //   {
-  //     checkbox: true,
-  //     no: "01",
-  //     productId: "ORD001",
-  //     productName: "Classic T-Shirt",
-  //     totalItems: 10,
-  //     itemsLeft: 5,
-  //     totalSold: 5,
-  //     dateAdded: "12-12-2024",
-  //     more: <IoEyeOutline />,
-  //   },
-  // ];
-  const [viewOrder, setViewOrder] = useState({
+  const [viewInventory, setViewInventory] = useState({
     status: false,
-    productId: "",
+    product: null as any,
   });
   const [productTypes, setProductTypes] = useState<any[]>([]);
-
   const [filteredProductTypes, setFilteredProductTypes] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState("all-inventory");
 
-  async function getProductTypes() {
-    const res = await fetch(`${API_BASE_URL}/types`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      next: { revalidate: 300 },
-    });
-    const { data } = await res.json();
-    const formatted = data.map((product: any, index: number) => ({
-      checkbox: false,
-      no: String(index + 1).padStart(2, "0"),
-      productId: product._id,
-      productName: product.name,
-      totalItems: product.totalProducts,
-      totalSold: product.totalSold,
-      dateAdded: new Date(product.createdAt).toLocaleDateString(),
-      more: <IoEyeOutline className="cursor-pointer" />,
-    }));
-    setProductTypes(formatted);
-    console.log(`Fetched Product Type: ${productTypes}`);
-  }
-
   useEffect(() => {
+    const getProductTypes = async () => {
+      const res = await fetch(`${API_BASE_URL}/types`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+        next: { revalidate: 300 },
+      });
+      const { data } = await res.json();
+      const formatted = data.map((product: any, index: number) => ({
+        id: product._id,
+        checkbox: false,
+        no: String(index + 1).padStart(2, "0"),
+        productId: product._id,
+        productName: product.name,
+        totalItems: product.totalProducts,
+        totalSold: product.totalSold,
+        dateAdded: new Date(product.createdAt).toLocaleDateString("en-GB"),
+        more: <IoEyeOutline className="cursor-pointer" />,
+        product,
+      }));
+      setProductTypes(formatted);
+    };
+
     getProductTypes();
   }, []);
 
   useEffect(() => {
     let filteredData = productTypes;
     if (activeTab === "low-inventory") {
-      // Filter for low inventory (totalProducts <= 5)
-      filteredData = productTypes.filter((p) => p.totalItems <= 5);
+      filteredData = productTypes.filter((product) => product.totalItems <= 5);
+    } else if (activeTab === "wishlist") {
+      filteredData = [];
     }
 
     setFilteredProductTypes(filteredData);
   }, [productTypes, activeTab]);
 
-  const fetchActiveTab = (tab: string) => {
-    setActiveTab(tab);
-  };
-
   return (
     <section className="py-5">
-      {viewOrder.status ? (
-        <ViewInventory />
+      {viewInventory.status ? (
+        <ViewInventory
+          product={viewInventory.product}
+          onBack={() => setViewInventory({ status: false, product: null })}
+        />
       ) : (
         <div>
           <DisplayStats />
@@ -89,16 +76,19 @@ function Inventory() {
               { key: "more", label: "More", type: "action" },
             ]}
             data={filteredProductTypes}
-            title="Orders"
+            title="Inventory"
             itemsPerPage={5}
             onAction={(id: string) => {
-              setViewOrder({
+              const selectedProduct = filteredProductTypes.find(
+                (product) => product.id === id
+              );
+              setViewInventory({
                 status: true,
-                productId: id,
+                product: selectedProduct?.product ?? null,
               });
             }}
-            fetchActiveTab={fetchActiveTab}
-            searchPlaceholder="Search by date, email..."
+            fetchActiveTab={setActiveTab}
+            searchPlaceholder="Search by product name or ID..."
             showViewAll={false}
             navigations={[
               {

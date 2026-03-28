@@ -91,6 +91,8 @@ import { IoEyeOutline } from "react-icons/io5";
 // ];
 
 interface User {
+  id: string;
+  no: string;
   userId: string;
   fullName: string;
   email: string;
@@ -142,11 +144,13 @@ function Dashboard() {
         if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
         const transformedUsers = data.map((user: any, index: number) => ({
+          id: user._id,
+          no: String(index + 1).padStart(2, "0"),
           userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           fullName: user.fullName || "N/A",
           email: user.email,
           dateJoined: new Date(user.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
-          totalOrders: Math.floor(Math.random() * 20), // simulate total orders
+          totalOrders: user.totalOrders ?? user.orders?.length ?? 0,
           more: <IoEyeOutline />,
         }));
 
@@ -177,13 +181,15 @@ function Dashboard() {
           { key: "email", label: "Email", type: "email" as const },
           { key: "dateJoined", label: "Date Joined", type: "date" as const },
           { key: "totalOrders", label: "Total Orders" },
-          { key: "more", label: "More" },
+          { key: "more", label: "More", type: "action" as const },
         ]}
         data={users}
         title="View All Users"
         itemsPerPage={5}
         searchPlaceholder="Search by date, email..."
-        onAction={() => console.log("Click on action button")}
+        onAction={(userId: string) =>
+          router.push(`/admin/users-management/user-profile?id=${userId}`)
+        }
         showViewAll={true}
         onViewAll={() => router.push("/admin/users-management")}
       />

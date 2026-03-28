@@ -3,60 +3,87 @@ import DynamicTable from "@/components/admin/dynamic-table";
 import ViewOrder from "@/components/admin/order/view-order";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
-import React, { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
+
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(amount);
 
 function OrderManagement() {
   const [viewOrder, setViewOrder] = useState({
     status: false,
-    orderId: "",
+    order: null as any,
   });
   const [error, setError] = useState("");
   const [orders, setOrders] = useState<any[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("allOrders");
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("all-orders");
+  const router = useRouter();
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/orders`);
-      if (!res.ok) throw new Error("Failed to fetch orders");
-      const data = await res.json();
-      // Format for table
-      const formatted = data.map((order: any, index: number) => ({
-        checkbox: false,
-        no: String(index + 1).padStart(2, "0"),
-        id: order._id,
-        userId: order.userId,
-        item: order.products.length,
-        deliveryMethod: order.deliveryMethod,
-        deliveryInformation: order.deliveryInformation,
-        amount: `₦${order.amount}`,
-        date: new Date(order.date).toLocaleDateString(),
-        status: order.status,
-        more: <IoEyeOutline className="cursor-pointer" />,
-      }));
-
-      setOrders(formatted);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) {
+          router.push("/admin");
+          return;
+        }
+
+        const res = await fetch(`${API_BASE_URL}/orders`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch orders");
+
+        const data = await res.json();
+        const formatted = data.map((order: any, index: number) => ({
+          checkbox: false,
+          no: String(index + 1).padStart(2, "0"),
+          id: order._id,
+          userId:
+            order.userId?.fullName ||
+            order.userId?.email ||
+            order.userId?._id ||
+            order.userId ||
+            "N/A",
+          items: order.products?.length ?? 0,
+          deliveryMethod: order.deliveryMethod || "N/A",
+          deliveryInformation: order.deliveryInformation,
+          amount: formatCurrency(order.amount ?? 0),
+          date: new Date(order.date || order.createdAt).toLocaleDateString(
+            "en-GB"
+          ),
+          status: order.status || "pending",
+          more: <IoEyeOutline className="cursor-pointer" />,
+          order,
+        }));
+
+        setOrders(formatted);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch orders");
+      }
+    };
+
     fetchOrders();
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     let filtered = orders;
     if (activeTab === "pending-orders") {
-      filtered = orders.filter((o) => o.status === "pending");
-    } else if (activeTab === "succesful-orders") {
-      filtered = orders.filter((o) => o.status === "successful");
+      filtered = orders.filter((order) => order.status === "pending");
+    } else if (activeTab === "successful-orders") {
+      filtered = orders.filter((order) => order.status === "successful");
     } else if (activeTab === "failed-orders") {
-      filtered = orders.filter((o) => o.status === "cancelled");
+      filtered = orders.filter((order) =>
+        ["cancelled", "failed"].includes(order.status)
+      );
     }
 
     setFilteredOrders(filtered);
@@ -71,20 +98,17 @@ function OrderManagement() {
     );
   }
 
-  const fetchActiveTab = (tab: string) => {
-    setActiveTab(tab);
-  };
-
-  const handleViewOrder = () => {
-    const order = orders.find((o) => o.id === viewOrder.orderId);
-    if (!order) return <p>Order not found</p>;
-    return <ViewOrder order={order} />;
-  };
-
   return (
     <section className="py-5">
       {viewOrder.status ? (
-        handleViewOrder()
+        viewOrder.order ? (
+          <ViewOrder
+            order={viewOrder.order}
+            onBack={() => setViewOrder({ status: false, order: null })}
+          />
+        ) : (
+          <p>Order not found</p>
+        )
       ) : (
         <div>
           <DisplayStats />
@@ -95,6 +119,7 @@ function OrderManagement() {
               { key: "userId", label: "User ID" },
               { key: "id", label: "Order ID" },
               { key: "deliveryMethod", label: "Delivery Method" },
+              { key: "items", label: "Items" },
               { key: "amount", label: "Amount" },
               { key: "date", label: "Date" },
               { key: "status", label: "Status" },
@@ -104,29 +129,30 @@ function OrderManagement() {
             title="Orders"
             itemsPerPage={5}
             onAction={(id: string) => {
+              const selectedOrder = filteredOrders.find((order) => order.id === id);
               setViewOrder({
                 status: true,
-                orderId: id,
+                order: selectedOrder?.order ?? null,
               });
             }}
-            searchPlaceholder="Search by date, email..."
+            searchPlaceholder="Search by date, user, order ID..."
             showViewAll={false}
-            fetchActiveTab={fetchActiveTab}
+            fetchActiveTab={setActiveTab}
             navigations={[
               {
                 name: "All Orders",
-                href: "allOrder",
+                href: "all-orders",
               },
               {
                 name: "Pending Orders",
                 href: "pending-orders",
               },
               {
-                name: "Successful orders",
-                href: "succesful-orders",
+                name: "Successful Orders",
+                href: "successful-orders",
               },
               {
-                name: "Failed orders",
+                name: "Failed Orders",
                 href: "failed-orders",
               },
             ]}

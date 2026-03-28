@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ClientResetForm() {
@@ -7,6 +8,7 @@ export default function ClientResetForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get("token");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +35,7 @@ export default function ClientResetForm() {
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
       alert("Password reset successful!");
+      router.push("/admin");
     } catch (err: any) {
       alert(err.message);
     }
