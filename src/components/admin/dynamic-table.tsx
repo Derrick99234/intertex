@@ -85,6 +85,23 @@ const startOfDay = (date: Date) =>
 const endOfDay = (date: Date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
 
+const getRowActionId = (item: Record<string, unknown>) => {
+  const candidates = [
+    item.id,
+    item._id,
+    item.productId,
+    item.orderId,
+    item.userId,
+    item.initiatorId,
+  ];
+
+  const match = candidates.find(
+    (value) => typeof value === "string" && value.trim().length > 0
+  );
+
+  return typeof match === "string" ? match : "";
+};
+
 export default function DynamicTable({
   title,
   columns,
@@ -173,7 +190,12 @@ export default function DynamicTable({
         return (
           <button
             className="text-gray-600 hover:text-gray-800 mr-2 cursor-pointer"
-            onClick={() => onAction(item.id)}
+            onClick={() => {
+              const actionId = getRowActionId(item);
+              if (actionId) {
+                onAction(actionId);
+              }
+            }}
           >
             {value}
           </button>
@@ -296,9 +318,12 @@ export default function DynamicTable({
 
         <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
           <span>
-            Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredData.length)} of{" "}
-            {filteredData.length}
+            {filteredData.length === 0
+              ? "Showing 0 to 0 of 0"
+              : `Showing ${startIndex + 1} to ${Math.min(
+                  startIndex + itemsPerPage,
+                  filteredData.length
+                )} of ${filteredData.length}`}
           </span>
           <div className="flex items-center space-x-2">
             <button

@@ -23,33 +23,31 @@ export default function LayoutWrapper({
   }, [pathname]);
 
   return (
-    <html lang="en">
-      <body>
-        {shouldRenderLayout ? (
-          <>
-            <AdminHeader
-              onToggleSidebar={
-                shouldRenderSidebar
-                  ? () => setIsSidebarOpen((prev) => !prev)
-                  : undefined
-              }
+    <>
+      {shouldRenderLayout ? (
+        <>
+          <AdminHeader
+            onToggleSidebar={
+              shouldRenderSidebar
+                ? () => setIsSidebarOpen((prev) => !prev)
+                : undefined
+            }
+          />
+          {shouldRenderSidebar && (
+            <AdminSidebar
+              isOpen={isSidebarOpen}
+              onClose={() => setIsSidebarOpen(false)}
             />
-            {shouldRenderSidebar && (
-              <AdminSidebar
-                isOpen={isSidebarOpen}
-                onClose={() => setIsSidebarOpen(false)}
-              />
-            )}
-            <main
-              className={`pt-20 ${shouldRenderSidebar ? "pl-0 md:pl-64" : ""}`}
-            >
-              <div className="px-4 sm:px-6">{children}</div>
-            </main>
-          </>
-        ) : (
-          children
-        )}
-      </body>
-    </html>
+          )}
+          <main
+            className={`pt-20 ${shouldRenderSidebar ? "pl-0 md:pl-64" : ""}`}
+          >
+            <div className="px-4 sm:px-6">{children}</div>
+          </main>
+        </>
+      ) : (
+        children
+      )}
+    </>
   );
 }

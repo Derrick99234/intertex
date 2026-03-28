@@ -130,7 +130,10 @@ function AdminLogin() {
             className="mb-4 p-2 border border-gray-300 rounded w-full"
           />
 
-          <Link href="#" className="text-right text-sm font-semibold block">
+          <Link
+            href="/admin/reset-password"
+            className="text-right text-sm font-semibold block"
+          >
             Forgot password?
           </Link>
 
