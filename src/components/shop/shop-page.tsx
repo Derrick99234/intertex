@@ -55,7 +55,7 @@ function ShopLandingPage({
 
     const sortQuery = searchParams.get("sort") || "newest";
     setSort(sortQuery);
-  }, [searchParams, sort]);
+  }, [searchParams]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -98,7 +98,7 @@ function ShopLandingPage({
   };
 
   const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
-    {}
+    {},
   );
 
   const router = useRouter();
