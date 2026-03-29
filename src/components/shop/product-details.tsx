@@ -279,8 +279,8 @@ function ProductDetails({
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(item),
-          })
-        )
+          }),
+        ),
       );
 
       if (responses.some((res) => res.status === 401)) {
@@ -383,16 +383,16 @@ function ProductDetails({
           </h1>
 
           <div className="text-[22px] md:text-3xl font-bold text-[#184B2E] mb-2">
-            ${product.price.toFixed(2)}
+            &#x20A6;{product.price.toFixed(2)}
           </div>
           <div className=" text-[#152F24] font-bold text-[14px] md:text-base">
             Please select the size you want
           </div>
           <div className="flex gap-2 mb-2 flex-wrap justify-between ">
             <div className="flex gap-2 flex-wrap items-end mb-8 md:mt-0 mt-2 md:mb-0">
-              {product.inStock.map(({ size, quantity }) => (
+              {product.inStock.map(({ size, quantity }, index) => (
                 <button
-                  key={size}
+                  key={size + quantity + index}
                   disabled={quantity === 0} // disable if out of stock
                   className={`border px-4 py-2 w-[34px] h-[34px] rounded-[3px] font-bold text-[13px] flex items-center justify-center transition-colors
       ${
@@ -648,14 +648,14 @@ function ProductDetails({
                         {size === "S"
                           ? "Small Size (S)"
                           : size === "M"
-                          ? "Medium Size (M)"
-                          : size === "L"
-                          ? "Large Size (L)"
-                          : size === "XL"
-                          ? "X-Large Size (XL)"
-                          : size === "XXL"
-                          ? "XX-Large Size (XXL)"
-                          : `${size} Size (${size})`}
+                            ? "Medium Size (M)"
+                            : size === "L"
+                              ? "Large Size (L)"
+                              : size === "XL"
+                                ? "X-Large Size (XL)"
+                                : size === "XXL"
+                                  ? "XX-Large Size (XXL)"
+                                  : `${size} Size (${size})`}
                       </div>
                       <div className="md:text-base text-xs text-[#152F24]">
                         {quantity} products left
