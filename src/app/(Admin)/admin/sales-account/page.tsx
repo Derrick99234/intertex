@@ -26,7 +26,7 @@ function SaleAccountManagement() {
   return (
     <section className="py-5">
       {viewOrder.status ? (
-        <ViewOrder />
+        <ViewOrder order={{ id: viewOrder.orderId }} onBack={() => setViewOrder({ status: false, orderId: "" })} />
       ) : (
         <div>
           <DisplayStats />
