@@ -1,51 +1,59 @@
-// components/OtpInput.tsx
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
-export default function OtpInput() {
+export default function OtpInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    inputsRef.current[0]?.focus();
+  }, []);
 
   const handleChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = e.target.value;
+    const nextValue = event.target.value.replace(/\D/g, "").slice(-1);
+    const digits = value.padEnd(6, " ").split("");
+    digits[index] = nextValue || " ";
+    const normalized = digits.join("").replace(/\s/g, "");
+    onChange(normalized);
 
-    // Move to next input if a digit is entered
-    if (value.length === 1 && index < inputsRef.current.length - 1) {
+    if (nextValue && index < inputsRef.current.length - 1) {
       inputsRef.current[index + 1]?.focus();
-    }
-
-    // Only allow numbers
-    if (!/^\d?$/.test(value)) {
-      e.target.value = "";
     }
   };
 
   const handleKeyDown = (
     index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
+    event: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
+    if (event.key === "Backspace" && !value[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
   return (
     <div className="flex justify-center gap-4 my-5">
-      {Array.from({ length: 6 }, (_, i) => (
+      {Array.from({ length: 6 }, (_, index) => (
         <input
-          key={i}
+          key={index}
           type="text"
           maxLength={1}
           inputMode="numeric"
+          value={value[index] ?? ""}
           className="w-10 h-12 text-2xl text-center border-b-2 border-gray-300 focus:outline-none focus:border-black"
-          ref={(el) => {
-            inputsRef.current[i] = el;
+          ref={(element) => {
+            inputsRef.current[index] = element;
           }}
-          onChange={(e) => handleChange(i, e)}
-          onKeyDown={(e) => handleKeyDown(i, e)}
+          onChange={(event) => handleChange(index, event)}
+          onKeyDown={(event) => handleKeyDown(index, event)}
         />
       ))}
     </div>
