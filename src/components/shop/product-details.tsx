@@ -52,7 +52,10 @@ function ProductDetails({
   }>({});
   const [moreLikeThis, setMoreLikeThis] = useState<Product[]>([]);
   const [relatedImgIdxs, setRelatedImgIdxs] = useState<number[]>([]);
-  const [showAllRelated, setShowAllRelated] = useState(false);
+  const [relatedPage, setRelatedPage] = useState(1);
+  const relatedPerPage = 6;
+  const relatedTotalPages = Math.ceil(moreLikeThis.length / relatedPerPage);
+  const relatedStart = (relatedPage - 1) * relatedPerPage;
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
     status: false,
@@ -352,12 +355,13 @@ function ProductDetails({
               More like this
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {(showAllRelated ? moreLikeThis : moreLikeThis.slice(0, 6)).map((item, index) => {
+              {moreLikeThis.slice(relatedStart, relatedStart + relatedPerPage).map((item, index) => {
                 const productImages = [
                   item.imageUrl,
                   ...(item.otherImages ?? []),
                 ].filter(Boolean);
-                const imageIndex = relatedImgIdxs[index] || 0;
+                const realIdx = relatedStart + index;
+                const imgIdx = relatedImgIdxs[realIdx] ?? 0;
 
                 return (
                   <div
@@ -369,14 +373,14 @@ function ProductDetails({
                       onClick={() =>
                         setRelatedImgIdxs((current) => {
                           const next = [...current];
-                          next[index] = (imageIndex + 1) % productImages.length;
+                          next[realIdx] = (imgIdx + 1) % productImages.length;
                           return next;
                         })
                       }
                     >
                       <div className="relative w-full aspect-[3/4] md:aspect-[4/5] bg-gray-50">
                         <Image
-                          src={productImages[imageIndex]}
+                          src={productImages[imgIdx]}
                           alt={item.productName}
                           fill
                           className="object-contain p-4"
@@ -396,12 +400,12 @@ function ProductDetails({
                                 event.stopPropagation();
                                 setRelatedImgIdxs((current) => {
                                   const next = [...current];
-                                  next[index] = dotIndex;
+                                  next[realIdx] = dotIndex;
                                   return next;
                                 });
                               }}
                             >
-                              {imageIndex === dotIndex ? (
+                              {imgIdx === dotIndex ? (
                                 <span className="block w-5 h-1.5 bg-[#152F24] rounded-full" />
                               ) : (
                                 <span className="block w-1.5 h-1.5 bg-gray-300 rounded-full" />
@@ -442,14 +446,52 @@ function ProductDetails({
               })}
             </div>
 
-            {moreLikeThis.length > 6 && (
-              <div className="flex justify-center mt-6">
+            {moreLikeThis.length > relatedPerPage && (
+              <div className="flex justify-center items-center gap-2 mt-6">
                 <button
-                  type="button"
-                  onClick={() => setShowAllRelated((prev) => !prev)}
-                  className="border-2 border-[#1739B7] text-[#1739B7] hover:bg-[#1739B7] hover:text-white px-8 py-2.5 rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                  onClick={() => setRelatedPage((p) => Math.max(1, p - 1))}
+                  disabled={relatedPage === 1}
+                  className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
                 >
-                  {showAllRelated ? "Show Less" : `View More (${moreLikeThis.length - 6})`}
+                  Prev
+                </button>
+                {(() => {
+                  const tp = relatedTotalPages;
+                  const cp = relatedPage;
+                  if (tp <= 7) return Array.from({ length: tp }, (_, i) => i + 1);
+                  const pages: (number | "...")[] = [1];
+                  if (cp > 3) pages.push("...");
+                  const start = Math.max(2, cp - 1);
+                  const end = Math.min(tp - 1, cp + 1);
+                  for (let i = start; i <= end; i++) pages.push(i);
+                  if (cp < tp - 2) pages.push("...");
+                  if (tp > 1) pages.push(tp);
+                  return pages;
+                })().map((page, i) =>
+                  page === "..." ? (
+                    <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center text-sm text-gray-400">
+                      ...
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => { setRelatedPage(page); setRelatedImgIdxs((current) => [...current]); }}
+                      className={`w-8 h-8 rounded text-sm font-medium transition-colors cursor-pointer ${
+                        relatedPage === page
+                          ? "bg-[#152F24] text-white"
+                          : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+                <button
+                  onClick={() => setRelatedPage((p) => Math.min(relatedTotalPages, p + 1))}
+                  disabled={relatedPage === relatedTotalPages}
+                  className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Next
                 </button>
               </div>
             )}
