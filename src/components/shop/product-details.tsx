@@ -79,10 +79,10 @@ function ProductDetails({
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/products/type/${product.productType.slug}`,
+          `${API_BASE_URL}/products/type/${product.productType.slug}?limit=1000`,
         );
-        const data = await res.json();
-        const relatedProducts = (data.products ?? []).filter(
+        const json = await res.json();
+        const relatedProducts = (json?.data ?? json?.products ?? []).filter(
           (item: Product) => item._id !== product._id,
         );
         setMoreLikeThis(relatedProducts);

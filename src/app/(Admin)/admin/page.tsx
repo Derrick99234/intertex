@@ -56,6 +56,7 @@ function AdminLogin() {
 
       const { accessToken } = await res.json();
       localStorage.setItem("adminToken", accessToken);
+      document.cookie = `adminToken=${accessToken}; path=/; max-age=86400; SameSite=Lax`;
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);

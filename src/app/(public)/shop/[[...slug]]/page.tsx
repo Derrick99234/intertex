@@ -14,19 +14,28 @@ export default async function ShopPage(props: {
   const { slug } = await props.params;
   const searchParams = await props.searchParams;
 
-  const searchTerm = searchParams?.keyword || ""; // Default to empty string if not provided
+  const searchTerm = searchParams?.keyword || "";
+  const page = parseInt(searchParams?.page || "1", 10) || 1;
   const slugArray = slug ?? [];
 
-  // Helper: fetch products from backend
-  async function fetchProducts(endpoint: string, query?: string) {
+  async function fetchProducts(
+    endpoint: string,
+    query?: string,
+    pageNum?: number,
+  ): Promise<{ products: any[]; totalPages: number }> {
     let url = endpoint;
-    if (query) {
-      const queryParams = new URLSearchParams({ keyword: query });
-      url += `?${queryParams.toString()}`;
-    }
+    const params = new URLSearchParams();
+    if (query) params.set("keyword", query);
+    params.set("limit", "12");
+    if (pageNum) params.set("page", String(pageNum));
+    const qs = params.toString();
+    if (qs) url += `?${qs}`;
     const res = await fetch(url);
     const data = await res.json();
-    return data ?? [];
+    return {
+      products: data?.data ?? data?.products ?? [],
+      totalPages: data?.totalPages ?? 1,
+    };
   }
 
   // Helper: extract unique categories from subcategories
@@ -40,21 +49,34 @@ export default async function ShopPage(props: {
 
   // Handle search if searchTerm exists
   if (searchTerm) {
-    const products = await fetchProducts(
+    const { products, totalPages } = await fetchProducts(
       `${API_BASE_URL}/products/search`,
-      searchTerm
+      searchTerm,
+      page,
     );
 
     const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
     const tabData: Subcategory[] = await tabsRes.json();
     const allCategoryFilter = getUniqueCategories(tabData);
 
-    return <ShopLandingPage products={products} tabs={[]} slug={slugArray} />;
+    return (
+      <ShopLandingPage
+        products={products}
+        tabs={[]}
+        slug={slugArray}
+        currentPage={page}
+        totalPages={totalPages}
+      />
+    );
   }
 
   // If no search, handle normal slug-based routing
   if (slugArray.length === 0) {
-    const { products } = await fetchProducts(`${API_BASE_URL}/products`);
+    const { products, totalPages } = await fetchProducts(
+      `${API_BASE_URL}/products`,
+      undefined,
+      page,
+    );
     const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
     const tabData: Subcategory[] = await tabsRes.json();
     const allCategoryFilter = getUniqueCategories(tabData);
@@ -64,6 +86,8 @@ export default async function ShopPage(props: {
         products={products ?? []}
         tabs={allCategoryFilter}
         slug={slugArray}
+        currentPage={page}
+        totalPages={totalPages}
       />
     );
   }
@@ -71,14 +95,16 @@ export default async function ShopPage(props: {
   if (slugArray.length === 1) {
     const categorySlug = slugArray[0];
     const res = await fetch(
-      `${API_BASE_URL}/products/category/${categorySlug}`
+      `${API_BASE_URL}/products/category/${categorySlug}?limit=12&page=${page}`,
     );
-    const { products } = await res.json();
+    const data = await res.json();
+    const products = data?.data ?? data?.products ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     const subcategoriesRes = await fetch(`${API_BASE_URL}/subcategories`);
     const tabData: Subcategory[] = await subcategoriesRes.json();
     const allSubcategories = tabData.filter(
-      (sub) => sub.category.slug === categorySlug
+      (sub) => sub.category.slug === categorySlug,
     );
 
     return (
@@ -86,6 +112,8 @@ export default async function ShopPage(props: {
         products={products ?? []}
         tabs={allSubcategories ?? []}
         slug={slugArray}
+        currentPage={page}
+        totalPages={totalPages}
       />
     );
   }
@@ -93,16 +121,18 @@ export default async function ShopPage(props: {
   if (slugArray.length === 2) {
     const [category, subcategory] = slugArray;
     const res = await fetch(
-      `${API_BASE_URL}/products/subcategory/${category}/${subcategory}`
+      `${API_BASE_URL}/products/subcategory/${category}/${subcategory}?limit=12&page=${page}`,
     );
-    const { products } = await res.json();
+    const data = await res.json();
+    const products = data?.data ?? data?.products ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     const typesRes = await fetch(`${API_BASE_URL}/types`);
     const { data: typeData } = await typesRes.json();
     const allTypes = typeData.filter(
       (type: Type) =>
         type.subcategory.slug === subcategory &&
-        type.subcategory.category.slug === category
+        type.subcategory.category.slug === category,
     );
 
     return (
@@ -110,17 +140,29 @@ export default async function ShopPage(props: {
         products={products ?? []}
         tabs={allTypes ?? []}
         slug={slugArray}
+        currentPage={page}
+        totalPages={totalPages}
       />
     );
   }
 
   if (slugArray.length === 3) {
     const typeSlug = slugArray[2];
-    const res = await fetch(`${API_BASE_URL}/products/type/${typeSlug}`);
-    const { products } = await res.json();
+    const res = await fetch(
+      `${API_BASE_URL}/products/type/${typeSlug}?limit=12&page=${page}`,
+    );
+    const data = await res.json();
+    const products = data?.data ?? data?.products ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     return (
-      <ShopLandingPage products={products ?? []} tabs={[]} slug={slugArray} />
+      <ShopLandingPage
+        products={products ?? []}
+        tabs={[]}
+        slug={slugArray}
+        currentPage={page}
+        totalPages={totalPages}
+      />
     );
   }
 

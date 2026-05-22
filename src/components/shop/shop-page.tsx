@@ -38,26 +38,20 @@ function ShopLandingPage({
   products,
   tabs,
   slug,
+  currentPage,
+  totalPages,
 }: {
   products: any[];
   tabs: any[];
   slug: string[];
+  currentPage: number;
+  totalPages: number;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sort, setSort] = useState<string>("newest");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [products.length]);
 
   useEffect(() => {
     const searchQuery = searchParams.get("keyword") || "";
@@ -306,7 +300,7 @@ function ShopLandingPage({
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              {paginatedProducts.map((product) => {
+              {products.map((product: any) => {
                 const imgIdx = imageIndexes[product._id];
                 const allImages = [product.imageUrl, ...(product?.otherImages || [])].filter(Boolean);
                 return (
@@ -385,7 +379,11 @@ function ShopLandingPage({
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-2 mt-8 mb-4">
                 <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  onClick={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("page", String(currentPage - 1));
+                    router.push(`${pathname}?${params.toString()}`);
+                  }}
                   disabled={currentPage === 1}
                   className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
                 >
@@ -399,7 +397,11 @@ function ShopLandingPage({
                   ) : (
                     <button
                       key={page}
-                      onClick={() => setCurrentPage(page)}
+                      onClick={() => {
+                        const params = new URLSearchParams(searchParams.toString());
+                        params.set("page", String(page));
+                        router.push(`${pathname}?${params.toString()}`);
+                      }}
                       className={`w-8 h-8 rounded text-sm font-medium transition-colors cursor-pointer ${
                         currentPage === page
                           ? "bg-[#152F24] text-white"
@@ -411,9 +413,11 @@ function ShopLandingPage({
                   ),
                 )}
                 <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                  }
+                  onClick={() => {
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.set("page", String(currentPage + 1));
+                    router.push(`${pathname}?${params.toString()}`);
+                  }}
                   disabled={currentPage === totalPages}
                   className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
                 >
