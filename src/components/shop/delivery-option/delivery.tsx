@@ -52,8 +52,6 @@ function Delivery({
         phoneNumber: formData.phoneNumber,
         secondPhoneNumber: formData.secondPhoneNumber,
         additionalInformation: formData.additionalInformation,
-        region: formData.region,
-        city: formData.city,
         isDefault: formData.isDefault,
         user: addressData.user._id,
       }),
@@ -107,7 +105,7 @@ function Delivery({
   ]);
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    null
+    null,
   );
   useEffect(() => {
     const fetchBilingInfo = async () => {
@@ -189,10 +187,6 @@ function Delivery({
 
   return (
     <div className="max-w-lg mx-auto">
-      <div className="flex justify-between items-center my-4 text-sm">
-        <h3 className="flex justify-between text-gray-600">Delivary Fee</h3>
-        <span className="font-semibold">$50.00</span>
-      </div>
       {/* <input
         type="text"
         placeholder="Delivery Address"

@@ -52,6 +52,7 @@ function ProductDetails({
   }>({});
   const [moreLikeThis, setMoreLikeThis] = useState<Product[]>([]);
   const [relatedImgIdxs, setRelatedImgIdxs] = useState<number[]>([]);
+  const [showAllRelated, setShowAllRelated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
     status: false,
@@ -61,7 +62,7 @@ function ProductDetails({
 
   const showNotification = (
     message: string,
-    type: "success" | "error" | "info"
+    type: "success" | "error" | "info",
   ) => {
     setNotifications({ status: true, message, type });
     window.setTimeout(() => {
@@ -75,11 +76,11 @@ function ProductDetails({
 
       try {
         const res = await fetch(
-          `${API_BASE_URL}/products/type/${product.productType.slug}`
+          `${API_BASE_URL}/products/type/${product.productType.slug}`,
         );
         const data = await res.json();
         const relatedProducts = (data.products ?? []).filter(
-          (item: Product) => item._id !== product._id
+          (item: Product) => item._id !== product._id,
         );
         setMoreLikeThis(relatedProducts);
       } catch {
@@ -122,7 +123,9 @@ function ProductDetails({
     }),
   ];
 
-  const images = [product.imageUrl, ...(product.otherImages ?? [])].filter(Boolean);
+  const images = [product.imageUrl, ...(product.otherImages ?? [])].filter(
+    Boolean,
+  );
 
   const handleAddToCart = async () => {
     try {
@@ -155,8 +158,8 @@ function ProductDetails({
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(item),
-          })
-        )
+          }),
+        ),
       );
 
       if (responses.some((response) => response.status === 401)) {
@@ -167,7 +170,7 @@ function ProductDetails({
       if (!responses.every((response) => response.ok)) {
         showNotification(
           "Something went wrong while adding to cart. Please try again.",
-          "error"
+          "error",
         );
         return;
       }
@@ -322,26 +325,34 @@ function ProductDetails({
 
       <div className="bg-[#152F24] md:h-[43px] h-[38px] w-full mt-10 mb-4 rounded-sm" />
       <div className="mb-8">
-        <h2 className="md:text-[28px] text-[22px] font-bold text-[#152F24] mb-2">
-          Product Description
-        </h2>
-        <p className="md:text-[19px] text-xs font-normal text-[#00041D] max-w-3xl mb-4">
-          {product.description}
-        </p>
-        <h3 className="md:text-[28px] text-[22px] font-bold text-[#152F24] mb-2">
-          Features
-        </h3>
-        <p className="md:text-[19px] text-xs font-normal text-[#00041D] max-w-3xl mb-4">
-          {product.features}
-        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+          <div className="bg-gray-50 rounded-xl p-5 md:p-8">
+            <h2 className="md:text-[25px] text-lg font-bold text-[#152F24] mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-[#1739B7] rounded-full inline-block" />
+              Product Description
+            </h2>
+            <p className="md:text-base text-sm font-normal text-[#00041D] leading-relaxed">
+              {product.description}
+            </p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-5 md:p-8">
+            <h3 className="md:text-[25px] text-lg font-bold text-[#152F24] mb-3 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-[#1739B7] rounded-full inline-block" />
+              Features
+            </h3>
+            <p className="md:text-base text-sm font-normal text-[#00041D] leading-relaxed">
+              {product.features}
+            </p>
+          </div>
+        </div>
 
         {moreLikeThis.length > 0 && (
-          <div className="mb-8">
+          <div className="mt-8 mb-8">
             <h2 className="md:text-[28px] text-[22px] font-bold text-[#152F24] mb-6">
               More like this
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 items-center justify-between">
-              {moreLikeThis.map((item, index) => {
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {(showAllRelated ? moreLikeThis : moreLikeThis.slice(0, 6)).map((item, index) => {
                 const productImages = [
                   item.imageUrl,
                   ...(item.otherImages ?? []),
@@ -351,10 +362,10 @@ function ProductDetails({
                 return (
                   <div
                     key={item._id}
-                    className="md:w-[405px] w-[166px] md:h-[573px] h-[245px] group rounded-xl flex flex-col items-center justify-between transition hover:shadow-lg cursor-default"
+                    className="group rounded-xl flex flex-col bg-white border border-gray-100 overflow-hidden transition hover:shadow-lg h-full cursor-default"
                   >
                     <div
-                      className="w-full md:h-[506px] h-[208px] flex flex-col items-center justify-between bg-gray-100 select-none rounded-[6px]"
+                      className="w-full select-none cursor-pointer"
                       onClick={() =>
                         setRelatedImgIdxs((current) => {
                           const next = [...current];
@@ -362,62 +373,86 @@ function ProductDetails({
                           return next;
                         })
                       }
-                      style={{ cursor: "pointer" }}
                     >
-                      <Image
-                        src={productImages[imageIndex]}
-                        alt={item.productName}
-                        width={260}
-                        height={320}
-                        className="object-cover md:w-[405px] w-[156px] md:h-[490px] h-[190px]"
-                      />
-                      <div className="flex gap-2 md:w-[73px] w-[57px] md:h-[40px] h-[20px]">
-                        {productImages.map((_, dotIndex) => (
-                          <button
-                            key={`${item._id}-${dotIndex}`}
-                            type="button"
-                            aria-label={`Show image ${dotIndex + 1}`}
-                            className="focus:outline-none flex items-center justify-center"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              setRelatedImgIdxs((current) => {
-                                const next = [...current];
-                                next[index] = dotIndex;
-                                return next;
-                              });
-                            }}
-                          >
-                            {imageIndex === dotIndex ? (
-                              <span className="inline-block md:w-[25px] w-[17px] md:h-[9px] h-[6px] bg-[#152F24] rounded-[3px]" />
-                            ) : (
-                              <span className="inline-block md:w-[14px] w-[10px] md:h-[14px] h-[10px] bg-[#152F24] rounded-full" />
-                            )}
-                          </button>
-                        ))}
+                      <div className="relative w-full aspect-[3/4] md:aspect-[4/5] bg-gray-50">
+                        <Image
+                          src={productImages[imageIndex]}
+                          alt={item.productName}
+                          fill
+                          className="object-contain p-4"
+                          sizes="(max-width: 768px) 50vw, 33vw"
+                        />
                       </div>
-                    </div>
-                    <div className="text-center w-full flex items-center justify-between md:h-[47px] h-[34px] md:pr-4">
-                      <div className="font-normal text-xs md:text-base text-left">
-                        {item.productName}
-                        <div className="text-xs md:text-base mb-2">
-                          {item.productType?.name || "Related product"}
+
+                      {productImages.length > 1 && (
+                        <div className="flex justify-center gap-1.5 py-2">
+                          {productImages.map((_, dotIndex) => (
+                            <button
+                              key={`${item._id}-${dotIndex}`}
+                              type="button"
+                              aria-label={`Show image ${dotIndex + 1}`}
+                              className="focus:outline-none"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setRelatedImgIdxs((current) => {
+                                  const next = [...current];
+                                  next[index] = dotIndex;
+                                  return next;
+                                });
+                              }}
+                            >
+                              {imageIndex === dotIndex ? (
+                                <span className="block w-5 h-1.5 bg-[#152F24] rounded-full" />
+                              ) : (
+                                <span className="block w-1.5 h-1.5 bg-gray-300 rounded-full" />
+                              )}
+                            </button>
+                          ))}
                         </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col flex-1 px-3 pb-3 gap-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-xs md:text-sm font-medium text-gray-900 line-clamp-2 flex-1">
+                          {item.productName}
+                        </span>
+                        <span className="text-[#1739B7] font-bold text-xs md:text-sm whitespace-nowrap">
+                          ₦{Number(item.price).toLocaleString()}
+                        </span>
                       </div>
-                      <Link
-                        href={`/shop/${item.subcategory.category.slug}/${item.subcategory.slug}/${item.productType.slug}/${item.slug}`}
-                      >
-                        <button
-                          type="button"
-                          className="bg-[#1739B7] text-white md:px-6 px-2 py-2 rounded-[3px] font-bold text-[8px] md:text-[13px] md:w-[113px] w-[60px] md:h-[31px] h-[16px] flex items-center justify-center"
+                      <div className="text-[10px] md:text-xs text-gray-500">
+                        {item.productType?.name || "Related product"}
+                      </div>
+                      <div className="mt-auto">
+                        <Link
+                          href={`/shop/${item.subcategory.category.slug}/${item.subcategory.slug}/${item.productType.slug}/${item.slug}`}
                         >
-                          Shop Now
-                        </button>
-                      </Link>
+                          <button
+                            type="button"
+                            className="w-full bg-[#1739B7] hover:bg-[#122a8f] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm transition-colors cursor-pointer"
+                          >
+                            Shop Now
+                          </button>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 );
               })}
             </div>
+
+            {moreLikeThis.length > 6 && (
+              <div className="flex justify-center mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowAllRelated((prev) => !prev)}
+                  className="border-2 border-[#1739B7] text-[#1739B7] hover:bg-[#1739B7] hover:text-white px-8 py-2.5 rounded-lg font-bold text-sm transition-colors cursor-pointer"
+                >
+                  {showAllRelated ? "Show Less" : `View More (${moreLikeThis.length - 6})`}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -548,7 +583,7 @@ function ProductDetails({
                             ...current,
                             [size]: Math.min(
                               (current[size] || 0) + 1,
-                              quantity
+                              quantity,
                             ),
                           }))
                         }

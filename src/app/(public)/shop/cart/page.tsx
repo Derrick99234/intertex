@@ -5,7 +5,11 @@ import { API_BASE_URL } from "@/lib/constants";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { AiOutlineDelete } from "react-icons/ai";
-import DeliveryOption from "@/components/shop/delivery-option/delivery-option";
+import DeliveryOption, {
+  CURRENCY_OPTIONS,
+  CurrencyCode,
+  DEFAULT_CURRENCY,
+} from "@/components/shop/delivery-option/delivery-option";
 import EmptyCartPage from "@/components/shop/empty-shopping-cart";
 
 interface CartProduct {
@@ -35,16 +39,17 @@ export default function CartSummary() {
     size: "",
   });
   const [loading, setLoading] = useState(true);
+  const [currency, setCurrency] = useState<CurrencyCode>(DEFAULT_CURRENCY);
 
-  // const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
     status: false,
     message: "",
     type: "info",
   });
+
   const showNotification = (
     message: string,
-    type: "success" | "error" | "info"
+    type: "success" | "error" | "info",
   ) => {
     setNotifications({ message, type, status: true });
 
@@ -52,6 +57,7 @@ export default function CartSummary() {
       setNotifications((prev) => ({ ...prev, status: false }));
     }, 2000);
   };
+
   async function fetchCart() {
     const token = localStorage.getItem("intertex-token");
     try {
@@ -65,7 +71,7 @@ export default function CartSummary() {
         const errorData = await res.json();
         showNotification(
           `Login failed: ${errorData.message || "Invalid credentials"}`,
-          "error"
+          "error",
         );
         return;
       }
@@ -77,9 +83,34 @@ export default function CartSummary() {
       setLoading(false);
     }
   }
+
   useEffect(() => {
     fetchCart();
   }, []);
+
+  useEffect(() => {
+    const savedCurrency = localStorage.getItem("intertex-currency");
+    if (
+      savedCurrency &&
+      CURRENCY_OPTIONS.some((item) => item.code === savedCurrency)
+    ) {
+      setCurrency(savedCurrency as CurrencyCode);
+      return;
+    }
+
+    const locale = navigator.language.toLowerCase();
+    if (locale.includes("en-gb")) {
+      setCurrency("GBP");
+    } else if (locale.includes("en-ng")) {
+      setCurrency("NGN");
+    } else if (locale.includes("en-us")) {
+      setCurrency("USD");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("intertex-currency", currency);
+  }, [currency]);
 
   const [user, setUser] = useState({
     fullName: "",
@@ -90,6 +121,8 @@ export default function CartSummary() {
   const [deliveryInformation, setDeliveryInformation] = useState({
     deliveryAddress: "",
     phoneNumber: "",
+    address: "",
+    alternativePhoneNumber: "",
   });
 
   useEffect(() => {
@@ -132,7 +165,6 @@ export default function CartSummary() {
         },
         method: "DELETE",
       });
-      // Refresh cart after deletion
       showNotification(`Cart Item deleted successfully`, "success");
       await fetchCart();
     } catch (err) {
@@ -150,40 +182,62 @@ export default function CartSummary() {
     return <EmptyCartPage />;
   }
 
-  // Calculate subtotal, taxes, total
+  const currencySymbol =
+    CURRENCY_OPTIONS.find((option) => option.code === currency)?.symbol || "₦";
+
+  const convertPrice = (price: number) => {
+    if (currency === "GBP") return price / 2000;
+    if (currency === "USD") return price / 1500;
+    return price;
+  };
+
+  const formatMoney = (value: number) =>
+    new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
+
   const subtotal = cart.items.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
-    0
+    (acc, item) => acc + convertPrice(item.product.price) * item.quantity,
+    0,
   );
-  const taxes = subtotal * 0.05; // Example 5% tax
+  const taxes = subtotal * 0.075;
   const total = subtotal + taxes;
 
   const handlePayment = async () => {
     try {
       setLoading(true);
 
-      const amount = total * 100; // Convert to kobo
+      const amount = total * 100;
 
       const orderDetailstoSend = {
-        userId: user._id,
+        currency,
         deliveryMethod: deliveryOption,
         amount: total,
         deliveryInformation: {
-          deliveryAddress: deliveryInformation.deliveryAddress,
+          deliveryAddress:
+            deliveryInformation.deliveryAddress || deliveryInformation.address,
           phoneNumber: deliveryInformation.phoneNumber,
         },
         status: "pending",
         products: cart.items.map((item) => ({
-          productId: item.product._id,
+          product: item.product._id,
           quantity: item.quantity,
           size: item.size,
         })),
       };
 
+      const token = localStorage.getItem("intertex-token");
+      if (!token) {
+        alert("You must be logged in to place an order.");
+        return;
+      }
+
       const orderRes = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(orderDetailstoSend),
       });
@@ -199,6 +253,7 @@ export default function CartSummary() {
       const payload = {
         email: user.email,
         amount,
+        currency,
         metadata: {
           customer_name: user.fullName,
           deliveryOption,
@@ -207,7 +262,7 @@ export default function CartSummary() {
             product_id: item._id,
             name: item.product.slug,
             quantity: item.quantity,
-            price: item.product.price,
+            price: convertPrice(item.product.price),
           })),
         },
       };
@@ -243,15 +298,16 @@ export default function CartSummary() {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Cart Summary
         </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Showing prices in {currency} ({currencySymbol})
+        </p>
 
-        {/* Cart Items */}
         <div className="space-y-4 border-b border-gray-200 pb-4">
           {cart.items.map((item) => (
             <div
               key={item._id}
               className="flex items-center justify-between gap-4"
             >
-              {/* Product Image */}
               <div className="w-16 h-20 relative bg-gray-100 rounded-md">
                 <Image
                   src={item.product.imageUrl}
@@ -261,7 +317,6 @@ export default function CartSummary() {
                 />
               </div>
 
-              {/* Details */}
               <div className="flex-1">
                 <h3 className="font-medium text-gray-900">
                   {item.product.slug.replace(/-/g, " ")}
@@ -270,10 +325,12 @@ export default function CartSummary() {
                 <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
               </div>
 
-              {/* Price + Delete */}
               <div className="flex items-center gap-3">
                 <span className="font-medium text-gray-900">
-                  ₦{(item.product.price * item.quantity).toLocaleString()}
+                  {currencySymbol}
+                  {formatMoney(
+                    convertPrice(item.product.price) * item.quantity,
+                  )}
                 </span>
                 <button
                   className="text-gray-400 hover:text-red-600 cursor-pointer"
@@ -286,7 +343,6 @@ export default function CartSummary() {
           ))}
         </div>
 
-        {/* Discount Code */}
         <div className="flex items-center gap-2 my-4">
           <input
             type="text"
@@ -298,34 +354,36 @@ export default function CartSummary() {
           </button>
         </div>
 
-        {/* Totals */}
         <div className="space-y-2 border-t border-gray-200 pt-4 text-sm">
           <div className="flex justify-between text-gray-600">
             <span>Subtotal</span>
-            <span>₦{subtotal.toLocaleString()}</span>
+            <span>
+              {currencySymbol}
+              {formatMoney(subtotal)}
+            </span>
           </div>
           <div className="flex justify-between text-gray-600">
             <span>Total</span>
             <span className="text-lg font-semibold text-gray-900">
-              ₦{total.toLocaleString()}
+              {currencySymbol}
+              {formatMoney(total)}
             </span>
           </div>
           <p className="text-xs text-gray-500">
-            Including ₦{taxes.toLocaleString()} in taxes
+            Including {currencySymbol}
+            {formatMoney(taxes)} in taxes
           </p>
         </div>
-
-        {/* Checkout Button */}
-        {/* <button className="mt-6 w-full bg-secondary hover:bg-secondary/80 cursor-pointer text-white font-semibold py-3 rounded-md">
-            Checkout
-          </button> */}
       </div>
+
       <DeliveryOption
         deliveryOption={deliveryOption}
         setDeliveryOption={setDeliveryOption}
         handlePayment={handlePayment}
         deliveryInformation={deliveryInformation}
         setDeliveryInformation={setDeliveryInformation}
+        currency={currency}
+        setCurrency={setCurrency}
       />
       {notifications.status && (
         <NotificationSystem

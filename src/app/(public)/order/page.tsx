@@ -7,13 +7,17 @@ import { motion } from "framer-motion";
 import { FaBoxOpen } from "react-icons/fa";
 import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 function OrderPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState("allOrders");
+  const [activeTab, setActiveTab] = useState("all");
   const [viewOrder, setViewOrder] = useState({
     status: false,
     orderId: "",
@@ -26,11 +30,20 @@ function OrderPage() {
     });
   };
 
+  const getReturnPath = () => {
+    const params = searchParams?.toString();
+    return params ? `${pathname}?${params}` : pathname;
+  };
+
+  const redirectToLogin = () => {
+    router.replace(`/login?returnUrl=${encodeURIComponent(getReturnPath())}`);
+  };
+
   // Fetch Orders from API
   const fetchOrders = async () => {
     const token = localStorage.getItem("intertex-token");
     if (!token) {
-      window.location.href = "/login";
+      redirectToLogin();
       return;
     }
     try {
@@ -44,23 +57,38 @@ function OrderPage() {
 
       if (res.status === 401) {
         localStorage.removeItem("intertex-token");
-        window.location.href = "/login";
+        redirectToLogin();
         return;
       }
       if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
-      // Format for table
-      const formatted = data.map((order: any, index: number) => ({
-        checkbox: false,
-        no: String(index + 1).padStart(2, "0"),
-        id: order._id,
-        item: order.products.length,
-        deliveryMethod: order.deliveryMethod,
-        amount: `₦${order.amount}`,
-        date: new Date(order.date).toLocaleDateString(),
-        status: order.status,
-        more: <IoEyeOutline className="cursor-pointer" />,
-      }));
+      const ordersList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+          ? data.data
+          : [];
+      const formatted = ordersList.map((order: any, index: number) => {
+        const products = Array.isArray(order?.products) ? order.products : [];
+        const dateValue = order?.date || order?.createdAt || order?.updatedAt;
+        const parsedDate = dateValue ? new Date(dateValue) : null;
+        const safeDate =
+          parsedDate && !Number.isNaN(parsedDate.getTime())
+            ? parsedDate.toLocaleDateString()
+            : "—";
+        const normalizedStatus = String(order?.status ?? "").toLowerCase();
+
+        return {
+          checkbox: false,
+          no: String(index + 1).padStart(2, "0"),
+          id: order?._id ?? "",
+          item: products.length,
+          deliveryMethod: order?.deliveryMethod ?? "—",
+          amount: `₦${order?.amount ?? 0}`,
+          date: safeDate,
+          status: normalizedStatus,
+          more: <IoEyeOutline className="cursor-pointer" />,
+        };
+      });
       setOrders(formatted);
     } catch (err: any) {
       setError(err.message);
@@ -68,6 +96,7 @@ function OrderPage() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -76,8 +105,10 @@ function OrderPage() {
     let filtered = orders;
     if (activeTab === "pending-orders") {
       filtered = orders.filter((o) => o.status === "pending");
-    } else if (activeTab === "succesful-orders") {
-      filtered = orders.filter((o) => o.status === "successful");
+    } else if (activeTab === "successful-orders") {
+      filtered = orders.filter(
+        (o) => o.status === "successful" || o.status === "completed"
+      );
     } else if (activeTab === "failed-orders") {
       filtered = orders.filter((o) => o.status === "cancelled");
     }
@@ -123,8 +154,8 @@ function OrderPage() {
           No Orders Yet
         </h2>
         <p className="text-gray-500 mb-4">
-          You currently have no orders. Once someone places an order, you’ll see
-          it here.
+          You currently have no orders. Once someone places an order, you’ll
+          see it here.
         </p>
         <button onClick={() => window.location.reload()}>Refresh</button>
       </motion.div>
@@ -145,7 +176,6 @@ function OrderPage() {
             transition={{ duration: 0.25 }}
             className="bg-white rounded-3xl shadow-2xl p-8 w-[90%] max-w-md text-center relative"
           >
-            {/* Close Button */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -153,21 +183,17 @@ function OrderPage() {
               <X className="w-5 h-5" />
             </button>
 
-            {/* Header Icon */}
             <div className="flex justify-center mb-3">
               <div className="bg-gradient-to-tr from-purple-500 to-indigo-500 p-4 rounded-full shadow-lg">
                 <Package className="w-8 h-8 text-white" />
               </div>
             </div>
 
-            {/* Dynamic content */}
             {(() => {
               const currentOrder = orders.find(
                 (o) => o.id === viewOrder.orderId
               );
               const status = currentOrder?.status?.toLowerCase();
-
-              console.log(`Order Status: ${status}`);
 
               if (status === "pending") {
                 return (
@@ -228,15 +254,51 @@ function OrderPage() {
                 );
               }
 
-              // Successful order (default)
+              if (status === "successful" || status === "completed") {
+                return (
+                  <>
+                    <h2 className="text-2xl font-semibold text-gray-800">
+                      Order Confirmed ✨
+                    </h2>
+                    <p className="text-gray-600 mt-2">
+                      Your order has been received successfully. One of our team
+                      members will reach out shortly with the next steps.
+                    </p>
+                    <div className="flex flex-col gap-3 w-full mt-6">
+                      <Link
+                        href="https://wa.me/2348124544127"
+                        target="_blank"
+                        className="flex items-center justify-center gap-2 bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition"
+                      >
+                        <MessageCircle className="w-5 h-5" />
+                        Chat on WhatsApp
+                      </Link>
+                      <Link
+                        href="/our-stores"
+                        className="flex items-center justify-center gap-2 border border-gray-300 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        <MapPin className="w-5 h-5 text-gray-500" />
+                        View Pickup Details
+                      </Link>
+                      <Link
+                        href="/shop"
+                        className="flex items-center justify-center gap-2 border border-green-500 py-2.5 rounded-lg font-medium text-green-600 hover:bg-green-50 transition"
+                      >
+                        Reorder Item
+                      </Link>
+                    </div>
+                  </>
+                );
+              }
+
               return (
                 <>
                   <h2 className="text-2xl font-semibold text-gray-800">
-                    Order Confirmed ✨
+                    Order Status Unknown
                   </h2>
                   <p className="text-gray-600 mt-2">
-                    Your order has been received successfully. One of our team
-                    members will reach out shortly with the next steps.
+                    We could not recognize this order status. Please contact
+                    support for help with this order.
                   </p>
                   <div className="flex flex-col gap-3 w-full mt-6">
                     <Link
@@ -247,19 +309,12 @@ function OrderPage() {
                       <MessageCircle className="w-5 h-5" />
                       Chat on WhatsApp
                     </Link>
-                    <Link
-                      href="/our-stores"
-                      className="flex items-center justify-center gap-2 border border-gray-300 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition"
+                    <button
+                      onClick={onClose}
+                      className="border border-gray-300 py-2.5 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition"
                     >
-                      <MapPin className="w-5 h-5 text-gray-500" />
-                      View Pickup Details
-                    </Link>
-                    <Link
-                      href="/shop"
-                      className="flex items-center justify-center gap-2 border border-green-500 py-2.5 rounded-lg font-medium text-green-600 hover:bg-green-50 transition"
-                    >
-                      Reorder Item
-                    </Link>
+                      Close
+                    </button>
                   </div>
                 </>
               );
@@ -290,7 +345,7 @@ function OrderPage() {
           navigations={[
             { name: "All Orders", href: "all" },
             { name: "Pending Orders", href: "pending-orders" },
-            { name: "Successful Orders", href: "succesful-orders" },
+            { name: "Successful Orders", href: "successful-orders" },
             { name: "Failed Orders", href: "failed-orders" },
           ]}
         />

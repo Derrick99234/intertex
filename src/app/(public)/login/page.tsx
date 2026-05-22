@@ -1,154 +1,161 @@
 "use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import InputField from "@/components/input-field/input-field";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
-import Facebook from "@/components/other-authentication-method/facebook";
-import Google from "@/components/other-authentication-method/google";
 import { API_BASE_URL } from "@/lib/constants";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
 
-function Login() {
+type LoginResponse = {
+  token?: string;
+  message?: string;
+  error?: string;
+  user?: unknown;
+};
+
+function getSafeReturnPath(value: string | null): string {
+  if (!value) return "/";
+  if (!value.startsWith("/")) return "/";
+  if (value.startsWith("//")) return "/";
+  return value;
+}
+
+export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = React.useState({
-    email: "",
-    password: "",
-  });
+  const searchParams = useSearchParams();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [notifications, setNotifications] = useState({
-    status: false,
-    message: "",
-    type: "info",
-  });
-  const [redirectTo, setRedirectTo] = useState("/update-profile");
+  const returnTo = useMemo(
+    () => getSafeReturnPath(searchParams.get("returnTo")),
+    [searchParams],
+  );
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
-    if (redirect) setRedirectTo(redirect);
-  }, []);
+    const successMessage = searchParams.get("success");
+    if (successMessage) {
+      setNotification({ type: "success", message: successMessage });
+    }
+  }, [searchParams]);
 
-  const showNotification = (
-    message: string,
-    type: "success" | "error" | "info"
-  ) => {
-    setNotifications({ message, type, status: true });
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-    setTimeout(() => {
-      setNotifications((prev) => ({ ...prev, status: false }));
-    }, 2000);
-  };
+    if (isSubmitting) return;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    setIsSubmitting(true);
+    setNotification(null);
+
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
+      let data: LoginResponse | null = null;
+      try {
+        data = (await response.json()) as LoginResponse;
+      } catch {
+        data = null;
+      }
+
       if (!response.ok) {
-        const errorData = await response.json();
-        showNotification(
-          `Login failed: ${errorData.message || "Invalid credentials"}`,
-          "error"
-        );
+        const message =
+          data?.message ||
+          data?.error ||
+          "Unable to log in. Please check your credentials and try again.";
+        setNotification({ type: "error", message });
         return;
       }
-      showNotification("Login successful!", "success");
-      const data = await response.json();
-      if (data.accessToken) {
-        localStorage.setItem("intertex-token", data.accessToken);
+
+      const token = data?.token;
+      if (!token) {
+        setNotification({
+          type: "error",
+          message:
+            "Login succeeded, but the server did not return an access token.",
+        });
+        return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      showNotification("redirecting to profile page...", "info");
-      router.push(redirectTo);
-    } catch (error) {
-      showNotification(
-        "Something went wrong. Please try again later.",
-        "error"
-      );
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("intertex-token", token);
+      }
+
+      setNotification({
+        type: "success",
+        message: "Login successful. Redirecting...",
+      });
+      router.replace(returnTo);
+      router.refresh();
+    } catch {
+      setNotification({
+        type: "error",
+        message: "Something went wrong while logging in. Please try again.",
+      });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
-  };
+  }
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-primary">
-      <form
-        className="max-w-md w-full mx-auto p-6 px-10 bg-white rounded-lg shadow-md mt-10"
-        onSubmit={handleSubmit}
-      >
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
-        <InputField
-          label="Email Address"
-          onChange={handleChange}
-          placeholder="Enter your email address"
-          type="email"
-          id="email"
-          name="email"
-          required
-        />
-        <InputField
-          label="Password"
-          onChange={handleChange}
-          id="password"
-          name="password"
-          required
-          type="password"
-        />
-        <p className="text-[10.91px] text-gray-600 mb-4 font-semibold text-right">
-          Forget password?{" "}
-          <Link
-            href={"/reset-password"}
-            className="text-secondary hover:underline"
+    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md items-center px-4 py-10">
+      <div className="w-full rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        {notification && (
+          <NotificationSystem
+            message={notification.message}
+            type={notification.type}
+          />
+        )}
+
+        <h1 className="mb-6 text-2xl font-semibold text-gray-900">Log in</h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <InputField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+            required
+          />
+          <InputField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPassword(e.target.value)
+            }
+            required
+          />
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full items-center justify-center rounded-md bg-black px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Reset now
-          </Link>{" "}
-          .
-        </p>
-        <button
-          type="submit"
-          className="mt-4 px-4 py-3 w-full cursor-pointer bg-secondary text-white rounded-2xl hover:bg-secondary/70 transition-colors duration-200"
-        >
-          Sign In
-        </button>
-        <p className="my-6 text-sm text-center">Sign in faster with</p>
-        <Google />
-        <Facebook />
-        <p className="mt-4 text-sm text-center text-gray-600">
-          Don&apos;t have an account,
-          <Link href={"/register"} className="text-secondary hover:underline">
-            {" "}
-            Sign up
-          </Link>
-        </p>
-      </form>
-      {notifications.status && (
-        <NotificationSystem
-          message={notifications.message}
-          type={notifications.type as "success" | "error" | "info"}
-        />
-      )}
-      <LoadingSpinner isLoading={isLoading} />
-    </section>
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <LoadingSpinner isLoading={isSubmitting} />
+                <span>Logging in...</span>
+              </span>
+            ) : (
+              "Log in"
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
-
-export default Login;

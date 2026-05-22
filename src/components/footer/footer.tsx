@@ -87,16 +87,8 @@ function Footer() {
   ];
   const socialLinks = [
     {
-      socialName: "Facebook",
-      socialLink: "https://www.facebook.com/yourcompany",
-    },
-    {
       socialName: "Instagram",
       socialLink: "https://www.instagram.com/yourcompany",
-    },
-    {
-      socialName: "Twitter",
-      socialLink: "https://www.twitter.com/yourcompany",
     },
     {
       socialName: "LinkedIn",

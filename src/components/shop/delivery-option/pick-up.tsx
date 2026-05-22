@@ -24,9 +24,6 @@ function Pickup({
           ONE SOURCE MART, Plot 12 Ligali Ayorinde Street, Victoria Island,
           Lagos.
         </option>
-        <option value="STORE 24 Ground Floor Top Mall Mandilas, Lagos Island">
-          STORE 24 Ground Floor Top Mall Mandilas, Lagos Island
-        </option>
         <option value="Joas House by 2nd Rainbow Bus-stop, Opp. Forte-oil, Beside T-Time Lagos">
           Joas House by 2nd Rainbow Bus-stop, Opp. Forte-oil, Beside T-Time
           Lagos

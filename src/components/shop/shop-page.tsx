@@ -45,10 +45,20 @@ function ShopLandingPage({
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sort, setSort] = useState<string>("newest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const router = useRouter();
 
-  // Update the search term based on the query params
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = products.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [products.length]);
+
   useEffect(() => {
     const searchQuery = searchParams.get("keyword") || "";
     setSearchTerm(searchQuery);
@@ -61,7 +71,6 @@ function ShopLandingPage({
     const value = e.target.value;
     setSearchTerm(value);
 
-    // 👇 guarantee shop root
     let basePath = "/shop";
     if (pathname.startsWith("/shop")) {
       basePath = pathname;
@@ -100,8 +109,6 @@ function ShopLandingPage({
   const [imageIndexes, setImageIndexes] = useState<{ [id: string]: number }>(
     {},
   );
-
-  const router = useRouter();
 
   const handleImageClick = (id: string, images: string[]) => {
     const nextIdx = ((imageIndexes[id] ?? 0) + 1) % images.length;
@@ -266,6 +273,7 @@ function ShopLandingPage({
             </div>
           </div>
         </div>
+      </div>
         {/* Product Grid */}
         {products?.length === 0 ? (
           <div className="w-full flex flex-col items-center justify-center py-16">
@@ -284,77 +292,122 @@ function ShopLandingPage({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-between">
-            {products.map((product) => {
-              const imgIdx = imageIndexes[product._id];
-              const allImages = [product.imageUrl, ...product?.otherImages];
-              return (
-                <div
-                  key={product._id}
-                  className="group rounded-xl flex flex-col bg-white transition hover:shadow-lg"
-                >
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {paginatedProducts.map((product) => {
+                const imgIdx = imageIndexes[product._id];
+                const allImages = [product.imageUrl, ...(product?.otherImages || [])].filter(Boolean);
+                return (
                   <div
-                    className="w-full select-none rounded-md overflow-hidden"
-                    onClick={() => handleImageClick(product._id, allImages)}
+                    key={product._id}
+                    className="group rounded-xl flex flex-col bg-white border border-gray-100 overflow-hidden transition hover:shadow-lg h-full"
                   >
-                    {/* IMAGE WRAPPER */}
-                    <div className="relative w-full h-70 md:h-80">
-                      <Image
-                        src={
-                          allImages && allImages.length > 0
-                            ? allImages[imgIdx ?? 0]
-                            : product.imageUrl
-                        }
-                        alt={product.productName}
-                        fill
-                        className="object-cover p-4"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
+                    <div
+                      className="w-full select-none cursor-pointer"
+                      onClick={() => handleImageClick(product._id, allImages)}
+                    >
+                      <div className="relative w-full aspect-[3/4] md:aspect-[4/5] bg-gray-50">
+                        <Image
+                          src={
+                            allImages && allImages.length > 0
+                              ? allImages[imgIdx ?? 0]
+                              : product.imageUrl
+                          }
+                          alt={product.productName}
+                          fill
+                          className="object-contain p-4"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      </div>
+
+                      {allImages.length > 1 && (
+                        <div className="flex justify-center gap-1.5 py-2">
+                          {allImages.map((_, idx) => (
+                            <button
+                              key={idx}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDotClick(product._id, idx);
+                              }}
+                              className="focus:outline-none"
+                            >
+                              {imgIdx === idx ? (
+                                <span className="block w-5 h-1.5 bg-[#152F24] rounded-full" />
+                              ) : (
+                                <span className="block w-1.5 h-1.5 bg-gray-300 rounded-full" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
-                    {/* DOTS */}
-                    <div className="flex justify-center gap-2 py-2">
-                      {allImages.map((_, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleDotClick(product._id, idx)}
+                    <div className="flex flex-col flex-1 px-3 pb-3 gap-2">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="text-xs md:text-sm font-medium text-gray-900 line-clamp-2 flex-1">
+                          {product.productName}
+                        </span>
+                        <span className="text-[#1739B7] font-bold text-xs md:text-sm whitespace-nowrap">
+                          ₦{Number(product.price).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="text-[10px] md:text-xs text-gray-500">
+                        {product.productType?.name}
+                      </div>
+                      <div className="mt-auto">
+                        <Link
+                          href={`/shop/${product.subcategory.category.slug}/${product.subcategory.slug}/${product.productType.slug}/${product.slug}`}
                         >
-                          {imgIdx === idx ? (
-                            <span className="block w-6 h-2 bg-[#152F24] rounded" />
-                          ) : (
-                            <span className="block w-3 h-3 bg-[#152F24] rounded-full" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Text Section  */}
-                  <div className="w-full flex flex-col justify-between h-22.5 md:h-27.5 px-2">
-                    <div className="text-left text-xs md:text-base line-clamp-2">
-                      {product.productName}
-                      <div className="text-xs md:text-sm text-gray-500">
-                        {product.productType.name}
+                          <button className="w-full bg-[#1739B7] hover:bg-[#122a8f] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm transition-colors cursor-pointer">
+                            Shop Now
+                          </button>
+                        </Link>
                       </div>
                     </div>
-
-                    <Link
-                      href={`/shop/${product.subcategory.category.slug}/${product.subcategory.slug}/${product.productType.slug}/${product.slug}`}
-                    >
-                      <button className="bg-[#1739B7] cursor-pointer text-white w-full py-2 rounded font-bold text-xs md:text-sm">
-                        Shop Now
-                      </button>
-                    </Link>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8 mb-4">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 rounded text-sm font-medium transition-colors cursor-pointer ${
+                        currentPage === page
+                          ? "bg-[#152F24] text-white"
+                          : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded border text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors cursor-pointer"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
-
-      {/* <LoadingSpinner isLoading={isLoading} /> */}
-    </div>
   );
 }
 
