@@ -66,7 +66,8 @@ function OtpVerification({
         throw new Error("OTP verified but reset token was not returned.");
       }
 
-      router.push(`/admin/reset-password/${resetToken}?token=${resetToken}`);
+      sessionStorage.setItem("adminResetToken", resetToken);
+      router.push("/admin/reset-password/new-password");
       setShowVerificationModal(false);
     } catch (error: any) {
       showNotification(error.message || "Unable to verify OTP.", "error");

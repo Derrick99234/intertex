@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import InputField from "@/components/input-field/input-field";
+import Google from "@/components/other-authentication-method/google";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
 
 type LoginResponse = {
-  token?: string;
+  accessToken?: string;
   message?: string;
   error?: string;
   user?: unknown;
@@ -78,7 +80,7 @@ export default function LoginPage() {
         return;
       }
 
-      const token = data?.token;
+      const token = data?.accessToken;
       if (!token) {
         setNotification({
           type: "error",
@@ -140,6 +142,15 @@ export default function LoginPage() {
             required
           />
 
+          <div className="text-right">
+            <Link
+              href="/reset-password"
+              className="text-sm text-secondary hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
@@ -155,6 +166,18 @@ export default function LoginPage() {
             )}
           </button>
         </form>
+
+        <div className="mt-6">
+          <p className="text-sm text-center text-gray-500 mb-3">Or sign in with</p>
+          <Google />
+        </div>
+
+        <p className="mt-6 text-sm text-center text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="text-secondary hover:underline font-medium">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );

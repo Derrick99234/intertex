@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { API_BASE_URL } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
@@ -11,6 +12,7 @@ import { NotificationSystem } from "@/components/notification-popup";
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -56,7 +58,6 @@ function AdminLogin() {
 
       const { accessToken } = await res.json();
       localStorage.setItem("adminToken", accessToken);
-      document.cookie = `adminToken=${accessToken}; path=/; max-age=86400; SameSite=Lax`;
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);
@@ -122,14 +123,24 @@ function AdminLogin() {
           <label htmlFor="password" className="text-lg mb-2 block">
             Password
           </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="mb-4 p-2 border border-gray-300 rounded w-full"
-          />
+          <div className="relative mb-4">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className="p-2 border border-gray-300 rounded w-full pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
           <Link
             href="/admin/reset-password"

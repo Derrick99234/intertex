@@ -39,7 +39,8 @@ export default function HomePage() {
       if (session?.user) {
         const fullName = session?.user?.name || "";
         const email = session?.user?.email || "";
-        const newPassword = Math.random().toString(36).slice(-8); // Generate a random password
+        const googleToken = (session as any)?.idToken || "";
+        const newPassword = Math.random().toString(36).slice(-8);
 
         if (fullName === "" || email === "") {
           window.location.href = "/register";
@@ -53,6 +54,7 @@ export default function HomePage() {
             fullName: fullName,
             email: email,
             password: newPassword,
+            googleToken: googleToken,
           }),
         });
         if (!response.ok) {

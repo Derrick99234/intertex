@@ -1,7 +1,6 @@
 "use client";
 import CreatePassword from "@/components/auth/create-user";
 import InputField from "@/components/input-field/input-field";
-import Facebook from "@/components/other-authentication-method/facebook";
 import Google from "@/components/other-authentication-method/google";
 import Link from "next/link";
 import React from "react";
@@ -106,7 +105,6 @@ function Register() {
         </button>
         <p className="my-6 text-sm text-center">Sign up faster with</p>
         <Google />
-        <Facebook />
         <p className="mt-4 text-sm text-center text-gray-600">
           I already have an account,
           <Link href={"/login"} className="text-secondary hover:underline">
