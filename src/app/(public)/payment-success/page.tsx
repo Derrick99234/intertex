@@ -204,8 +204,14 @@ export default function PaymentSuccessPage() {
         }
 
         // 1. Call NestJS backend for Paystack verification
+        const token = localStorage.getItem("intertex-token");
         const res = await fetch(
-          `${API_BASE_URL}/paystack/verify?reference=${reference}`
+          `${API_BASE_URL}/paystack/verify?reference=${reference}`,
+          {
+            headers: {
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          },
         );
 
         if (!res.ok) {

@@ -8,6 +8,7 @@ import Google from "@/components/other-authentication-method/google";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 
 type LoginResponse = {
   accessToken?: string;
@@ -26,6 +27,7 @@ function getSafeReturnPath(value: string | null): string {
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshUser } = useAuth();
 
   const returnTo = useMemo(
     () => getSafeReturnPath(searchParams.get("returnTo")),
@@ -93,6 +95,8 @@ export default function LoginPage() {
       if (typeof window !== "undefined") {
         window.localStorage.setItem("intertex-token", token);
       }
+
+      await refreshUser();
 
       setNotification({
         type: "success",

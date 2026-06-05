@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function HomePage() {
   const { data: session } = useSession();
@@ -16,6 +17,7 @@ export default function HomePage() {
   // }
 
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
@@ -69,6 +71,7 @@ export default function HomePage() {
         const data = await response.json();
         if (data.accessToken) {
           localStorage.setItem("intertex-token", data.accessToken);
+          await refreshUser();
           await signOut({ redirect: false });
         }
         await new Promise((resolve) => setTimeout(resolve, 2000));

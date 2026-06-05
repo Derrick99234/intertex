@@ -208,7 +208,7 @@ export default function CartSummary() {
     try {
       setLoading(true);
 
-      const amount = total * 100;
+      const amount = Math.round(total * 100);
 
       const orderDetailstoSend = {
         currency,
@@ -229,7 +229,7 @@ export default function CartSummary() {
 
       const token = localStorage.getItem("intertex-token");
       if (!token) {
-        alert("You must be logged in to place an order.");
+        showNotification("You must be logged in to place an order.", "error");
         return;
       }
 
@@ -246,7 +246,10 @@ export default function CartSummary() {
 
       if (!orderRes.ok) {
         console.error("Order creation failed:", orderResponse);
-        alert("Could not create order. Please try again.");
+        showNotification(
+          orderResponse?.message || "Could not create order. Please try again.",
+          "error",
+        );
         return;
       }
 
@@ -271,6 +274,7 @@ export default function CartSummary() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -280,12 +284,12 @@ export default function CartSummary() {
       if (data.status && data.data.authorization_url) {
         window.location.href = data.data.authorization_url;
       } else {
-        alert("Unable to initialize payment");
+        showNotification("Unable to initialize payment", "error");
         console.error("Paystack response:", data);
       }
     } catch (error) {
       console.error("Error initializing payment:", error);
-      alert("Payment failed to start.");
+      showNotification("Payment failed to start.", "error");
       window.location.href = "/order";
     } finally {
       setLoading(false);

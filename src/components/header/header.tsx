@@ -2,13 +2,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import MenDropdown from "./men-dropdown";
 import WomenDropdown from "./women-dropdown";
 import KidDropdown from "./kid-dropdown";
-import { LoadingSpinner } from "../loading-spinner";
-import { NotificationSystem } from "../notification-popup";
-import { API_BASE_URL } from "@/lib/constants";
+import { useAuth } from "@/context/AuthContext";
 import MobileMenu from "./mobile-header";
 import { LogInIcon } from "lucide-react";
 import { BiCart } from "react-icons/bi";
@@ -16,6 +14,7 @@ import { CgProfile } from "react-icons/cg";
 
 function Header() {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [showMenNavMenu, setShowMenNavMenu] = React.useState(false);
   const [showWomenNavMenu, setShowWomenNavMenu] = React.useState(false);
@@ -25,39 +24,9 @@ function Header() {
     router.push("/");
   };
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-
-  const [user, setUser] = useState({
-    fullName: "",
-    email: "",
-  });
-
-  useEffect(() => {
-    const token = localStorage.getItem("intertex-token");
-    if (!token) {
-      return;
-    }
-    setIsLoading(true);
-    const fetchUserData = async () => {
-      const response = await fetch(`${API_BASE_URL}/user/get-user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setIsLoading(false);
-        setUser(data);
-      }
-      setIsLoading(false);
-    };
-
-    fetchUserData();
-  }, []);
 
   return (
     <>
@@ -137,7 +106,7 @@ function Header() {
           >
             <BiCart size={20} />
           </Link>
-          {user.fullName ? (
+          {user?.fullName ? (
             <>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
                 {user.fullName.split(" ")[0].charAt(0) +
@@ -174,7 +143,7 @@ function Header() {
           >
             <BiCart size={20} />
           </Link>
-          {user.fullName ? (
+          {user?.fullName ? (
             <>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
                 {user.fullName.split(" ")[0].charAt(0) +
@@ -205,7 +174,6 @@ function Header() {
           <MobileMenu toggleMobileMenu={toggleMobileMenu} />
         </Suspense>
       )}
-      <LoadingSpinner isLoading={isLoading} />
 
       {/* Desktop Dropdowns */}
       {showMenNavMenu && <MenDropdown setShowMenNavMenu={setShowMenNavMenu} />}
