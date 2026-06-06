@@ -3,6 +3,7 @@ import DynamicTable from "@/components/admin/dynamic-table";
 import ViewOrder from "@/components/admin/order/view-order";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
@@ -28,16 +29,8 @@ function OrderManagement() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          router.push("/admin");
-          return;
-        }
-
-        const res = await fetch(`${API_BASE_URL}/orders`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch("/orders", {
+          refreshPath: "/admin/refresh",
         });
 
         if (!res.ok) throw new Error("Failed to fetch orders");

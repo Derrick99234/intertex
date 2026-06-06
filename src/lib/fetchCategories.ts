@@ -1,15 +1,16 @@
 import { API_BASE_URL } from "./constants";
+import { authFetch } from "./auth-fetch";
 
 export async function createCategory(data: {
   name: string;
   description?: string;
   status?: boolean;
 }) {
-  const res = await fetch(`${API_BASE_URL}/categories`, {
+  const res = await authFetch("/categories", {
+    refreshPath: "/admin/refresh",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`, // if protected
     },
     body: JSON.stringify(data),
   });
@@ -19,11 +20,9 @@ export async function createCategory(data: {
 }
 
 export async function getCategories() {
-  const res = await fetch(`${API_BASE_URL}/categories`, {
+  const res = await authFetch("/categories", {
+    refreshPath: "/admin/refresh",
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
     next: { revalidate: 300 }, // ✅ caching for frontend
   });
 
@@ -32,11 +31,9 @@ export async function getCategories() {
 }
 
 export async function getCategoryById(id: string) {
-  const res = await fetch(`${API_BASE_URL}/categories/${id}`, {
+  const res = await authFetch(`/categories/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
     cache: "no-store", // get always fresh
   });
 
@@ -48,11 +45,11 @@ export async function updateCategory(
   id: string,
   data: { name?: string; slug?: string; description?: string; status?: boolean }
 ) {
-  const res = await fetch(`${API_BASE_URL}/categories/${id}`, {
+  const res = await authFetch(`/categories/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -62,11 +59,9 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string) {
-  const res = await fetch(`${API_BASE_URL}/categories/${id}`, {
+  const res = await authFetch(`/categories/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
   });
 
   if (!res.ok) throw new Error("Failed to delete category");
@@ -76,11 +71,9 @@ export async function deleteCategory(id: string) {
 // subcategories
 
 export async function getAllSubCategories() {
-  const res = await fetch(`${API_BASE_URL}/subcategories`, {
+  const res = await authFetch("/subcategories", {
+    refreshPath: "/admin/refresh",
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
     next: { revalidate: 300 },
   });
 
@@ -89,16 +82,11 @@ export async function getAllSubCategories() {
 }
 
 export async function getSubCategories(categoryId: string) {
-  const res = await fetch(
-    `${API_BASE_URL}/subcategories/category/${categoryId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      next: { revalidate: 300 }, // optional caching for Next.js
-    }
-  );
+  const res = await authFetch(`/subcategories/category/${categoryId}`, {
+    refreshPath: "/admin/refresh",
+    method: "GET",
+    next: { revalidate: 300 }, // optional caching for Next.js
+  });
 
   if (!res.ok) throw new Error("Failed to fetch subcategories");
   return res.json();
@@ -110,11 +98,11 @@ export async function createSubCategory(data: {
   description?: string;
   status?: boolean;
 }) {
-  const res = await fetch(`${API_BASE_URL}/subcategories`, {
+  const res = await authFetch("/subcategories", {
+    refreshPath: "/admin/refresh",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -127,11 +115,11 @@ export async function updateSubCategory(
   id: string,
   data: { name?: string; slug?: string; description?: string; status?: boolean }
 ) {
-  const res = await fetch(`${API_BASE_URL}/subcategories/${id}`, {
+  const res = await authFetch(`/subcategories/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -141,11 +129,9 @@ export async function updateSubCategory(
 }
 
 export async function deleteSubCategory(id: string) {
-  const res = await fetch(`${API_BASE_URL}/subcategories/${id}`, {
+  const res = await authFetch(`/subcategories/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
   });
   if (!res.ok) throw new Error("Failed to delete subcategory");
   return res.json();
@@ -154,11 +140,9 @@ export async function deleteSubCategory(id: string) {
 // product types
 
 export async function getAllProductTypes() {
-  const res = await fetch(`${API_BASE_URL}/types`, {
+  const res = await authFetch("/types", {
+    refreshPath: "/admin/refresh",
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
     next: { revalidate: 300 },
   });
   if (!res.ok) throw new Error("Failed to fetch product types");
@@ -166,16 +150,11 @@ export async function getAllProductTypes() {
 }
 
 export async function getProductTypes(subcategoryId: string) {
-  const res = await fetch(
-    `${API_BASE_URL}/types/by-subcategory/${subcategoryId}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-      },
-      next: { revalidate: 300 }, // optional caching for Next.js
-    }
-  );
+  const res = await authFetch(`/types/by-subcategory/${subcategoryId}`, {
+    refreshPath: "/admin/refresh",
+    method: "GET",
+    next: { revalidate: 300 }, // optional caching for Next.js
+  });
 
   if (!res.ok) throw new Error("Failed to fetch subcategories");
   return res.json();
@@ -187,11 +166,11 @@ export async function createProductType(data: {
   description?: string;
   status?: boolean;
 }) {
-  const res = await fetch(`${API_BASE_URL}/types`, {
+  const res = await authFetch("/types", {
+    refreshPath: "/admin/refresh",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -210,11 +189,11 @@ export async function updateProductType(
     subcategory?: string;
   }
 ) {
-  const res = await fetch(`${API_BASE_URL}/types/${id}`, {
+  const res = await authFetch(`/types/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
     },
     body: JSON.stringify(data),
   });
@@ -224,11 +203,9 @@ export async function updateProductType(
 }
 
 export async function deleteProductType(id: string) {
-  const res = await fetch(`${API_BASE_URL}/types/${id}`, {
+  const res = await authFetch(`/types/${id}`, {
+    refreshPath: "/admin/refresh",
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-    },
   });
   if (!res.ok) throw new Error("Failed to delete product type");
   return res.json();

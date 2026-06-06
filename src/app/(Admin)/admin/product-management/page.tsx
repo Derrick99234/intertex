@@ -6,7 +6,7 @@ import ViewProduct, { Product } from "@/components/admin/products/view-product";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
@@ -42,19 +42,10 @@ function ProductManagement() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const token = localStorage.getItem("adminToken");
       setIsLoading(true);
-
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
       try {
-        const res = await fetch(`${API_BASE_URL}/products`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch("/products", {
+          refreshPath: "/admin/refresh",
         });
         const { products, message } = await res.json();
 
@@ -88,7 +79,9 @@ function ProductManagement() {
 
   const fetchActiveTab = async (href: string) => {
     if (href === "all") {
-      const res = await fetch(`${API_BASE_URL}/products`);
+      const res = await authFetch("/products", {
+        refreshPath: "/admin/refresh",
+      });
       const { products, message } = await res.json();
       if (!res.ok) throw new Error(message || "Failed to fetch product");
 
@@ -107,7 +100,9 @@ function ProductManagement() {
       return;
     }
 
-    const res = await fetch(`${API_BASE_URL}/products/category/${href}`);
+    const res = await authFetch(`/products/category/${href}`, {
+      refreshPath: "/admin/refresh",
+    });
     const { products, message } = await res.json();
 
     if (!res.ok) throw new Error(message || "Failed to fetch product");

@@ -8,6 +8,7 @@ import { Product } from "../admin/products/view-product";
 import { API_BASE_URL } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
+import { authFetch } from "@/lib/auth-fetch";
 
 const Accordion = ({
   title,
@@ -145,20 +146,13 @@ function ProductDetails({
         return;
       }
 
-      const token = localStorage.getItem("intertex-token");
-      if (!token) {
-        router.push("/login?redirect=/shop/cart");
-        return;
-      }
-
       setIsLoading(true);
       const responses = await Promise.all(
         itemsToAdd.map((item) =>
-          fetch(`${API_BASE_URL}/cart`, {
+          authFetch("/cart", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(item),
           }),

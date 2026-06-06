@@ -4,6 +4,7 @@ import DynamicTable from "@/components/admin/dynamic-table";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -42,18 +43,10 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     const fetchFeedback = async () => {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
-
       try {
         setIsLoading(true);
-        const response = await fetch(`${API_BASE_URL}/admin/feedback`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await authFetch("/admin/feedback", {
+          refreshPath: "/admin/refresh",
         });
         const data = await response.json();
 

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import AddNewProducts from "./add-new-products";
 import EditProduct from "./edit-product";
 import { ArrowLeft } from "lucide-react";
+import { authFetch } from "@/lib/auth-fetch";
 
 interface TabData {
   id: string;
@@ -36,18 +37,9 @@ export default function ProductTabs({
   const [editProduct, setEditProduct] = useState(false);
 
   const fetchProduct = async () => {
-    const token = localStorage.getItem("adminToken");
-
-    if (!token) {
-      router.push("/admin");
-      return;
-    }
     try {
-      const res = await fetch(`${API_BASE_URL}/products/${productId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await authFetch(`/products/${productId}`, {
+        refreshPath: "/admin/refresh",
       });
       const { product, message } = await res.json();
 

@@ -8,7 +8,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 
 type User = { fullName?: string; email?: string } | null;
 
@@ -31,21 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
-    const token = localStorage.getItem("intertex-token");
-    if (!token) {
-      setUser(null);
-      setIsLoading(false);
-      return;
-    }
     try {
-      const res = await fetch(`${API_BASE_URL}/user/get-user`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await authFetch("/user/get-user");
       if (res.ok) {
         const data = await res.json();
         setUser(data);
       } else {
-        localStorage.removeItem("intertex-token");
         setUser(null);
       }
     } catch {
@@ -57,7 +48,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearUser = useCallback(() => {
     setUser(null);
-    localStorage.removeItem("intertex-token");
   }, []);
 
   useEffect(() => {

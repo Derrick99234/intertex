@@ -3,6 +3,7 @@ import DeletePopup from "@/components/admin/blog/delete-popup";
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import React, { JSX, useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
@@ -30,7 +31,8 @@ function BlogManagement() {
   const [blogToDelete, setBlogToDelete] = useState<string>("");
 
   const handleDelete = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/blog/${id}`, {
+    const res = await authFetch(`/blog/${id}`, {
+      refreshPath: "/admin/refresh",
       method: "DELETE",
     });
 
@@ -46,18 +48,9 @@ function BlogManagement() {
 
   useEffect(() => {
     const fetchBlogs = async () => {
-      const token = localStorage.getItem("adminToken");
-
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
       try {
-        const res = await fetch(`${API_BASE_URL}/blog`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch("/blog", {
+          refreshPath: "/admin/refresh",
         });
         const data = await res.json();
 

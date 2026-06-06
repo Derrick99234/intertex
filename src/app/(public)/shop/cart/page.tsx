@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { AiOutlineDelete } from "react-icons/ai";
+import { authFetch } from "@/lib/auth-fetch";
 import DeliveryOption, {
   CURRENCY_OPTIONS,
   CurrencyCode,
@@ -59,14 +60,8 @@ export default function CartSummary() {
   };
 
   async function fetchCart() {
-    const token = localStorage.getItem("intertex-token");
     try {
-      const res = await fetch(`${API_BASE_URL}/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await authFetch("/cart");
       if (!res.ok) {
         const errorData = await res.json();
         showNotification(
@@ -126,17 +121,9 @@ export default function CartSummary() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("intertex-token");
-    if (!token) {
-      return;
-    }
     setLoading(true);
     const fetchUserData = async () => {
-      const response = await fetch(`${API_BASE_URL}/user/get-user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await authFetch("/user/get-user");
       const data = await response.json();
       if (response.ok) {
         setLoading(false);
@@ -152,15 +139,13 @@ export default function CartSummary() {
 
   async function handleDelete(productId: string, size: string) {
     setLoading(true);
-    const token = localStorage.getItem("intertex-token");
     try {
       setDeleting({
         productId,
         size,
       });
-      await fetch(`${API_BASE_URL}/cart/${productId}/${size}`, {
+      await authFetch(`/cart/${productId}/${size}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         method: "DELETE",
@@ -227,17 +212,10 @@ export default function CartSummary() {
         })),
       };
 
-      const token = localStorage.getItem("intertex-token");
-      if (!token) {
-        showNotification("You must be logged in to place an order.", "error");
-        return;
-      }
-
-      const orderRes = await fetch(`${API_BASE_URL}/orders`, {
+      const orderRes = await authFetch("/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(orderDetailstoSend),
       });
@@ -270,11 +248,10 @@ export default function CartSummary() {
         },
       };
 
-      const res = await fetch(`${API_BASE_URL}/paystack/initialize`, {
+      const res = await authFetch("/paystack/initialize", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });

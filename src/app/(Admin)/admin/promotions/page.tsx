@@ -4,6 +4,7 @@ import DynamicTable from "@/components/admin/dynamic-table";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -58,18 +59,10 @@ export default function PromotionsPage() {
   };
 
   const fetchPromotions = async () => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      router.push("/admin");
-      return;
-    }
-
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/admin/promotions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await authFetch("/admin/promotions", {
+        refreshPath: "/admin/refresh",
       });
       const data = await response.json();
 
@@ -111,12 +104,6 @@ export default function PromotionsPage() {
   }, [router]);
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      router.push("/admin");
-      return;
-    }
-
     try {
       setIsLoading(true);
       const endpoint = editingId
@@ -124,17 +111,20 @@ export default function PromotionsPage() {
         : `${API_BASE_URL}/admin/promotions`;
       const method = editingId ? "PATCH" : "POST";
 
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await authFetch(
+        editingId ? `/admin/promotions/${editingId}` : "/admin/promotions",
+        {
+          refreshPath: "/admin/refresh",
+          method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            discountValue: Number(form.discountValue),
+          }),
         },
-        body: JSON.stringify({
-          ...form,
-          discountValue: Number(form.discountValue),
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -160,23 +150,12 @@ export default function PromotionsPage() {
   const handleDelete = async () => {
     if (!editingId) return;
 
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      router.push("/admin");
-      return;
-    }
-
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `${API_BASE_URL}/admin/promotions/${editingId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await authFetch(`/admin/promotions/${editingId}`, {
+        refreshPath: "/admin/refresh",
+        method: "DELETE",
+      });
       const data = await response.json();
 
       if (!response.ok) {

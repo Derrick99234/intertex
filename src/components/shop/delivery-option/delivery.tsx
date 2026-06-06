@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import AddressForm from "./add-billing-information";
 import AddressSelectionCard from "./address-selection-card";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 
 function Delivery({
   deliveryInformation,
@@ -37,13 +38,12 @@ function Delivery({
   const handleSave = async (formData: any) => {
     const method = isEditMode ? "PATCH" : "POST";
     const endpoint = isEditMode
-      ? `${API_BASE_URL}/billing-information/${editingAddressId}`
-      : `${API_BASE_URL}/billing-information`;
+      ? `/billing-information/${editingAddressId}`
+      : "/billing-information";
 
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -63,11 +63,7 @@ function Delivery({
     }
 
     // Refresh addresses
-    const updated = await fetch(`${API_BASE_URL}/billing-information`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
-      },
-    });
+    const updated = await authFetch("/billing-information");
 
     const data = await updated.json();
 
@@ -109,12 +105,7 @@ function Delivery({
   );
   useEffect(() => {
     const fetchBilingInfo = async () => {
-      const res = await fetch(`${API_BASE_URL}/billing-information`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await authFetch("/billing-information");
       const data = await res.json();
 
       const updatedData = data.map((item: any) => {

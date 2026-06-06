@@ -10,6 +10,7 @@ import {
 } from "@/lib/fetchCategories";
 import { CgClose } from "react-icons/cg";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { Product } from "./view-product";
@@ -210,10 +211,10 @@ function AddNewProducts({
         });
       }
 
-      const res = await fetch(`${API_BASE_URL}/products`, {
+      const res = await authFetch("/products", {
+        refreshPath: "/admin/refresh",
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
         },
         body: formDataToSend,
       });

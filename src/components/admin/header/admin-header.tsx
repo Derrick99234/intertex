@@ -1,6 +1,6 @@
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -45,18 +45,9 @@ function AdminHeader({
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
-      const token = localStorage.getItem("adminToken");
-
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
       try {
-        const res = await fetch(`${API_BASE_URL}/admin/get-admin`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch("/admin/get-admin", {
+          refreshPath: "/admin/refresh",
         });
         const data = await res.json();
 

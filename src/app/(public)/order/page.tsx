@@ -9,6 +9,7 @@ import { FaBoxOpen } from "react-icons/fa";
 import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { authFetch } from "@/lib/auth-fetch";
 
 function OrderPageInner() {
   const router = useRouter();
@@ -42,22 +43,11 @@ function OrderPageInner() {
 
   // Fetch Orders from API
   const fetchOrders = async () => {
-    const token = localStorage.getItem("intertex-token");
-    if (!token) {
-      redirectToLogin();
-      return;
-    }
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE_URL}/orders/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await authFetch("/orders/user");
 
       if (res.status === 401) {
-        localStorage.removeItem("intertex-token");
         redirectToLogin();
         return;
       }

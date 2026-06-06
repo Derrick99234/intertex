@@ -96,8 +96,11 @@ export default function AdminSidebar({
   const handleLogout = () => {
     try {
       setIsLoading(true);
+      fetch(`${API_BASE_URL}/admin/logout`, {
+        method: "POST",
+        credentials: "include",
+      }).catch(() => {});
       setTimeout(() => {
-        localStorage.removeItem("adminToken");
         showNotification("You have been successfully logged out!", "success");
         router.push("/admin");
         setIsLoading(false);
@@ -169,3 +172,4 @@ export default function AdminSidebar({
     </>
   );
 }
+import { API_BASE_URL } from "@/lib/constants";

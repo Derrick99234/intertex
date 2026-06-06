@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export function middleware(req: NextRequest) {
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || "";
+
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/admin") && pathname !== "/admin") {
     const adminToken = req.cookies.get("adminToken")?.value;
     if (!adminToken) {
       return NextResponse.redirect(new URL("/admin", req.url));
+    }
+
+    if (ADMIN_JWT_SECRET) {
+      try {
+        const secretKey = new TextEncoder().encode(ADMIN_JWT_SECRET);
+        await jwtVerify(adminToken, secretKey);
+      } catch {
+        return NextResponse.redirect(new URL("/admin", req.url));
+      }
     }
   }
 

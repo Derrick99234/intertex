@@ -1,6 +1,13 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+const secret = process.env.NEXTAUTH_SECRET;
+if (!secret) {
+  throw new Error(
+    "NEXTAUTH_SECRET environment variable is required but not set.",
+  );
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -8,7 +15,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
+  secret,
   callbacks: {
     async jwt({ token, account }) {
       if (account) {

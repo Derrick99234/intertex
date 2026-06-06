@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { IoEyeOutline } from "react-icons/io5";
 import { Subcategory, Type } from "@/components/shop/shop-page";
 import { ArrowLeft } from "lucide-react";
@@ -111,18 +112,9 @@ export default function ViewProduct({
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem("adminToken");
-
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
       try {
-        const res = await fetch(`${API_BASE_URL}/products/${productId}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch(`/products/${productId}`, {
+          refreshPath: "/admin/refresh",
         });
         const { product, message } = await res.json();
 

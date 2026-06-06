@@ -2,6 +2,7 @@
 import DynamicTable from "@/components/admin/dynamic-table";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import React, { JSX, useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
@@ -25,18 +26,9 @@ function UserManagement() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const token = localStorage.getItem("adminToken");
-
-      if (!token) {
-        router.push("/admin");
-        return;
-      }
       try {
-        const res = await fetch(`${API_BASE_URL}/admin/users`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await authFetch("/admin/users", {
+          refreshPath: "/admin/refresh",
         });
         const data = await res.json();
 

@@ -3,6 +3,7 @@ import DynamicTable from "@/components/admin/dynamic-table";
 import ViewInventory from "@/components/admin/inventory/view-inventory";
 import DisplayStats from "@/components/display-stats/display-stats";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import React, { useEffect, useState } from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
@@ -17,11 +18,9 @@ function Inventory() {
 
   useEffect(() => {
     const getProductTypes = async () => {
-      const res = await fetch(`${API_BASE_URL}/types`, {
+      const res = await authFetch("/types", {
+        refreshPath: "/admin/refresh",
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
         next: { revalidate: 300 },
       });
       const { data } = await res.json();

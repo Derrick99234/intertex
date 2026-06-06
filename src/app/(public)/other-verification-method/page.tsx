@@ -52,6 +52,7 @@ export default function HomePage() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             fullName: fullName,
             email: email,
@@ -68,12 +69,9 @@ export default function HomePage() {
           return;
         }
         showNotification("Login successful!", "success");
-        const data = await response.json();
-        if (data.accessToken) {
-          localStorage.setItem("intertex-token", data.accessToken);
-          await refreshUser();
-          await signOut({ redirect: false });
-        }
+        await response.json();
+        await refreshUser();
+        await signOut({ redirect: false });
         await new Promise((resolve) => setTimeout(resolve, 2000));
         showNotification("redirecting to profile page...", "info");
         router.push("/update-profile");

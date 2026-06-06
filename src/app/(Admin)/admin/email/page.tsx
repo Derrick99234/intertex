@@ -3,6 +3,7 @@
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -31,19 +32,13 @@ export default function EmailManagementPage() {
   };
 
   const handleSendEmail = async () => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      router.push("/admin");
-      return;
-    }
-
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_BASE_URL}/admin/email/send`, {
+      const response = await authFetch("/admin/email/send", {
+        refreshPath: "/admin/refresh",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       });

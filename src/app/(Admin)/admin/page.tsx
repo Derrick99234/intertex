@@ -43,6 +43,7 @@ function AdminLogin() {
       const res = await fetch(`${API_BASE_URL}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -56,8 +57,6 @@ function AdminLogin() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       showNotification("redirecting to dashboard...", "info");
 
-      const { accessToken } = await res.json();
-      localStorage.setItem("adminToken", accessToken);
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);

@@ -2,7 +2,7 @@
 import InputField from "@/components/input-field/input-field";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useEffect, useState } from "react";
 
@@ -75,21 +75,10 @@ function UpdateProfile() {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem("intertex-token");
       setIsLoading(true);
 
-      if (!token) {
-        router.push("/login");
-        return;
-      }
-
       try {
-        const res = await fetch(`${API_BASE_URL}/user/get-user`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await authFetch("/user/get-user");
         fetch("https://restcountries.com/v3.1/all?fields=name,cca2")
           .then((res) => res.json())
           .then((data) => {
@@ -106,7 +95,6 @@ function UpdateProfile() {
 
         console.log("Responses from fetch:", res);
         if (!res.ok) {
-          localStorage.removeItem("intertex-token");
           showNotification("Failed to fetch user data", "error");
           router.push("/login");
           return;
@@ -131,7 +119,6 @@ function UpdateProfile() {
         console.log("User data fetched successfully:", userData);
       } catch (err) {
         console.error("Token verification failed:", err);
-        localStorage.removeItem("intertex-token");
         router.push("/login");
       } finally {
         setIsLoading(false);
@@ -151,11 +138,10 @@ function UpdateProfile() {
     e.preventDefault();
     setIsLoading(true);
     const updateUser = async () => {
-      const res = await fetch(`${API_BASE_URL}/user/update`, {
+      const res = await authFetch("/user/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("intertex-token")}`,
         },
         body: JSON.stringify(user),
       });

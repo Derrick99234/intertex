@@ -1,6 +1,7 @@
 "use client";
 
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import React, { useEffect, useState } from "react";
 
 // --- INLINE SVG ICONS ---
@@ -204,15 +205,7 @@ export default function PaymentSuccessPage() {
         }
 
         // 1. Call NestJS backend for Paystack verification
-        const token = localStorage.getItem("intertex-token");
-        const res = await fetch(
-          `${API_BASE_URL}/paystack/verify?reference=${reference}`,
-          {
-            headers: {
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-          },
-        );
+        const res = await authFetch(`/paystack/verify?reference=${reference}`);
 
         if (!res.ok) {
           throw new Error(`Server error: ${res.status}`);
@@ -230,11 +223,10 @@ export default function PaymentSuccessPage() {
           const fetchedOrderId = data.data.metadata?.orderId;
           if (fetchedOrderId) {
             setOrderId(fetchedOrderId);
-            await fetch(`${API_BASE_URL}/orders/${fetchedOrderId}`, {
+            await authFetch(`/orders/${fetchedOrderId}`, {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
               },
               body: JSON.stringify({ status: "successful" }),
             });

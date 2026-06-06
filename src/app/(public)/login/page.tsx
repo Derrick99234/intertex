@@ -63,6 +63,7 @@ function LoginForm() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -80,20 +81,6 @@ function LoginForm() {
           "Unable to log in. Please check your credentials and try again.";
         setNotification({ type: "error", message });
         return;
-      }
-
-      const token = data?.accessToken;
-      if (!token) {
-        setNotification({
-          type: "error",
-          message:
-            "Login succeeded, but the server did not return an access token.",
-        });
-        return;
-      }
-
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("intertex-token", token);
       }
 
       await refreshUser();

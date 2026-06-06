@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 
 type OrderProduct = {
   product?: {
@@ -49,26 +50,9 @@ export default function PaymentPage() {
     }
 
     const startPayment = async () => {
-      const token = localStorage.getItem("intertex-token");
-      if (!token) {
-        router.replace(`/login?returnUrl=${encodeURIComponent(`/payment/${orderId}`)}`);
-        return;
-      }
-
       try {
         setMessage("Loading your order...");
-        const orderRes = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (orderRes.status === 401) {
-          localStorage.removeItem("intertex-token");
-          router.replace(`/login?returnUrl=${encodeURIComponent(`/payment/${orderId}`)}`);
-          return;
-        }
+        const orderRes = await authFetch(`/orders/${orderId}`);
 
         if (!orderRes.ok) {
           throw new Error("Could not load order details.");
@@ -91,11 +75,10 @@ export default function PaymentPage() {
         }
 
         setMessage("Initializing secure checkout...");
-        const paymentRes = await fetch(`${API_BASE_URL}/paystack/initialize`, {
+        const paymentRes = await authFetch("/paystack/initialize", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             email: orderData.userId?.email,
