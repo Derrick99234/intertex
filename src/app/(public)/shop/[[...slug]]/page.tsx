@@ -7,6 +7,14 @@ import ShopLandingPage, {
 } from "@/components/shop/shop-page";
 import ProductDetails from "@/components/shop/product-details";
 
+async function safeJson<T>(res: Response): Promise<T | null> {
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
 export default async function ShopPage(props: {
   params: Promise<{ slug?: string[] }>;
   searchParams: Promise<Record<string, string>>;
@@ -17,6 +25,14 @@ export default async function ShopPage(props: {
   const searchTerm = searchParams?.keyword || "";
   const page = parseInt(searchParams?.page || "1", 10) || 1;
   const slugArray = slug ?? [];
+
+  if (!API_BASE_URL) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
+        <p>Backend URL is not configured.</p>
+      </div>
+    );
+  }
 
   async function fetchProducts(
     endpoint: string,
@@ -30,15 +46,19 @@ export default async function ShopPage(props: {
     if (pageNum) params.set("page", String(pageNum));
     const qs = params.toString();
     if (qs) url += `?${qs}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return {
-      products: data?.data ?? data?.products ?? [],
-      totalPages: data?.totalPages ?? 1,
-    };
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) return { products: [], totalPages: 1 };
+      const data = await safeJson<any>(res);
+      return {
+        products: data?.data ?? data?.products ?? [],
+        totalPages: data?.totalPages ?? 1,
+      };
+    } catch {
+      return { products: [], totalPages: 1 };
+    }
   }
 
-  // Helper: extract unique categories from subcategories
   function getUniqueCategories(subcategories: Subcategory[]): Category[] {
     return subcategories
       .map((sub) => sub.category)
@@ -47,7 +67,6 @@ export default async function ShopPage(props: {
       );
   }
 
-  // Handle search if searchTerm exists
   if (searchTerm) {
     const { products, totalPages } = await fetchProducts(
       `${API_BASE_URL}/products/search`,
@@ -55,8 +74,8 @@ export default async function ShopPage(props: {
       page,
     );
 
-    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
-    const tabData: Subcategory[] = await tabsRes.json();
+    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`, { cache: "no-store" }).catch(() => null);
+    const tabData: Subcategory[] = tabsRes ? (await safeJson<Subcategory[]>(tabsRes)) ?? [] : [];
     const allCategoryFilter = getUniqueCategories(tabData);
 
     return (
@@ -70,15 +89,14 @@ export default async function ShopPage(props: {
     );
   }
 
-  // If no search, handle normal slug-based routing
   if (slugArray.length === 0) {
     const { products, totalPages } = await fetchProducts(
       `${API_BASE_URL}/products`,
       undefined,
       page,
     );
-    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`);
-    const tabData: Subcategory[] = await tabsRes.json();
+    const tabsRes = await fetch(`${API_BASE_URL}/subcategories`, { cache: "no-store" }).catch(() => null);
+    const tabData: Subcategory[] = tabsRes ? (await safeJson<Subcategory[]>(tabsRes)) ?? [] : [];
     const allCategoryFilter = getUniqueCategories(tabData);
 
     return (
@@ -94,15 +112,22 @@ export default async function ShopPage(props: {
 
   if (slugArray.length === 1) {
     const categorySlug = slugArray[0];
-    const res = await fetch(
-      `${API_BASE_URL}/products/category/${categorySlug}?limit=12&page=${page}`,
-    );
-    const data = await res.json();
-    const products = data?.data ?? data?.products ?? [];
-    const totalPages = data?.totalPages ?? 1;
+    let products: any[] = [];
+    let totalPages = 1;
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/products/category/${categorySlug}?limit=12&page=${page}`,
+        { cache: "no-store" },
+      );
+      if (res.ok) {
+        const data = await safeJson<any>(res);
+        products = data?.data ?? data?.products ?? [];
+        totalPages = data?.totalPages ?? 1;
+      }
+    } catch {}
 
-    const subcategoriesRes = await fetch(`${API_BASE_URL}/subcategories`);
-    const tabData: Subcategory[] = await subcategoriesRes.json();
+    const subcategoriesRes = await fetch(`${API_BASE_URL}/subcategories`, { cache: "no-store" }).catch(() => null);
+    const tabData: Subcategory[] = subcategoriesRes ? (await safeJson<Subcategory[]>(subcategoriesRes)) ?? [] : [];
     const allSubcategories = tabData.filter(
       (sub) => sub.category.slug === categorySlug,
     );
@@ -120,15 +145,22 @@ export default async function ShopPage(props: {
 
   if (slugArray.length === 2) {
     const [category, subcategory] = slugArray;
-    const res = await fetch(
-      `${API_BASE_URL}/products/subcategory/${category}/${subcategory}?limit=12&page=${page}`,
-    );
-    const data = await res.json();
-    const products = data?.data ?? data?.products ?? [];
-    const totalPages = data?.totalPages ?? 1;
+    let products: any[] = [];
+    let totalPages = 1;
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/products/subcategory/${category}/${subcategory}?limit=12&page=${page}`,
+        { cache: "no-store" },
+      );
+      if (res.ok) {
+        const data = await safeJson<any>(res);
+        products = data?.data ?? data?.products ?? [];
+        totalPages = data?.totalPages ?? 1;
+      }
+    } catch {}
 
-    const typesRes = await fetch(`${API_BASE_URL}/types`);
-    const { data: typeData } = await typesRes.json();
+    const typesRes = await fetch(`${API_BASE_URL}/types`, { cache: "no-store" }).catch(() => null);
+    const typeData: Type[] = typesRes ? (await safeJson<{ data: Type[] }>(typesRes))?.data ?? [] : [];
     const allTypes = typeData.filter(
       (type: Type) =>
         type.subcategory.slug === subcategory &&
@@ -148,12 +180,19 @@ export default async function ShopPage(props: {
 
   if (slugArray.length === 3) {
     const typeSlug = slugArray[2];
-    const res = await fetch(
-      `${API_BASE_URL}/products/type/${typeSlug}?limit=12&page=${page}`,
-    );
-    const data = await res.json();
-    const products = data?.data ?? data?.products ?? [];
-    const totalPages = data?.totalPages ?? 1;
+    let products: any[] = [];
+    let totalPages = 1;
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/products/type/${typeSlug}?limit=12&page=${page}`,
+        { cache: "no-store" },
+      );
+      if (res.ok) {
+        const data = await safeJson<any>(res);
+        products = data?.data ?? data?.products ?? [];
+        totalPages = data?.totalPages ?? 1;
+      }
+    } catch {}
 
     return (
       <ShopLandingPage
@@ -168,120 +207,17 @@ export default async function ShopPage(props: {
 
   if (slugArray.length === 4) {
     const productSlug = slugArray[3];
-    const res = await fetch(`${API_BASE_URL}/products/product/${productSlug}`);
-    const { product } = await res.json();
+    let product: any = null;
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/product/${productSlug}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await safeJson<{ product: any }>(res);
+        product = data?.product ?? null;
+      }
+    } catch {}
 
     return <ProductDetails slug={slugArray} product={product ?? []} />;
   }
 
   return notFound();
 }
-
-// import { notFound } from "next/navigation";
-// import { API_BASE_URL } from "@/lib/constants";
-// import ShopLandingPage, {
-//   Category,
-//   Subcategory,
-//   Type,
-// } from "@/components/shop/shop-page";
-// import ProductDetails from "@/components/shop/product-details";
-
-// export default async function ShopPage({
-//   params,
-// }: {
-//   params: Promise<{ slug?: string[] }>;
-// }) {
-//   const { slug } = await params;
-//   const slugArray = slug ?? [];
-
-//   if (slugArray.length === 0) {
-//     const response = await fetch(`${API_BASE_URL}/products`);
-//     const data = await response.json();
-//     const tabs = await fetch(`${API_BASE_URL}/subcategories`);
-//     const tabData = await tabs.json();
-
-//     function getUniqueCategories(subcategories: Subcategory[]): Category[] {
-//       return subcategories
-//         .map((sub) => sub.category)
-//         .filter(
-//           (cat, index, self) =>
-//             index === self.findIndex((c) => c._id === cat._id)
-//         );
-//     }
-
-//     const allCategoryFilter = getUniqueCategories(tabData);
-//     return (
-//       <ShopLandingPage
-//         products={data.products ?? []}
-//         tabs={allCategoryFilter ?? []}
-//         slug={slugArray}
-//       />
-//     );
-//   }
-
-//   if (slugArray.length === 1) {
-//     const response = await fetch(
-//       `${API_BASE_URL}/products/category/${slugArray[0]}`
-//     );
-//     const data = await response.json();
-//     console.log(data);
-//     const subcategories = await fetch(`${API_BASE_URL}/subcategories`);
-//     const tabData = await subcategories.json();
-//     const allSubcategories = tabData.filter(
-//       (sub: Subcategory) => sub.category.slug === slugArray[0]
-//     );
-
-//     return (
-//       <ShopLandingPage
-//         products={data.products ?? []}
-//         tabs={allSubcategories ?? []}
-//         slug={slugArray}
-//       />
-//     );
-//   }
-
-//   if (slugArray.length === 2) {
-//     const [category, subcategory] = slugArray;
-//     const { products } = await fetch(
-//       `${API_BASE_URL}/products/subcategory/${category}/${subcategory}`
-//     ).then((res) => res.json());
-
-//     const types = await fetch(`${API_BASE_URL}/types`);
-//     const { data: typeData } = await types.json();
-//     const allTypes = typeData.filter(
-//       (type: Type) =>
-//         type.subcategory.slug === subcategory &&
-//         type.subcategory.category.slug === category
-//     );
-
-//     return (
-//       <ShopLandingPage
-//         products={products ?? []}
-//         tabs={allTypes ?? []}
-//         slug={slugArray}
-//       />
-//     );
-//   }
-
-//   if (slugArray.length === 3) {
-//     const [category, subcategory, type] = slugArray;
-//     const { products } = await fetch(
-//       `${API_BASE_URL}/products/type/${type}`
-//     ).then((res) => res.json());
-
-//     return (
-//       <ShopLandingPage products={products ?? []} tabs={[]} slug={slugArray} />
-//     );
-//   }
-
-//   if (slugArray.length === 4) {
-//     const productSlug = slugArray[3];
-//     const { product } = await fetch(
-//       `${API_BASE_URL}/products/product/${productSlug}`
-//     ).then((res) => res.json());
-
-//     return <ProductDetails slug={[...slugArray]} product={product ?? []} />;
-//   }
-
-//   return notFound();
-// }
