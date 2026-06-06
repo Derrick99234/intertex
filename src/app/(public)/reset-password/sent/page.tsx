@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { API_BASE_URL } from "@/lib/constants";
@@ -7,7 +8,7 @@ import OtpInput from "@/components/admin/otp-verification/otp-input";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 
-export default function ResetPasswordSent() {
+function ResetPasswordSentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -126,5 +127,13 @@ export default function ResetPasswordSent() {
       )}
       <LoadingSpinner isLoading={isLoading} />
     </section>
+  );
+}
+
+export default function ResetPasswordSent() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordSentForm />
+    </Suspense>
   );
 }

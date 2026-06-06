@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import { Package, MessageCircle, MapPin, X } from "lucide-react";
 import DynamicTable from "@/components/admin/dynamic-table";
 import React, { useEffect, useState } from "react";
@@ -9,7 +10,7 @@ import { API_BASE_URL } from "@/lib/constants";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-function OrderPage() {
+function OrderPageInner() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -354,4 +355,10 @@ function OrderPage() {
   );
 }
 
-export default OrderPage;
+export default function OrderPage() {
+  return (
+    <Suspense fallback={null}>
+      <OrderPageInner />
+    </Suspense>
+  );
+}
