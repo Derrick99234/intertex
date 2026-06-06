@@ -227,15 +227,18 @@ export default function PaymentSuccessPage() {
           data.data.status === "success"
         ) {
           success = true;
-          // Prefer the orderId from Paystack metadata if available
           const fetchedOrderId = data.data.metadata?.orderId;
-
-          // NOTE: Add your backend order status update call here if needed:
-          await fetch(`${API_BASE_URL}/orders/${fetchedOrderId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "successful" }),
-          });
+          if (fetchedOrderId) {
+            setOrderId(fetchedOrderId);
+            await fetch(`${API_BASE_URL}/orders/${fetchedOrderId}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify({ status: "successful" }),
+            });
+          }
         } else {
           console.error("Verification failed in NestJS response:", data);
         }
