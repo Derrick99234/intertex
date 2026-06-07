@@ -22,7 +22,7 @@ function Footer() {
     },
     {
       productName: "Our Factory",
-      productLink: "factory.intertexng.com",
+      productLink: "https://factory.intertexng.com",
     },
   ];
   const companyLinks = [

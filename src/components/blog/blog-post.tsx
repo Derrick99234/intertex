@@ -79,9 +79,14 @@ const BlogPost = ({ slug }: BlogPostProps) => {
   const [post, setPost] = useState<any>(null);
 
   const fetchBlogPosts = async () => {
-    const res = await fetch(`${API_BASE_URL}/blog/slug/${slug}`);
-    const data = await res.json();
-    setPost(data);
+    try {
+      const res = await fetch(`${API_BASE_URL}/blog/slug/${slug}`);
+      const data = await res.json();
+      setPost(data);
+    } catch (err) {
+      console.error("Failed to fetch blog post:", err);
+      setPost(null);
+    }
   };
 
   useEffect(() => {

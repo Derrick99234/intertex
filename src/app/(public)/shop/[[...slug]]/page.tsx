@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { API_BASE_URL } from "@/lib/constants";
 import ShopLandingPage, {
   Category,
@@ -79,13 +80,15 @@ export default async function ShopPage(props: {
     const allCategoryFilter = getUniqueCategories(tabData);
 
     return (
-      <ShopLandingPage
-        products={products}
-        tabs={[]}
-        slug={slugArray}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><p>Loading...</p></div>}>
+        <ShopLandingPage
+          products={products}
+          tabs={[]}
+          slug={slugArray}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      </Suspense>
     );
   }
 
@@ -100,13 +103,15 @@ export default async function ShopPage(props: {
     const allCategoryFilter = getUniqueCategories(tabData);
 
     return (
-      <ShopLandingPage
-        products={products ?? []}
-        tabs={allCategoryFilter}
-        slug={slugArray}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><p>Loading...</p></div>}>
+        <ShopLandingPage
+          products={products ?? []}
+          tabs={allCategoryFilter}
+          slug={slugArray}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      </Suspense>
     );
   }
 
@@ -133,13 +138,15 @@ export default async function ShopPage(props: {
     );
 
     return (
-      <ShopLandingPage
-        products={products ?? []}
-        tabs={allSubcategories ?? []}
-        slug={slugArray}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><p>Loading...</p></div>}>
+        <ShopLandingPage
+          products={products ?? []}
+          tabs={allSubcategories ?? []}
+          slug={slugArray}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      </Suspense>
     );
   }
 
@@ -168,13 +175,15 @@ export default async function ShopPage(props: {
     );
 
     return (
-      <ShopLandingPage
-        products={products ?? []}
-        tabs={allTypes ?? []}
-        slug={slugArray}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><p>Loading...</p></div>}>
+        <ShopLandingPage
+          products={products ?? []}
+          tabs={allTypes ?? []}
+          slug={slugArray}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      </Suspense>
     );
   }
 
@@ -195,13 +204,15 @@ export default async function ShopPage(props: {
     } catch {}
 
     return (
-      <ShopLandingPage
-        products={products ?? []}
-        tabs={[]}
-        slug={slugArray}
-        currentPage={page}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><p>Loading...</p></div>}>
+        <ShopLandingPage
+          products={products ?? []}
+          tabs={[]}
+          slug={slugArray}
+          currentPage={page}
+          totalPages={totalPages}
+        />
+      </Suspense>
     );
   }
 

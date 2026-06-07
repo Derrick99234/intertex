@@ -199,10 +199,15 @@ const BlogList = () => {
   );
 
   const fetchBlogPosts = async () => {
-    const res = await fetch(`${API_BASE_URL}/blog`);
-    const data = await res.json();
-    console.log(data);
-    setPosts(data);
+    try {
+      const res = await fetch(`${API_BASE_URL}/blog`);
+      const data = await res.json();
+      console.log(data);
+      setPosts(data);
+    } catch (err) {
+      console.error("Failed to fetch blog posts:", err);
+      setPosts([]);
+    }
   };
 
   useEffect(() => {

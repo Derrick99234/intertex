@@ -2,7 +2,8 @@
 
 import { API_BASE_URL } from "@/lib/constants";
 import { authFetch } from "@/lib/auth-fetch";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 // --- INLINE SVG ICONS ---
 
@@ -116,7 +117,8 @@ const FailureScreen = ({
 );
 
 // --- Main Application Component ---
-export default function PaymentSuccessPage() {
+function PaymentSuccessInner() {
+  const searchParams = useSearchParams();
   const [reference, setReference] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [verified, setVerified] = useState(false); // Success/Failure state
@@ -153,21 +155,15 @@ export default function PaymentSuccessPage() {
     };
   }, []);
 
-  // Effect 1: Extract 'reference' from URL using standard browser API
+  // Effect 1: Extract 'reference' from URL using useSearchParams
   useEffect(() => {
-    if (typeof window !== "undefined" && window.location.search) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const ref = urlParams.get("reference");
-      setReference(ref);
+    const ref = searchParams.get("reference");
+    setReference(ref);
 
-      if (!ref) {
-        // Start the verification process immediately even if reference is missing (will result in failure)
-        setLoading(false);
-      }
-    } else {
+    if (!ref) {
       setLoading(false);
     }
-  }, []);
+  }, [searchParams]);
 
   // Effect 2: Verification and Redirect Logic (REPLACING MOCK)
   useEffect(() => {
@@ -275,5 +271,13 @@ export default function PaymentSuccessPage() {
         <FailureScreen orderId={orderId} redirectTime={redirectTime} />
       )}
     </div>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-gray-50"><div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-500"></div></div>}>
+      <PaymentSuccessInner />
+    </Suspense>
   );
 }

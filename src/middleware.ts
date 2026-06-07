@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
 
-const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || "";
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET;
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -12,13 +12,16 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/admin", req.url));
     }
 
-    if (ADMIN_JWT_SECRET) {
-      try {
-        const secretKey = new TextEncoder().encode(ADMIN_JWT_SECRET);
-        await jwtVerify(adminToken, secretKey);
-      } catch {
-        return NextResponse.redirect(new URL("/admin", req.url));
-      }
+    if (!ADMIN_JWT_SECRET) {
+      console.error("ADMIN_JWT_SECRET not configured");
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+
+    try {
+      const secretKey = new TextEncoder().encode(ADMIN_JWT_SECRET);
+      await jwtVerify(adminToken, secretKey);
+    } catch {
+      return NextResponse.redirect(new URL("/admin", req.url));
     }
   }
 

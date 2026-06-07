@@ -38,7 +38,7 @@ function OrderPageInner() {
   };
 
   const redirectToLogin = () => {
-    router.replace(`/login?returnUrl=${encodeURIComponent(getReturnPath())}`);
+    router.replace(`/login?returnTo=${encodeURIComponent(getReturnPath())}`);
   };
 
   // Fetch Orders from API

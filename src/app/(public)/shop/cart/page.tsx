@@ -65,7 +65,7 @@ export default function CartSummary() {
       if (!res.ok) {
         const errorData = await res.json();
         showNotification(
-          `Login failed: ${errorData.message || "Invalid credentials"}`,
+          `Failed to load cart: ${errorData.message || "Unknown error"}`,
           "error",
         );
         return;
