@@ -38,7 +38,8 @@ const slides = [
   },
   {
     id: "tailored",
-    bgColor: "bg-[#2f3331]",
+    bgImage:
+      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1920",
     content: (
       <div className="text-center text-white flex justify-center items-center flex-col max-w-3xl">
         <span className="font-sans text-xs font-semibold tracking-[0.3em] text-[#c6b7a2] uppercase">
@@ -61,7 +62,8 @@ const slides = [
   },
   {
     id: "summer",
-    bgColor: "bg-[#735a45]",
+    bgImage:
+      "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=1920",
     content: (
       <div className="text-center text-white flex justify-center items-center flex-col max-w-3xl">
         <span className="font-sans text-xs font-semibold tracking-[0.3em] text-[#f0ceb3] uppercase">
@@ -78,20 +80,8 @@ const slides = [
         </p>
       </div>
     ),
-    leftImage: {
-      src: "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Component+3.png",
-      alt: "brown suit",
-      width: 300,
-      className:
-        "bottom-0 left-0 max-[1246px]:max-w-40 opacity-60",
-    },
-    rightImage: {
-      src: "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Component+2.png",
-      alt: "classy outfit",
-      width: 280,
-      className:
-        "bottom-0 right-0 max-[1246px]:max-w-36 opacity-60",
-    },
+    leftImage: null,
+    rightImage: null,
     showShopButton: true,
   },
 ];
@@ -125,22 +115,31 @@ export default function HeroSlider() {
           }`}
         >
           <section
-            className={`relative grid grid-cols-[30rem_1fr_20rem] max-[1246px]:grid-cols-[1fr] max-[1246px]:min-h-[85vh] max-[1246px]:items-start ${slide.bgColor} items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-(family-name:--font-geist-sans)`}
+            className={`relative grid grid-cols-[30rem_1fr_20rem] max-[1246px]:grid-cols-[1fr] max-[1246px]:min-h-[85vh] max-[1246px]:items-start ${slide.bgColor || ""} items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-(family-name:--font-geist-sans)`}
           >
+            {slide.bgImage && (
+              <>
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url(${slide.bgImage})` }}
+                />
+                <div className="absolute inset-0 bg-[#0d0e0e]/60" />
+              </>
+            )}
             {slide.leftImage && (
               <Image
                 src={slide.leftImage.src}
                 alt={slide.leftImage.alt}
                 width={slide.leftImage.width}
                 height={300}
-                className={`absolute ${slide.leftImage.className}`}
+                className={`absolute z-10 ${slide.leftImage.className}`}
               />
             )}
 
-            <div className="col-span-3">{slide.content}</div>
+            <div className="relative z-10 col-span-3">{slide.content}</div>
 
             {slide.showShopButton && (
-              <div className="col-span-3">
+              <div className="relative z-10 col-span-3">
                 <button
                   className="text-white px-18 py-4 mt-5 bg-black/20 hover:bg-black/40 backdrop-blur-sm transition-all cursor-pointer"
                   onClick={() => router.push("/shop")}
@@ -156,7 +155,7 @@ export default function HeroSlider() {
                 alt={slide.rightImage.alt}
                 width={slide.rightImage.width}
                 height={200}
-                className={`absolute ${slide.rightImage.className}`}
+                className={`absolute z-10 ${slide.rightImage.className}`}
               />
             )}
           </section>
