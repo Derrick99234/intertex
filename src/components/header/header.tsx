@@ -106,11 +106,13 @@ function Header() {
           >
             <BiCart size={20} />
           </Link>
-          {user?.fullName ? (
+          {isLoading ? (
+            <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
+          ) : user?.fullName ? (
             <>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
                 {user.fullName.split(" ")[0].charAt(0) +
-                  user.fullName.split(" ")[1]?.charAt(0)}
+                  (user.fullName.split(" ")[1]?.charAt(0) || "")}
               </span>
               <Link href={"/update-profile"}>
                 <CgProfile size={20} />
@@ -143,11 +145,13 @@ function Header() {
           >
             <BiCart size={20} />
           </Link>
-          {user?.fullName ? (
+          {isLoading ? (
+            <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
+          ) : user?.fullName ? (
             <>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
                 {user.fullName.split(" ")[0].charAt(0) +
-                  user.fullName.split(" ")[1]?.charAt(0)}
+                  (user.fullName.split(" ")[1]?.charAt(0) || "")}
               </span>
               <Link href={"/update-profile"}>
                 <CgProfile size={20} />
