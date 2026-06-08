@@ -1,7 +1,40 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { API_BASE_URL } from "@/lib/constants";
+
+function ArrivalImage({
+  src,
+  alt,
+}: {
+  src?: string;
+  alt: string;
+}) {
+  const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  if (!src || errored) {
+    return <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />;
+  }
+
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={`object-cover ${!loaded ? "opacity-0" : "opacity-100"}`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setErrored(true)}
+        sizes="(max-width: 768px) 50vw, 25vw"
+      />
+    </>
+  );
+}
 
 interface ProductItem {
   _id: string;
@@ -81,10 +114,6 @@ export default function NewArrivalsBanner() {
               const href = product
                 ? `/shop/${product.subcategory?.category?.slug}/${product.subcategory?.slug}/${product.productType?.slug}/${product.slug}`
                 : "/shop";
-              const src =
-                product?.imageUrl ||
-                "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/elegant-man-suit+1.png";
-
               return (
                 <Link
                   key={slot.key}
@@ -93,12 +122,11 @@ export default function NewArrivalsBanner() {
                 >
                   <div
                     style={{ backgroundColor: slot.key === "center" ? "#ffffff" : "#e0e3e0" }}
-                    className={`p-3 shadow-sm transition-opacity hover:opacity-90 md:p-4 ${slot.key === "center" ? "shadow-md md:p-5" : ""}`}
+                    className={`relative ${slot.imgClass} shadow-sm transition-opacity hover:opacity-90 ${slot.key === "center" ? "shadow-md" : ""}`}
                   >
-                    <img
-                      src={src}
+                    <ArrivalImage
+                      src={product?.imageUrl}
                       alt={product?.productName || "New arrival"}
-                      className={`${slot.imgClass} object-cover`}
                     />
                   </div>
                 </Link>

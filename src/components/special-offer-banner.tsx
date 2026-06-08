@@ -1,7 +1,40 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { API_BASE_URL } from "@/lib/constants";
+
+function SaleImage({
+  src,
+  alt,
+}: {
+  src?: string;
+  alt: string;
+}) {
+  const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  if (!src || errored) {
+    return <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />;
+  }
+
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={`object-cover ${!loaded ? "opacity-0" : "opacity-100"}`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setErrored(true)}
+        sizes="(max-width: 768px) 50vw, 25vw"
+      />
+    </>
+  );
+}
 
 interface SaleProduct {
   _id: string;
@@ -88,15 +121,11 @@ export default function SpecialOfferBanner() {
                   className={`${slot.position} ${slot.z} transition-opacity hover:opacity-90`}
                 >
                   <div
-                    className={`bg-[#e0e3e0] p-4 shadow-sm ${slot.idx === 1 ? "p-6 shadow-xl" : ""}`}
+                    className={`relative ${slot.imgClass} bg-[#e0e3e0] shadow-sm ${slot.idx === 1 ? "shadow-xl" : ""}`}
                   >
-                    <img
-                      src={
-                        product?.imageUrl ||
-                        "https://lh3.googleusercontent.com/aida-public/AB6AXuBRri_RpsLtJtPVr75Hd41nZSJ7K8jMemSv7YkBSmWytiKZMs16EF0ilPhaW484SiGbHgr-_dC5czoTG2OJn6OHADQMpGvDVsD3mEZ1a6FAPSSXQLv3ghFxkTlQxyFkU6UUFXC33ruxzN_XlpJeLVbd5QRZoEQj6TjWBo8WH71nuxRaPkztNcLfUZ800EARlcApEMX1lw9nX55XdTMdd6V8-lSrzCR5YRdk7tvsYLXrDT57nj4lLV6DHujPVc2tWwlrwpC3_8zhOeI0"
-                      }
+                    <SaleImage
+                      src={product?.imageUrl}
                       alt={product?.productName || "Sale item"}
-                      className={`${slot.imgClass} object-cover`}
                     />
                   </div>
                 </Link>

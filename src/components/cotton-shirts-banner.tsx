@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { API_BASE_URL } from "@/lib/constants";
 
 interface ShirtProduct {
@@ -16,6 +17,38 @@ interface ShirtProduct {
   };
 }
 
+function ShirtImage({
+  src,
+  alt,
+}: {
+  src?: string;
+  alt: string;
+}) {
+  const [errored, setErrored] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  if (!src || errored) {
+    return <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />;
+  }
+
+  return (
+    <>
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse bg-[#e0e3e0]" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={`object-cover grayscale-[20%] transition-all duration-700 group-hover:grayscale-0 ${!loaded ? "opacity-0" : "opacity-100"}`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setErrored(true)}
+        sizes="(max-width: 768px) 50vw, 25vw"
+      />
+    </>
+  );
+}
+
 export default function CottonShirtsBanner() {
   const [products, setProducts] = useState<ShirtProduct[]>([]);
 
@@ -25,9 +58,6 @@ export default function CottonShirtsBanner() {
       .then((data) => setProducts(data.products || data.data || []))
       .catch(() => {});
   }, []);
-
-  const fallbackSrc =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCaLeGBuisBOIRKBrHcKfdxST5UJfLO5Vrq1TkFwp_F4xbRzNMJoSkzzTTX_m665ITzRd8iy1fH-3P3dUky3T8Gtu-PHVbpmDP_Hs6O4hSiB9TJoGjKy2LyHbQPR__mJI1kbIgdBY1Gb-ASj7tCt155NEr7soCWHajvV-4dYNv6axSrjSCIZXnTXoG2ob_KfrJNZbys2CjTmy1OeASYS8EtpMkk_d32WDzXHSflyXhvMAbz-dNSmQl7VgLHRP5xdImDyzVEG277x7QA";
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#faf9f7] px-6 py-20">
@@ -61,11 +91,10 @@ export default function CottonShirtsBanner() {
                   href={href}
                   className="group relative flex flex-col items-center p-4"
                 >
-                  <div className="mb-6 aspect-[3/4] w-full overflow-hidden bg-[#e0e3e0]">
-                    <img
-                      src={product?.imageUrl || fallbackSrc}
+                  <div className="mb-6 relative aspect-[3/4] w-full overflow-hidden bg-[#e0e3e0]">
+                    <ShirtImage
+                      src={product?.imageUrl}
                       alt={product?.productName || "Cotton shirt"}
-                      className="h-full w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:grayscale-0"
                     />
                   </div>
                   {product?.productName && (
