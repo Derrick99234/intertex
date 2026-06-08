@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 import React, { useEffect, useState } from "react";
 
 const animatedTexts = [
@@ -52,14 +51,13 @@ const FactoryExplore = () => {
           </button>
         </div>
         <div className=" flex justify-center items-center mt-8 md:mt-0 w-[180px] sm:w-[300px] md:w-[473px] h-[180px] sm:h-[300px] md:h-[710px] ">
-          <SafeImage
+          <Image
             src="/images/factory-explore.png"
             alt="Man in suit"
             width={420}
             height={600}
             className="object-contain w-[180px] sm:w-[300px] md:w-[473px] h-[180px] sm:h-[300px] md:h-[710px]"
             priority
-            skeletonClassName="w-[473px] h-[710px]"
           />
         </div>
       </div>

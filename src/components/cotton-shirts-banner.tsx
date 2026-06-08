@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import SafeImage from "@/components/safe-image";
 import { API_BASE_URL } from "@/lib/constants";
 
 interface ShirtProduct {
@@ -62,13 +61,11 @@ export default function CottonShirtsBanner() {
                   href={href}
                   className="group relative flex flex-col items-center p-4"
                 >
-                  <div className="mb-6 aspect-[3/4] w-full overflow-hidden bg-[#e0e3e0] relative">
-                    <SafeImage
+                  <div className="mb-6 aspect-[3/4] w-full overflow-hidden bg-[#e0e3e0]">
+                    <img
                       src={product?.imageUrl || fallbackSrc}
                       alt={product?.productName || "Cotton shirt"}
-                      fill
-                      className="object-cover grayscale-[20%] transition-all duration-700 group-hover:grayscale-0"
-                      skeletonClassName="absolute inset-0"
+                      className="h-full w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:grayscale-0"
                     />
                   </div>
                   {product?.productName && (

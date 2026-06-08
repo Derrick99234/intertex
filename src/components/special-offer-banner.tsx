@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import SafeImage from "@/components/safe-image";
 import { API_BASE_URL } from "@/lib/constants";
 
 interface SaleProduct {
@@ -89,17 +88,15 @@ export default function SpecialOfferBanner() {
                   className={`${slot.position} ${slot.z} transition-opacity hover:opacity-90`}
                 >
                   <div
-                    className={`bg-[#e0e3e0] p-4 shadow-sm ${slot.idx === 1 ? "p-6 shadow-xl" : ""} ${slot.imgClass} relative`}
+                    className={`bg-[#e0e3e0] p-4 shadow-sm ${slot.idx === 1 ? "p-6 shadow-xl" : ""}`}
                   >
-                    <SafeImage
+                    <img
                       src={
                         product?.imageUrl ||
                         "https://lh3.googleusercontent.com/aida-public/AB6AXuBRri_RpsLtJtPVr75Hd41nZSJ7K8jMemSv7YkBSmWytiKZMs16EF0ilPhaW484SiGbHgr-_dC5czoTG2OJn6OHADQMpGvDVsD3mEZ1a6FAPSSXQLv3ghFxkTlQxyFkU6UUFXC33ruxzN_XlpJeLVbd5QRZoEQj6TjWBo8WH71nuxRaPkztNcLfUZ800EARlcApEMX1lw9nX55XdTMdd6V8-lSrzCR5YRdk7tvsYLXrDT57nj4lLV6DHujPVc2tWwlrwpC3_8zhOeI0"
                       }
                       alt={product?.productName || "Sale item"}
-                      fill
-                      className="h-full w-full object-cover"
-                      skeletonClassName="absolute inset-0"
+                      className={`${slot.imgClass} object-cover`}
                     />
                   </div>
                 </Link>

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 import { API_BASE_URL } from "@/lib/constants";
 import { useSearchParams } from "next/navigation";
 
@@ -45,13 +44,12 @@ function UserProfileComponent() {
       <h2 className="text-center text-2xl font-semibold">User Details</h2>
       <div className="flex border border-gray-300 rounded p-8 justify-between max-h-[50rem]  mt-5">
         <div className="flex items-center flex-col gap-4 w-[30%]">
-          <SafeImage
+          <Image
             src="/images/customers/bithop.jpg"
             alt="User Profile"
             className="rounded-full border border-gray-300 object-cover object-left w-[8rem] h-[8rem]"
             width={100}
             height={100}
-            skeletonClassName="w-[8rem] h-[8rem] rounded-full"
           />
           <span>ABC200023</span>
         </div>

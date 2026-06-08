@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -328,13 +327,12 @@ const MensWearList = () => {
                   onClick={() => handleImageClick(product.id, product.images)}
                   style={{ cursor: "pointer" }}
                 >
-                  <SafeImage
+                  <Image
                     src={product.images[imgIdx]}
                     alt={product.name}
                     width={260}
                     height={320}
                     className="object-cover md:w-[405px] w-[156px] md:h-[490px] h-[190px]"
-                    skeletonClassName="md:w-[405px] w-[156px] md:h-[490px] h-[190px]"
                   />
 
                   <div className="flex gap-2 md:w-[73px] w-[57px] md:h-[40px] h-[20px]">

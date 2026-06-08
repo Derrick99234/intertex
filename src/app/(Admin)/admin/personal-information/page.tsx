@@ -1,5 +1,4 @@
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 import React from "react";
 import { IoIosCamera } from "react-icons/io";
 function PersonalInformatio() {
@@ -9,13 +8,12 @@ function PersonalInformatio() {
         Personal Information
       </h3>
       <div className="relative mx-auto w-28 h-28">
-        <SafeImage
+        <Image
           src="/images/design1.jpeg"
           alt="Personal Information"
           width={500}
           height={300}
           className="w-28 h-28 rounded-full border-2 border-secondary mx-auto mt-10"
-          skeletonClassName="w-28 h-28 rounded-full"
         />
 
         <IoIosCamera className="absolute bottom-0 right-0 mt-2 mr-2 p-1 text-white text-3xl bg-secondary rounded-full" />

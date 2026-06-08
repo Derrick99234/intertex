@@ -1,5 +1,4 @@
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 
 const OurCustomers = () => {
   const customerLogos = [
@@ -30,13 +29,12 @@ const OurCustomers = () => {
             key={index}
             className="border border-gray-200 rounded-lg p-1 flex items-center justify-center w-[38px] sm:w-[60px] md:w-[95px] h-[45px] sm:h-[60px] md:h-[75px] shadow-sm border-1 border-[#CCCCCC]"
           >
-            <SafeImage
+            <Image
               src={logo.src}
               alt={logo.alt}
               width={90}
               height={90}
               className="object-contain max-w-full max-h-full"
-              skeletonClassName="w-[90px] h-[90px]"
             />
           </div>
         ))}

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import SafeImage from "@/components/safe-image";
 import { API_BASE_URL } from "@/lib/constants";
 
 interface ProductItem {
@@ -94,14 +93,12 @@ export default function NewArrivalsBanner() {
                 >
                   <div
                     style={{ backgroundColor: slot.key === "center" ? "#ffffff" : "#e0e3e0" }}
-                    className={`p-3 shadow-sm transition-opacity hover:opacity-90 md:p-4 ${slot.key === "center" ? "shadow-md md:p-5" : ""} ${slot.imgClass} relative`}
+                    className={`p-3 shadow-sm transition-opacity hover:opacity-90 md:p-4 ${slot.key === "center" ? "shadow-md md:p-5" : ""}`}
                   >
-                    <SafeImage
+                    <img
                       src={src}
                       alt={product?.productName || "New arrival"}
-                      fill
-                      className="h-full w-full object-cover"
-                      skeletonClassName="absolute inset-0"
+                      className={`${slot.imgClass} object-cover`}
                     />
                   </div>
                 </Link>

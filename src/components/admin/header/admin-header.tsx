@@ -1,7 +1,6 @@
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { authFetch } from "@/lib/auth-fetch";
-import SafeImage from "@/components/safe-image";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -93,13 +92,12 @@ function AdminHeader({
 
       <div className="flex justify-center gap-3 sm:gap-4 items-center">
         <IoMdNotificationsOutline />
-        <SafeImage
+        <Image
           src="/images/bg-cloth.jpg"
-          alt="Admin avatar"
+          alt="Showcase background"
           width={40}
           height={40}
           className="w-10 h-10 rounded-full ml-4"
-          skeletonClassName="w-10 h-10 rounded-full ml-4"
         />
         <span className="hidden sm:inline">
           {user?.firstName + " " + user?.lastName}

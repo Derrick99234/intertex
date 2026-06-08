@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import SafeImage from "@/components/safe-image";
 
 const ContactHeroSection = () => {
   return (
@@ -202,13 +201,12 @@ const ContactHeroSection = () => {
             </a>
           </div>
           <div className="w-full rounded-2xl overflow-hidden ">
-            <SafeImage
+            <Image
               src="/images/contact-hero.jpeg"
               alt="Contact Hero"
               width={600}
               height={350}
               className="w-full h-[217px] md:w-[649px] md:h-[322px] rounded-2xl object-cover"
-              skeletonClassName="w-full h-[322px] rounded-2xl"
             />
           </div>
         </div>
