@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 
 const SuccessStory = () => {
   return (
@@ -20,21 +21,21 @@ const SuccessStory = () => {
       {/* Right: Images */}
       <div className="flex flex-row gap-4 flex-1 justify-center md:justify-center">
         <div className="relative w-[120px] h-[200px] md:w-[263px] md:h-[428px] rounded-[6px] overflow-hidden">
-          <Image
+          <SafeImage
             src="/images/success1.jpeg"
             alt="Success Story 1"
             fill
             className="object-cover rounded-[6px]"
-            sizes="(max-width: 768px) 120px, 263px"
+            skeletonClassName="w-full h-full rounded-[6px]"
           />
         </div>
         <div className="relative w-[120px] h-[200px] md:w-[263px] md:h-[428px] rounded-[6px] overflow-hidden">
-          <Image
+          <SafeImage
             src="/images/success2.jpeg"
             alt="Success Story 2"
             fill
             className="object-cover rounded-[6px]"
-            sizes="(max-width: 768px) 120px, 263px"
+            skeletonClassName="w-full h-full rounded-[6px]"
           />
         </div>
       </div>

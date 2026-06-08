@@ -23,7 +23,7 @@ const ShowroomSection2 = () => (
     {showrooms.map((room, idx) => (
       <div
         key={idx}
-        className={`relative w-full overflow-hidden shadow-lg
+        className={`relative w-full overflow-hidden shadow-lg bg-gray-200
           ${
             idx === showrooms.length - 1
               ? "h-[275px] md:h-[647px] md:w-[938px]"

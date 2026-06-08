@@ -1,13 +1,15 @@
 import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 
 const ShowcaseSection = () => (
   <section className="relative w-full md:h-[982px] h-[237px] flex items-center justify-center overflow-hidden">
-    <Image
+    <SafeImage
       src="/images/bg-cloth.jpg"
       alt="Showcase background"
       fill
       priority
       className="object-cover w-full h-full"
+      skeletonClassName="w-full h-full"
     />
     {/* nothing here just test */}
 

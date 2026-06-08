@@ -1,4 +1,5 @@
 import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 import React from "react";
 
 const DesignSection = () => {
@@ -25,12 +26,12 @@ const DesignSection = () => {
         {/* Left Column: design1, design4, design5 */}
         <div className="flex flex-col gap-4 w-full md:w-auto">
           <div className="relative flex items-center justify-center overflow-hidden shadow-md group w-full md:w-[589px] h-[180px] sm:h-[248px]">
-            <Image
+            <SafeImage
               src={designCategories[0].src}
               alt={designCategories[0].alt}
-              layout="fill"
-              objectFit="cover"
-              className="transition-transform duration-300 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              skeletonClassName="w-full h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
               <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -40,12 +41,12 @@ const DesignSection = () => {
           </div>
 
           <div className="relative overflow-hidden shadow-md group w-full md:w-[589px] h-[180px] sm:h-[248px]">
-            <Image
+            <SafeImage
               src={designCategories[3].src}
               alt={designCategories[3].alt}
-              layout="fill"
-              objectFit="cover"
-              className="transition-transform duration-300 group-hover:scale-105 object-top"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105 object-top"
+              skeletonClassName="w-full h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
               <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -55,12 +56,12 @@ const DesignSection = () => {
           </div>
 
           <div className="relative overflow-hidden shadow-md group w-full md:w-[589px] h-[180px] sm:h-[248px]">
-            <Image
+            <SafeImage
               src={designCategories[4].src}
               alt={designCategories[4].alt}
-              layout="fill"
-              objectFit="cover"
-              className="transition-transform duration-300 group-hover:scale-105 object-top"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105 object-top"
+              skeletonClassName="w-full h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
               <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -74,12 +75,12 @@ const DesignSection = () => {
         <div className="flex flex-col gap-4 w-full md:w-auto">
           <div className="flex gap-4 w-full">
             <div className="relative overflow-hidden shadow-md group w-1/2 md:w-[264px] h-[180px] sm:h-[248px]">
-              <Image
+              <SafeImage
                 src={designCategories[1].src}
                 alt={designCategories[1].alt}
-                layout="fill"
-                objectFit="cover"
-                className="transition-transform duration-300 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                skeletonClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
                 <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -89,12 +90,12 @@ const DesignSection = () => {
             </div>
 
             <div className="relative overflow-hidden shadow-md group w-1/2 md:w-[264px] h-[180px] sm:h-[248px]">
-              <Image
+              <SafeImage
                 src={designCategories[2].src}
                 alt={designCategories[2].alt}
-                layout="fill"
-                objectFit="cover"
-                className="transition-transform duration-300 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                skeletonClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
                 <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -106,12 +107,12 @@ const DesignSection = () => {
 
           <div className="flex gap-4 w-full">
             <div className="relative overflow-hidden shadow-md group w-1/2 md:w-[264px] h-[180px] sm:h-[516px]">
-              <Image
+              <SafeImage
                 src={designCategories[5].src}
                 alt={designCategories[5].alt}
-                layout="fill"
-                objectFit="cover"
-                className="transition-transform duration-300 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                skeletonClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
                 <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">
@@ -121,12 +122,12 @@ const DesignSection = () => {
             </div>
 
             <div className="relative overflow-hidden shadow-md group w-1/2 md:w-[264px] h-[180px] sm:h-[516px]">
-              <Image
+              <SafeImage
                 src={designCategories[6].src}
                 alt={designCategories[6].alt}
-                layout="fill"
-                objectFit="cover"
-                className="transition-transform duration-300 group-hover:scale-105 object-left-center"
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105 object-left-center"
+                skeletonClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/100 to-transparent flex items-end justify-center p-3 sm:p-6">
                 <span className="text-white text-lg sm:text-[28px] font-['Marcellus_SC'] font-normal">

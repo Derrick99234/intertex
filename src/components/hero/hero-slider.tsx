@@ -119,6 +119,7 @@ export default function HeroSlider() {
           >
             {slide.bgImage && (
               <>
+                <div className="absolute inset-0 bg-gray-300" />
                 <div
                   className="absolute inset-0 bg-cover bg-center"
                   style={{ backgroundImage: `url(${slide.bgImage})` }}

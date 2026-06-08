@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 
 const testimonials = [
   {
@@ -48,12 +48,13 @@ const BrandSections = () => {
               className="flex flex-col items-center bg-[#ffffff] p-10 text-center"
             >
               <div className="h-16 w-16 overflow-hidden bg-[#e0e3e0]">
-                <Image
+                <SafeImage
                   src={item.avatar}
                   alt={item.name}
                   width={64}
                   height={64}
                   className="h-full w-full object-cover"
+                  skeletonClassName="h-16 w-16"
                 />
               </div>
               <div className="mt-6 flex gap-1">

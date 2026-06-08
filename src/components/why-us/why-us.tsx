@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 import React, { useState } from "react";
 
 const WhyUs = () => {
@@ -69,12 +70,12 @@ const WhyUs = () => {
         {/* Right Section: Image */}
         <div className="relative w-full sm:w-[350px] md:w-[597px] flex justify-center items-center md:min-h-[685px] mt-6 md:mt-0">
           <div className="relative w-full h-[220px] sm:h-[350px] md:h-[685px] ">
-            <Image
+            <SafeImage
               src="/images/wash.jpeg"
               alt="Woman working in factory"
-              layout="fill"
-              objectFit="cover"
-              className="object-left-center rounded-md"
+              fill
+              className="object-cover object-left-center rounded-md"
+              skeletonClassName="w-full h-full"
             />
           </div>
         </div>

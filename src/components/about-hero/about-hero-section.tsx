@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import SafeImage from "@/components/safe-image";
 
 const AboutHeroSection = () => {
   return (
@@ -47,12 +48,13 @@ const AboutHeroSection = () => {
       <div className="w-full  md:py-8  flex md:justify-between justify-center items-center ">
         <div className="w-full mx-auto md:flex md:flex-row flex flex-col-reverse gap-8 md:justify-between ">
           <div className="md:w-[621px] w-full">
-            <Image
+            <SafeImage
               src="/images/leftgroup.jpeg"
               alt="Group on couch"
               width={582}
               height={398}
               className="w-full h-[217px] md:w-[582px] md:h-[398px] rounded-2xl mb-6 md:mb-8 object-cover"
+              skeletonClassName="w-full h-[398px] rounded-2xl"
             />
             <p className="text-gray-800 text-base md:text-lg font-normal">
               In Turkey, where textile craftsmanship dates back centuries, we
@@ -87,12 +89,13 @@ const AboutHeroSection = () => {
                 out to create garments that showcase the best of both cultures.
               </p>
             </div>
-            <Image
+            <SafeImage
               src="/images/rightgroup.jpeg"
               alt="Group with basketball"
               width={582}
               height={398}
               className="w-full h-[217px] md:w-[582px] md:h-[398px] rounded-2xl object-cover"
+              skeletonClassName="w-full h-[398px] rounded-2xl"
             />
           </div>
         </div>
