@@ -20,7 +20,7 @@ function AdminHeader({
 }: {
   onToggleSidebar?: () => void;
 }) {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | null>(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
@@ -54,6 +54,7 @@ function AdminHeader({
         if (!res.ok) {
           showNotification(data.message || "Failed to fetch user", "error");
           router.push("/admin");
+          return;
         }
         setUser(data);
       } catch (err: any) {
@@ -66,7 +67,7 @@ function AdminHeader({
     fetchUsers();
   }, []);
 
-  if (!user) return;
+  if (!user) return null;
 
   return (
     <header className="flex justify-between items-center bg-white px-4 py-3 fixed w-full top-0 z-50">

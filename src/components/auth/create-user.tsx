@@ -16,15 +16,27 @@ export default function CreatePassword({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPassword === confirmPassword) {
-      if (form.fullName === "" || form.email === "") {
-        window.location.href = "/register";
-      }
+    setError("");
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (form.fullName === "" || form.email === "") {
+      window.location.href = "/register";
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -38,13 +50,14 @@ export default function CreatePassword({
       });
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+        setError(errorData.message || "Registration failed");
         return;
       }
-      alert("User created successfully!");
-      router.push("/login");
-    } else {
-      console.error("Passwords do not match");
+      router.push("/login?success=Account+created+successfully.+Please+sign+in.");
+    } catch {
+      setError("Unable to register. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -129,8 +142,15 @@ export default function CreatePassword({
           </div>
         </div>
 
-        <button className="w-full bg-blue-800 text-white py-2 rounded-full font-semibold hover:bg-blue-700 transition">
-          Submit
+        {error && (
+          <p className="text-red-600 text-sm text-center">{error}</p>
+        )}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-blue-800 text-white py-2 rounded-full font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? "Creating account..." : "Submit"}
         </button>
       </div>
 

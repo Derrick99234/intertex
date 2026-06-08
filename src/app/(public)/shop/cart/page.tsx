@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/constants";
+import { API_BASE_URL, TAX_RATE } from "@/lib/constants";
 import { NotificationSystem } from "@/components/notification-popup";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -186,7 +186,7 @@ export default function CartSummary() {
     (acc, item) => acc + convertPrice(item.product.price) * item.quantity,
     0,
   );
-  const taxes = subtotal * 0.075;
+  const taxes = subtotal * TAX_RATE;
   const total = subtotal + taxes;
 
   const handlePayment = async () => {

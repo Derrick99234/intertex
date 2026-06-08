@@ -3,23 +3,26 @@ import CreatePassword from "@/components/auth/create-user";
 import InputField from "@/components/input-field/input-field";
 import Google from "@/components/other-authentication-method/google";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 function Register() {
-  const [showCreatePassword, setShowCreatePassword] = React.useState(false);
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
+  const [error, setError] = useState("");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     if (!isTermsAndConditionsChecked) {
-      alert("You must agree to the terms and conditions before proceeding.");
+      setError("You must agree to the terms and conditions before proceeding.");
       return;
     }
     setShowCreatePassword(true);
   };
 
   const [isTermsAndConditionsChecked, setIsTermsAndConditionsChecked] =
-    React.useState(false);
+    useState(false);
 
-  const [form, setForm] = React.useState({
+  const [form, setForm] = useState({
     fullName: "",
     email: "",
   });
@@ -97,6 +100,9 @@ function Register() {
           </Link>{" "}
           .
         </p>
+        {error && (
+          <p className="text-red-600 text-sm text-center mb-2">{error}</p>
+        )}
         <button
           type="submit"
           className="mt-4 px-4 py-3 w-full bg-secondary text-white rounded-2xl hover:bg-secondary/70 transition-colors duration-200"

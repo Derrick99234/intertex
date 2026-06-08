@@ -15,6 +15,8 @@ export default function EditBlogComponent() {
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,11 +45,6 @@ export default function EditBlogComponent() {
     fetchBlog();
   }, [id]);
 
-  //   const formatText = (command: string, value?: string) => {
-  //     document.execCommand(command, false, value);
-  //     editorRef.current?.focus();
-  //   };
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -56,6 +53,8 @@ export default function EditBlogComponent() {
   };
 
   const handleUpdate = async () => {
+    setError("");
+    setIsSubmitting(true);
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -72,13 +71,11 @@ export default function EditBlogComponent() {
 
       if (!res.ok) throw new Error("Failed to update post");
 
-      const data = await res.json();
-      console.log("✅ Post updated:", data);
-      alert("Blog updated successfully!");
-      router.push("/admin/blog-management"); // go back to blogs list
+      router.push("/admin/blog-management");
     } catch (err) {
-      console.error(err);
-      alert("Error updating blog");
+      setError(err instanceof Error ? err.message : "Error updating blog");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -181,13 +178,15 @@ export default function EditBlogComponent() {
           </div>
 
           {/* Update Button */}
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center flex-col items-center gap-2">
+            {error && <p className="text-red-600 text-sm">{error}</p>}
             <button
               onClick={handleUpdate}
-              className="px-8 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 w-2xl cursor-pointer font-medium"
+              disabled={isSubmitting}
+              className="px-8 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 w-2xl cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               type="button"
             >
-              Update
+              {isSubmitting ? "Updating..." : "Update"}
             </button>
           </div>
         </div>

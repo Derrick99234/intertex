@@ -105,7 +105,7 @@ export default function HeroSlider() {
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden"
+      className="relative md:min-h-screen h-[80vh] overflow-hidden"
     >
       {slides.map((slide, idx) => (
         <div
