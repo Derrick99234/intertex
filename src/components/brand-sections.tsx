@@ -6,7 +6,7 @@ const testimonials = [
     role: "Fashion Blogger",
     quote:
       "The quality of the organic cotton is unmatched. Finally, a brand that cares about fit and the planet.",
-    avatar: "https://i.pravatar.cc/150?u=marcus",
+    avatar: "/icons/profile.png",
     stars: 5,
   },
   {
@@ -14,7 +14,7 @@ const testimonials = [
     role: "Verified Buyer",
     quote:
       "I bought the linen set for my vacation and I've never received so many compliments. It's so breathable!",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
+    avatar: "/icons/profile.png",
     stars: 5,
   },
   {
@@ -22,7 +22,7 @@ const testimonials = [
     role: "Stylist",
     quote:
       "The attention to detail in the stitching and the silhouette is what sets this brand apart from fast fashion.",
-    avatar: "https://i.pravatar.cc/150?u=elena",
+    avatar: "/icons/profile.png",
     stars: 4,
   },
 ];

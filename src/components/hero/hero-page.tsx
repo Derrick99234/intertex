@@ -12,60 +12,7 @@ function HeroPage() {
   return (
     <>
       <HeroSlider />
-      <section className="min-h-[50vh] py-16 bg-[#F2F2F2]">
-        <h2 className="text-3xl text-secondary font-medium text-center mb-10">
-          Explore our collections
-        </h2>
-        <div className="flex justify-center items-start gap-10 flex-wrap">
-          <Link
-            href={"/shop/men"}
-            className="flex flex-col justify-center items-center"
-          >
-            <Image
-              src={
-                "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Component+3.png"
-              }
-              width={300}
-              height={300}
-              alt="A man in brown suit"
-              className="w-125"
-            />
-            <span className="text-secondary font-medium text-2xl block mt-2">
-              MAN
-            </span>
-          </Link>
-          <Link
-            href={"/shop/women"}
-            className="flex flex-col justify-center items-center"
-          >
-            <Image
-              src={
-                "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Component+2.png"
-              }
-              width={300}
-              height={300}
-              alt="A black man in brown suit"
-              className="w-114"
-            />
-            <span className="text-secondary font-medium text-2xl block mt-2">
-              WOMAN
-            </span>
-          </Link>
-          {/* <div className="flex flex-col justify-center items-center">
-            <Image
-              src={
-                "https://intertex-storage.s3.eu-north-1.amazonaws.com/Website+images/Landing+page/Group+2.png"
-              }
-              width={300}
-              height={300}
-              alt="A lady on glass dress for summer"
-            />
-            <span className="text-secondary font-medium text-2xl block mt-2">
-              KID&#39;S
-            </span>
-          </div> */}
-        </div>
-      </section>
+
       <NewArrivalsBanner />
       <CottonShirtsBanner />
       <SpecialOfferBanner />
