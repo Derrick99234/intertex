@@ -160,7 +160,7 @@ function ProductDetails({
       );
 
       if (responses.some((response) => response.status === 401)) {
-        router.push("/login?redirect=/shop/cart");
+        router.push("/login?returnTo=/shop/cart");
         return;
       }
 

@@ -96,7 +96,7 @@ function UpdateProfile() {
         console.log("Responses from fetch:", res);
         if (!res.ok) {
           showNotification("Failed to fetch user data", "error");
-          router.push("/login");
+          router.push("/login?returnTo=/update-profile");
           return;
         }
 
@@ -119,7 +119,7 @@ function UpdateProfile() {
         console.log("User data fetched successfully:", userData);
       } catch (err) {
         console.error("Token verification failed:", err);
-        router.push("/login");
+        router.push("/login?returnTo=/update-profile");
       } finally {
         setIsLoading(false);
       }
