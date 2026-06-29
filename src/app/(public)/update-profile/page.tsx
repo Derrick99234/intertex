@@ -93,18 +93,13 @@ function UpdateProfile() {
           })
           .catch((err) => console.error("Error fetching countries:", err));
 
-        console.log("Responses from fetch:", res);
         if (!res.ok) {
-          showNotification("Failed to fetch user data", "error");
+          showNotification("Please log in to update your profile", "error");
           router.push("/login?returnTo=/update-profile");
           return;
         }
 
         const userData = await res.json();
-        if (userData.gender || userData.dob || userData.stateOfResidence) {
-          router.push("/shop");
-        }
-
         setUser({
           fullName: userData.fullName,
           email: userData.email,
@@ -116,9 +111,7 @@ function UpdateProfile() {
           streetAddress: userData.streetAddress || "",
           phone: userData.phone || "",
         });
-        console.log("User data fetched successfully:", userData);
-      } catch (err) {
-        console.error("Token verification failed:", err);
+      } catch {
         router.push("/login?returnTo=/update-profile");
       } finally {
         setIsLoading(false);

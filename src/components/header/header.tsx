@@ -8,9 +8,10 @@ import WomenDropdown from "./women-dropdown";
 import KidDropdown from "./kid-dropdown";
 import { useAuth } from "@/context/AuthContext";
 import MobileMenu from "./mobile-header";
-import { LogInIcon } from "lucide-react";
+import { LogInIcon, LogOut } from "lucide-react";
 import { BiCart } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
+import { API_BASE_URL } from "@/lib/constants";
 
 function Header() {
   const router = useRouter();
@@ -110,13 +111,25 @@ function Header() {
             <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
           ) : user?.fullName ? (
             <>
-              <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
-                {user.fullName.split(" ")[0].charAt(0) +
-                  (user.fullName.split(" ")[1]?.charAt(0) || "")}
-              </span>
               <Link href={"/update-profile"}>
-                <CgProfile size={20} />
+                <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
+                  {user.fullName.split(" ")[0].charAt(0) +
+                    (user.fullName.split(" ")[1]?.charAt(0) || "")}
+                </span>
               </Link>
+              <button
+                onClick={async () => {
+                  await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: "POST",
+                    credentials: "include",
+                  });
+                  window.location.href = "/";
+                }}
+                className="flex items-center gap-1 text-sm text-gray-600 hover:text-red-600 transition-colors"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
             </>
           ) : (
             <Link href={"/login"}>
@@ -148,15 +161,12 @@ function Header() {
           {isLoading ? (
             <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse" />
           ) : user?.fullName ? (
-            <>
+            <Link href={"/update-profile"}>
               <span className="bg-secondary text-white font-semibold text-2xl w-12 h-12 p-2 flex justify-center items-center rounded-full uppercase">
                 {user.fullName.split(" ")[0].charAt(0) +
                   (user.fullName.split(" ")[1]?.charAt(0) || "")}
               </span>
-              <Link href={"/update-profile"}>
-                <CgProfile size={20} />
-              </Link>
-            </>
+            </Link>
           ) : (
             <Link href={"/login"}>
               <CgProfile size={20} />
