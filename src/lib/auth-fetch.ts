@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./constants";
+import { getAccessToken, setAccessToken } from "./token-store";
 
 type AuthFetchOptions = RequestInit & {
   refreshPath?: "/auth/refresh" | "/admin/refresh";
@@ -7,19 +8,17 @@ type AuthFetchOptions = RequestInit & {
   };
 };
 
-async function refreshSession(refreshPath: string) {
-  return fetch(`${API_BASE_URL}${refreshPath}`, {
-    method: "POST",
-    credentials: "include",
-  });
-}
-
 export async function authFetch(
   path: string,
   options: AuthFetchOptions = {},
 ) {
   const { refreshPath = "/auth/refresh", headers, ...rest } = options;
   const requestHeaders = new Headers(headers);
+
+  const token = getAccessToken();
+  if (token) {
+    requestHeaders.set("Authorization", `Bearer ${token}`);
+  }
 
   const makeRequest = () =>
     fetch(`${API_BASE_URL}${path}`, {
@@ -33,9 +32,19 @@ export async function authFetch(
     return response;
   }
 
-  const refreshResponse = await refreshSession(refreshPath);
+  const refreshResponse = await fetch(`${API_BASE_URL}${refreshPath}`, {
+    method: "POST",
+    credentials: "include",
+  });
+
   if (!refreshResponse.ok) {
     return response;
+  }
+
+  const refreshData = await refreshResponse.json();
+  if (refreshData.accessToken) {
+    setAccessToken(refreshData.accessToken);
+    requestHeaders.set("Authorization", `Bearer ${refreshData.accessToken}`);
   }
 
   response = await makeRequest();

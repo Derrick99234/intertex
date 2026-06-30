@@ -8,14 +8,14 @@ import Google from "@/components/other-authentication-method/google";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 import { API_BASE_URL } from "@/lib/constants";
+import { setAccessToken } from "@/lib/token-store";
 import { useAuth } from "@/context/AuthContext";
 
-type LoginResponse = {
-  accessToken?: string;
-  message?: string;
-  error?: string;
-  user?: unknown;
-};
+  type LoginResponse = {
+    accessToken?: string;
+    message?: string;
+    error?: string;
+  };
 
 function getSafeReturnPath(value: string | null): string {
   if (!value) return "/";
@@ -81,6 +81,10 @@ function LoginForm() {
           "Unable to log in. Please check your credentials and try again.";
         setNotification({ type: "error", message });
         return;
+      }
+
+      if (data?.accessToken) {
+        setAccessToken(data.accessToken);
       }
 
       await refreshUser();

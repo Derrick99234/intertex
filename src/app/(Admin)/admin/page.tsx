@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { API_BASE_URL } from "@/lib/constants";
+import { setAccessToken } from "@/lib/token-store";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { NotificationSystem } from "@/components/notification-popup";
 
@@ -51,6 +52,11 @@ function AdminLogin() {
         const data = await res.json();
         showNotification(data.message || "Login failed", "error");
         throw new Error(data.message || "Login failed");
+      }
+
+      const loginData = await res.json();
+      if (loginData?.accessToken) {
+        setAccessToken(loginData.accessToken);
       }
 
       showNotification("Login successful", "success");

@@ -1,7 +1,9 @@
 "use client";
 import { API_BASE_URL } from "@/lib/constants";
+import { setAccessToken } from "@/lib/token-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function CreatePassword({
@@ -20,6 +22,7 @@ export default function CreatePassword({
   const [error, setError] = useState("");
 
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +56,13 @@ export default function CreatePassword({
         setError(errorData.message || "Registration failed");
         return;
       }
-      router.push("/login?success=Account+created+successfully.+Please+sign+in.");
+
+      const data = await response.json();
+      if (data?.accessToken) {
+        setAccessToken(data.accessToken);
+      }
+      await refreshUser();
+      router.push("/");
     } catch {
       setError("Unable to register. Please try again.");
     } finally {
