@@ -32,7 +32,7 @@ function Footer() {
     },
     {
       companyName: "Contact Us",
-      companyLink: "/contact-us",
+      companyLink: "/contact",
     },
     {
       companyName: "Wholesale",
@@ -125,6 +125,12 @@ function Footer() {
             <p className="text-gray-300 text-sm">
               ONE SOURCE MART, Plot 12 Ligali Ayorinde Street, Victoria Island,
               Lagos.
+            </p>
+            <p className="text-gray-300 text-sm mt-2">
+              +44 7827 780878
+            </p>
+            <p className="text-gray-300 text-sm">
+              info@intertexng.shop
             </p>
             <Image
               src={"/logo/intertex-logo.png"}

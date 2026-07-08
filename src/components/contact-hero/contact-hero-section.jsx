@@ -130,7 +130,7 @@ const ContactHeroSection = () => {
                 height={20}
                 className="md:w-[20px] w-[14px] md:h-[20px] h-[14px]"
               />
-              <span>+234-800-000-1234</span>
+              <span>+44 7827 780878</span>
             </div>
             <div className="flex items-center gap-2 text-black md:text-xl text-xs font-['OpenSans']">
               <Image
@@ -140,7 +140,7 @@ const ContactHeroSection = () => {
                 height={20}
                 className="md:w-[20px] w-[14px] md:h-[20px] h-[14px]"
               />
-              <span>support@intertex.com</span>
+              <span>info@intertexng.shop</span>
             </div>
           </div>
           <div className="flex gap-2 flex-wrap md:w-[649px] w-full mb-2">

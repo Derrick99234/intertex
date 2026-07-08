@@ -116,15 +116,16 @@ function Delivery({
       });
 
       const address = updatedData.find((item: any) => item.isDefault === true);
-      setAddressData(address);
-      setSelectedAddressId(address._id);
+      if (address) {
+        setAddressData(address);
+        setSelectedAddressId(address._id);
+        const deliveryAddress = address.deliveryAddress + (address.location || '');
+        setDeliveryInformation({
+          deliveryAddress,
+          phoneNumber: address.phoneNumber,
+        });
+      }
       setAddresses(updatedData);
-
-      const deliveryAddress = address?.deliveryAddress + address?.location;
-      setDeliveryInformation({
-        deliveryAddress,
-        phoneNumber: address?.phoneNumber,
-      });
     };
     fetchBilingInfo();
   }, []);
