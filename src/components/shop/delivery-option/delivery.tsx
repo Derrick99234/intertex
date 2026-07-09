@@ -53,12 +53,15 @@ function Delivery({
         secondPhoneNumber: formData.secondPhoneNumber,
         additionalInformation: formData.additionalInformation,
         isDefault: formData.isDefault,
-        user: addressData.user._id,
+        country: "Nigeria",
+        state: formData.region,
       }),
     });
 
     if (!res.ok) {
-      alert("Failed to save address");
+      const err = await res.json();
+      console.error("Save address error:", err);
+      alert(err.message?.[0] || err.message || "Failed to save address");
       return;
     }
 
@@ -69,7 +72,7 @@ function Delivery({
 
     const mapped = data.map((item: any) => ({
       ...item,
-      location: `${item.city} - ${item.region}`,
+      location: `${item.city || item.state || ""} - ${item.state || item.region || ""}`,
     }));
 
     setAddresses(mapped);
@@ -111,7 +114,7 @@ function Delivery({
       const updatedData = data.map((item: any) => {
         return {
           ...item,
-          location: `${item.city} - ${item.region}`,
+          location: `${item.city || item.state || ""} - ${item.state || item.region || ""}`,
         };
       });
 
@@ -168,7 +171,7 @@ function Delivery({
       secondPhoneNumber: "",
       region: "",
       city: "",
-      user: addressData.user,
+      user: { _id: "", email: "", fullName: "" },
     });
 
     setEditingAddressId(null);

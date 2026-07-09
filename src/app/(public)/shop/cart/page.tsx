@@ -191,6 +191,17 @@ export default function CartSummary() {
 
   const handlePayment = async () => {
     try {
+      if (deliveryOption === "delivery" && !deliveryInformation.deliveryAddress.trim()) {
+        showNotification("Please select a delivery address", "error");
+        setLoading(false);
+        return;
+      }
+      if (!deliveryInformation.phoneNumber.trim()) {
+        showNotification("Please enter your phone number", "error");
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
 
       const amount = Math.round(total * 100);
@@ -201,7 +212,9 @@ export default function CartSummary() {
         amount: total,
         deliveryInformation: {
           deliveryAddress:
-            deliveryInformation.deliveryAddress || deliveryInformation.address,
+            deliveryInformation.pickUpLocation ||
+            deliveryInformation.deliveryAddress ||
+            deliveryInformation.address,
           phoneNumber: deliveryInformation.phoneNumber,
         },
         status: "pending",
@@ -220,12 +233,17 @@ export default function CartSummary() {
         body: JSON.stringify(orderDetailstoSend),
       });
 
-      const orderResponse = await orderRes.json();
+      let orderResponse: any;
+      try {
+        orderResponse = await orderRes.json();
+      } catch {
+        orderResponse = { status: orderRes.status, body: "Unable to parse response" };
+      }
 
       if (!orderRes.ok) {
-        console.error("Order creation failed:", orderResponse);
+        console.error("Order creation failed:", orderRes.status, orderResponse);
         showNotification(
-          orderResponse?.message || "Could not create order. Please try again.",
+          orderResponse?.message || `Could not create order. Server responded with ${orderRes.status}.`,
           "error",
         );
         return;

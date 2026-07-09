@@ -11,10 +11,10 @@ function Pickup({
     <div className="max-w-xl mx- text-sm">
       <h3 className="my-5">Find the nearest store location close to you</h3>
       <select
-        onClick={(e) =>
+        onChange={(e) =>
           setDeliveryInformation({
             ...deliveryInformation,
-            pickUpLocation: (e.target as HTMLSelectElement).value,
+            pickUpLocation: e.target.value,
           })
         }
         className="border-none w-full bg-gray-100 py-2 px-4 rounded-md outline-none"
