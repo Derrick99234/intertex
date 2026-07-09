@@ -118,6 +118,7 @@ export default function CartSummary() {
     phoneNumber: "",
     address: "",
     alternativePhoneNumber: "",
+    pickUpLocation: "",
   });
 
   useEffect(() => {
