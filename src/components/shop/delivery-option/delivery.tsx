@@ -180,19 +180,34 @@ function Delivery({
     // setIsModalOpen(true);
   };
 
+  const noAddress = addresses.length === 0 || !addressData._id;
+
   return (
     <div className="max-w-lg mx-auto">
-      {/* <input
-        type="text"
-        placeholder="Delivery Address"
-        className="my-4 block border-b-2 border-gray-400 outline-none w-full py-2 px-4"
-      /> */}
-      <h3 className="bg-gray-300 text-sm py-1 rounded-t-md px-2">
-        {addressData.fullName}
-      </h3>
-      <address className="text-gray-500 border-gray-300 border-2 p-2 text-sm rounded-b-md">
-        {addressData.deliveryAddress + addressData.location}
-      </address>
+      {noAddress ? (
+        <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
+          <p className="text-sm mb-2">No saved address yet.</p>
+          <button
+            type="button"
+            onClick={() => {
+              setIsModalOpen(true);
+              handleAdd();
+            }}
+            className="text-secondary font-semibold text-sm underline cursor-pointer"
+          >
+            Add a delivery address
+          </button>
+        </div>
+      ) : (
+        <>
+          <h3 className="bg-gray-300 text-sm py-1 rounded-t-md px-2">
+            {addressData.fullName}
+          </h3>
+          <address className="text-gray-500 border-gray-300 border-2 p-2 text-sm rounded-b-md">
+            {addressData.deliveryAddress + addressData.location}
+          </address>
+        </>
+      )}
       <button
         className="bg-secondary text-white py-2 px-4 rounded-md mt-4 text-sm cursor-pointer"
         onClick={() => setIsModalOpen(true)}
