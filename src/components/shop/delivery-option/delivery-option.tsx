@@ -23,6 +23,7 @@ type DeliveryInformation = {
   phoneNumber: string;
   alternativePhoneNumber: string;
   address: string;
+  pickUpLocation: string;
 };
 
 export default function DeliveryOption({
