@@ -84,6 +84,7 @@ export default function PaymentPage() {
             email: orderData.userId?.email,
             amount,
             currency: orderData.currency,
+            callback_url: `${window.location.origin}/payment-success`,
             metadata: {
               customer_name: orderData.userId?.fullName,
               deliveryOption: orderData.deliveryMethod,
