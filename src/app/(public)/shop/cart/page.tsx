@@ -254,6 +254,7 @@ export default function CartSummary() {
         email: user.email,
         amount,
         currency,
+        callback_url: `${window.location.origin}/payment-success`,
         metadata: {
           customer_name: user.fullName,
           deliveryOption,

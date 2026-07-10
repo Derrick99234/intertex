@@ -200,8 +200,8 @@ function PaymentSuccessInner() {
           throw new Error("Missing payment reference in URL.");
         }
 
-        // 1. Call NestJS backend for Paystack verification
-        const res = await authFetch(`/paystack/verify?reference=${reference}`);
+        // 1. Call NestJS backend for Paystack verification (no auth needed)
+        const res = await fetch(`${API_BASE_URL}/paystack/verify?reference=${reference}`);
 
         if (!res.ok) {
           throw new Error(`Server error: ${res.status}`);
@@ -225,7 +225,7 @@ function PaymentSuccessInner() {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({ status: "successful" }),
-            });
+            }).catch(() => {});
           }
         } else {
           console.error("Verification failed in NestJS response:", data);
