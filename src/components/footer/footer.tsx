@@ -127,7 +127,7 @@ function Footer() {
               Lagos.
             </p>
             <p className="text-gray-300 text-sm mt-2">
-              +44 7827 780878
+              0708 648 4400
             </p>
             <p className="text-gray-300 text-sm">
               info@intertexng.shop

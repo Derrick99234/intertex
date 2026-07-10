@@ -130,7 +130,7 @@ const ContactHeroSection = () => {
                 height={20}
                 className="md:w-[20px] w-[14px] md:h-[20px] h-[14px]"
               />
-              <span>+44 7827 780878</span>
+              <span>0708 648 4400</span>
             </div>
             <div className="flex items-center gap-2 text-black md:text-xl text-xs font-['OpenSans']">
               <Image
