@@ -79,7 +79,7 @@ export default function ProductTabs({
   };
 
   const renderImagesTab = () => {
-    const otherImages = product?.otherImages?.map(
+    const otherImages = (product?.otherImages || []).map(
       (image: string, index: number) => {
         return { url: image, label: `Other Image ${index + 1}` };
       }
@@ -149,7 +149,7 @@ export default function ProductTabs({
   };
 
   const renderSizeQuantitiesTab = () => {
-    const data = product?.inStock?.map((item: any) => ({
+    const data = (product?.inStock || []).map((item: any) => ({
       label: item.size,
       value: item.quantity,
     }));

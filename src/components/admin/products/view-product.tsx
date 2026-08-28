@@ -179,7 +179,7 @@ export default function ViewProduct({
     );
   };
 
-  const data = product.otherImages.map((item, index) => {
+  const data = (product.otherImages || []).map((item, index) => {
     return {
       url: item || "",
       label: `Image ${index + 1}`,
@@ -229,7 +229,7 @@ export default function ViewProduct({
   };
 
   const renderQuantityLeftTab = () => {
-    const data = product.inStock.map((item) => {
+    const data = (product.inStock || []).map((item) => {
       return {
         label: item?.size || "",
         value: item?.quantity || "",
