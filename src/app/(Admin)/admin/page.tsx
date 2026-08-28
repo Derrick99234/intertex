@@ -58,14 +58,15 @@ function AdminLogin() {
       if (loginData?.accessToken) {
         setAccessToken(loginData.accessToken);
         // Also set a frontend-readable cookie for middleware (cross-site backup)
-        document.cookie = `adminToken=${loginData.accessToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax`;
+        const secure = window.location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = `adminToken=${loginData.accessToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax${secure}`;
       }
 
       showNotification("Login successful", "success");
       await new Promise((resolve) => setTimeout(resolve, 2000));
       showNotification("redirecting to dashboard...", "info");
 
-      router.push("/admin/dashboard");
+      window.location.href = "/admin/dashboard";
     } catch (err: any) {
       setError(err.message);
       showNotification(err.message || "Login failed", "error");
