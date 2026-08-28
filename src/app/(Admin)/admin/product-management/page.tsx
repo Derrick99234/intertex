@@ -19,7 +19,7 @@ function ProductManagement() {
   });
   const [addNewProduct, setAddNewProduct] = React.useState(false);
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notifications, setNotifications] = useState({
     status: false,
