@@ -47,18 +47,18 @@ function ProductManagement() {
         const res = await authFetch("/products", {
           refreshPath: "/admin/refresh",
         });
-        const { products, message } = await res.json();
+        const raw = await res.json();
 
-        if (!res.ok) throw new Error(message || "Failed to fetch product");
+        if (!res.ok) throw new Error(raw.message || "Failed to fetch product");
 
-        const transformedUsers = products.map((product: Product) => ({
+        const list: Product[] = raw.products || raw.data || (Array.isArray(raw) ? raw : []);
+        const transformedUsers = list.map((product: Product) => ({
           id: product._id,
-          // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           productName: product.productName || "N/A",
           category: product?.productType?.name,
           price: product.price,
-          createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
-          inStock: product.inStock.length,
+          createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A",
+          inStock: Array.isArray(product.inStock) ? product.inStock.length : 0,
           status: "Active",
           more: <IoEyeOutline />,
         }));
@@ -82,17 +82,17 @@ function ProductManagement() {
       const res = await authFetch("/products", {
         refreshPath: "/admin/refresh",
       });
-      const { products, message } = await res.json();
-      if (!res.ok) throw new Error(message || "Failed to fetch product");
+      const raw = await res.json();
+      if (!res.ok) throw new Error(raw.message || "Failed to fetch product");
 
-      const transformedUsers = products.map((product: Product) => ({
+      const list: Product[] = raw.products || raw.data || (Array.isArray(raw) ? raw : []);
+      const transformedUsers = list.map((product: Product) => ({
         id: product._id,
-        // productId: `PRD-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
         productName: product.productName || "N/A",
         category: product?.productType?.name,
         price: product.price,
-        createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
-        inStock: product.inStock.length,
+        createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A",
+        inStock: Array.isArray(product.inStock) ? product.inStock.length : 0,
         status: "Active",
         more: <IoEyeOutline />,
       }));
@@ -103,17 +103,18 @@ function ProductManagement() {
     const res = await authFetch(`/products/category/${href}`, {
       refreshPath: "/admin/refresh",
     });
-    const { products, message } = await res.json();
+    const raw = await res.json();
 
-    if (!res.ok) throw new Error(message || "Failed to fetch product");
+    if (!res.ok) throw new Error(raw.message || "Failed to fetch product");
 
-    const transformedUsers = products.map((product: Product) => ({
+    const list: Product[] = raw.products || raw.data || (Array.isArray(raw) ? raw : []);
+    const transformedUsers = list.map((product: Product) => ({
       _id: product._id,
       productName: product.productName || "N/A",
       category: product?.productType?.name,
-      createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A", // adjust format if needed
+      createdAt: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A",
       price: product.price,
-      inStock: product.inStock.length,
+      inStock: Array.isArray(product.inStock) ? product.inStock.length : 0,
       status: "Active",
       more: <IoEyeOutline />,
     }));
