@@ -66,7 +66,7 @@ function AdminLogin() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       showNotification("redirecting to dashboard...", "info");
 
-      window.location.href = "/admin/dashboard";
+      router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message);
       showNotification(err.message || "Login failed", "error");
