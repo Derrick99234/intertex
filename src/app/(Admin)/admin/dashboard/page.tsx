@@ -134,7 +134,8 @@ function Dashboard() {
 
         if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
-        const transformedUsers = data.map((user: any, index: number) => ({
+        const list = Array.isArray(data) ? data : data.users || data.data || [];
+        const transformedUsers = list.map((user: any, index: number) => ({
           id: user._id,
           no: String(index + 1).padStart(2, "0"),
           userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
