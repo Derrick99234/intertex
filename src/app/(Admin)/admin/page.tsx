@@ -57,6 +57,8 @@ function AdminLogin() {
       const loginData = await res.json();
       if (loginData?.accessToken) {
         setAccessToken(loginData.accessToken);
+        // Also set a frontend-readable cookie for middleware (cross-site backup)
+        document.cookie = `adminToken=${loginData.accessToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax`;
       }
 
       showNotification("Login successful", "success");
