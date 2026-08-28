@@ -36,7 +36,8 @@ function OrderManagement() {
         if (!res.ok) throw new Error("Failed to fetch orders");
 
         const data = await res.json();
-        const formatted = data.map((order: any, index: number) => ({
+        const list = Array.isArray(data) ? data : data.data || data.orders || [];
+        const formatted = list.map((order: any, index: number) => ({
           checkbox: false,
           no: String(index + 1).padStart(2, "0"),
           id: order._id,
