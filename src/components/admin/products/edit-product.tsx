@@ -107,7 +107,7 @@ function EditProduct({
     description: product?.description || "",
     ratings: product?.ratings || "4.6",
     features: product?.features || "",
-    inStock: product?.inStock || [{ id: "1", size: "S", quantity: 1 }],
+    inStock: Array.isArray(product?.inStock) ? product.inStock : [{ id: "1", size: "S", quantity: 1 }],
   });
 
   // LOAD CATEGORIES

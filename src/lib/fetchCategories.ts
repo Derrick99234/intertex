@@ -23,11 +23,11 @@ export async function getCategories() {
   const res = await authFetch("/categories", {
     refreshPath: "/admin/refresh",
     method: "GET",
-    next: { revalidate: 300 }, // ✅ caching for frontend
+    next: { revalidate: 300 },
   });
-
   if (!res.ok) throw new Error("Failed to fetch categories");
-  return res.json();
+  const json = await res.json();
+  return Array.isArray(json) ? json : json.data || json.categories || [];
 }
 
 export async function getCategoryById(id: string) {
@@ -85,11 +85,11 @@ export async function getSubCategories(categoryId: string) {
   const res = await authFetch(`/subcategories/category/${categoryId}`, {
     refreshPath: "/admin/refresh",
     method: "GET",
-    next: { revalidate: 300 }, // optional caching for Next.js
+    next: { revalidate: 300 },
   });
-
   if (!res.ok) throw new Error("Failed to fetch subcategories");
-  return res.json();
+  const json = await res.json();
+  return Array.isArray(json) ? json : json.data || json.subcategories || [];
 }
 
 export async function createSubCategory(data: {
@@ -153,11 +153,11 @@ export async function getProductTypes(subcategoryId: string) {
   const res = await authFetch(`/types/by-subcategory/${subcategoryId}`, {
     refreshPath: "/admin/refresh",
     method: "GET",
-    next: { revalidate: 300 }, // optional caching for Next.js
+    next: { revalidate: 300 },
   });
-
   if (!res.ok) throw new Error("Failed to fetch subcategories");
-  return res.json();
+  const json = await res.json();
+  return Array.isArray(json) ? json : json.data || json.types || [];
 }
 
 export async function createProductType(data: {
