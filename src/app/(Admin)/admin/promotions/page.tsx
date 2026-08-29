@@ -70,20 +70,22 @@ export default function PromotionsPage() {
         throw new Error(data.message || "Unable to fetch promotions.");
       }
 
-      const items = (data.promotions || data || []).map(
+      const raw = Array.isArray(data) ? data : Array.isArray(data?.promotions) ? data.promotions : Array.isArray(data?.data) ? data.data : [];
+      const list = Array.isArray(raw) ? raw : [];
+      const items = list.map(
         (item: any, index: number) => ({
-          id: item._id || item.id,
+          id: item?._id || item?.id || "",
           no: String(index + 1).padStart(2, "0"),
-          code: item.code,
+          code: item?.code || "N/A",
           discount:
-            item.discountType === "fixed"
-              ? `NGN ${item.discountValue}`
-              : `${item.discountValue}%`,
-          status: item.status || "active",
-          starts: item.startsAt
+            item?.discountType === "fixed"
+              ? `NGN ${item?.discountValue}`
+              : `${item?.discountValue ?? 0}%`,
+          status: item?.status || "active",
+          starts: item?.startsAt
             ? new Date(item.startsAt).toLocaleDateString("en-GB")
             : "N/A",
-          ends: item.endsAt
+          ends: item?.endsAt
             ? new Date(item.endsAt).toLocaleDateString("en-GB")
             : "N/A",
           more: "Manage",

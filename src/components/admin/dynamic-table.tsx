@@ -132,7 +132,7 @@ export default function DynamicTable({
   }, [columns, filterDateKey]);
 
   const dataAfterAdvancedFilters = useMemo(() => {
-    let next = data;
+    let next = Array.isArray(data) ? data : [];
 
     if (tableFilters?.startDate && tableFilters?.endDate && inferredDateKey) {
       const start = parseISODateOnlyLocal(tableFilters.startDate);

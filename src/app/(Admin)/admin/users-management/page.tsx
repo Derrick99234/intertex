@@ -30,18 +30,20 @@ function UserManagement() {
         const res = await authFetch("/admin/users", {
           refreshPath: "/admin/refresh",
         });
-        const data = await res.json();
+        const json = await res.json();
 
-        if (!res.ok) throw new Error(data.message || "Failed to fetch users");
+        if (!res.ok) throw new Error(json?.message || "Failed to fetch users");
 
-        const transformedUsers = data.map((user: any, index: number) => ({
+        const raw = Array.isArray(json) ? json : json?.users || json?.data || [];
+        const list = Array.isArray(raw) ? raw : [];
+        const transformedUsers = list.map((user: any, index: number) => ({
           no: String(index + 1).padStart(2, "0"),
-          userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
+          userId: `USR-${String(index + 1).padStart(4, "0")}`,
           fullName: user.fullName || "N/A",
           id: user._id,
           email: user.email,
-          dateJoined: new Date(user.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
-          totalOrders: user.totalOrders ?? user.orders?.length ?? 0,
+          dateJoined: user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-GB") : "N/A",
+          totalOrders: typeof user?.totalOrders === "number" ? user.totalOrders : Array.isArray(user?.orders) ? user.orders.length : 0,
           more: <IoEyeOutline />,
         }));
 

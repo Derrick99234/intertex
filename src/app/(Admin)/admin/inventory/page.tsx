@@ -18,25 +18,32 @@ function Inventory() {
 
   useEffect(() => {
     const getProductTypes = async () => {
-      const res = await authFetch("/types", {
-        refreshPath: "/admin/refresh",
-        method: "GET",
-        next: { revalidate: 300 },
-      });
-      const { data } = await res.json();
-      const formatted = data.map((product: any, index: number) => ({
-        id: product._id,
-        checkbox: false,
-        no: String(index + 1).padStart(2, "0"),
-        productId: product._id,
-        productName: product.name,
-        totalItems: product.totalProducts,
-        totalSold: product.totalSold,
-        dateAdded: new Date(product.createdAt).toLocaleDateString("en-GB"),
-        more: <IoEyeOutline className="cursor-pointer" />,
-        product,
-      }));
-      setProductTypes(formatted);
+      try {
+        const res = await authFetch("/types", {
+          refreshPath: "/admin/refresh",
+          method: "GET",
+          next: { revalidate: 300 },
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json?.message || "Failed to fetch types");
+        const raw = Array.isArray(json) ? json : json?.data || json?.types || [];
+        const list = Array.isArray(raw) ? raw : [];
+        const formatted = list.map((product: any, index: number) => ({
+          id: product._id,
+          checkbox: false,
+          no: String(index + 1).padStart(2, "0"),
+          productId: product._id,
+          productName: product.name || "N/A",
+          totalItems: product.totalProducts ?? 0,
+          totalSold: product.totalSold ?? 0,
+          dateAdded: product?.createdAt ? new Date(product.createdAt).toLocaleDateString("en-GB") : "N/A",
+          more: <IoEyeOutline className="cursor-pointer" />,
+          product,
+        }));
+        setProductTypes(formatted);
+      } catch {
+        setProductTypes([]);
+      }
     };
 
     getProductTypes();

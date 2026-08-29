@@ -52,17 +52,18 @@ function BlogManagement() {
         const res = await authFetch("/blog", {
           refreshPath: "/admin/refresh",
         });
-        const data = await res.json();
+        const json = await res.json();
 
-        if (!res.ok) throw new Error(data.message || "Failed to fetch blogs");
+        if (!res.ok) throw new Error(json?.message || "Failed to fetch blogs");
 
-        console.log(data);
-        const transformedBlogs = data.map((blog: any, index: number) => ({
+        const raw = Array.isArray(json) ? json : json?.blogs || json?.data || [];
+        const list = Array.isArray(raw) ? raw : [];
+        const transformedBlogs = list.map((blog: any, index: number) => ({
           id: blog._id,
           no: String(index + 1).padStart(2, "0"),
-          initiatorId: `BLG-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
+          initiatorId: `BLG-${String(index + 1).padStart(4, "0")}`,
           topic: blog.title || "N/A",
-          datePosted: new Date(blog.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
+          datePosted: blog?.createdAt ? new Date(blog.createdAt).toLocaleDateString("en-GB") : "N/A",
           edit: (
             <MdEdit
               className="text-secondary cursor-pointer"

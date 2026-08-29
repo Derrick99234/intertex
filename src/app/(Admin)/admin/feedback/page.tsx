@@ -54,17 +54,17 @@ export default function FeedbackPage() {
           throw new Error(data.message || "Unable to fetch feedback.");
         }
 
-        const items = (data.feedback || data || []).map(
+        const raw = Array.isArray(data) ? data : Array.isArray(data?.feedback) ? data.feedback : Array.isArray(data?.data) ? data.data : [];
+        const list = Array.isArray(raw) ? raw : [];
+        const items = list.map(
           (item: any, index: number) => ({
-            id: item._id || item.id,
+            id: item?._id || item?.id || "",
             no: String(index + 1).padStart(2, "0"),
-            name: item.name || item.fullName || "Anonymous",
-            email: item.email || "N/A",
-            message: item.message || item.subject || "No message",
-            date: new Date(item.createdAt || item.date).toLocaleDateString(
-              "en-GB"
-            ),
-            status: item.status || "new",
+            name: item?.name || item?.fullName || "Anonymous",
+            email: item?.email || "N/A",
+            message: item?.message || item?.subject || "No message",
+            date: item?.createdAt || item?.date ? new Date(item.createdAt || item.date).toLocaleDateString("en-GB") : "N/A",
+            status: item?.status || "new",
             more: "View",
             raw: item,
           })

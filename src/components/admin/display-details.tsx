@@ -9,9 +9,10 @@ type DisplayDetailsProps = {
 };
 
 const DisplayDetails = ({ data }: DisplayDetailsProps) => {
+  const safe = Array.isArray(data) ? data : [];
   return (
     <div className="max-w-3xl w-full rounded overflow-hidden border border-gray-300 divide-y divide-gray-300">
-      {data.map(({ label, value, thirdValue }, index) => (
+      {safe.map(({ label, value, thirdValue }, index) => (
         <div
           key={index}
           className={`grid items-center px-4 py-4 ${
