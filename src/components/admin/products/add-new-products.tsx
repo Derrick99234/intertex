@@ -95,8 +95,15 @@ function AddNewProducts({
   }, []);
 
   useEffect(() => {
-    if (!selectedCategory) return;
+    if (!selectedCategory) {
+      setSubcategories([]);
+      setSelectedSubcategory("");
+      setProductTypes([]);
+      return;
+    }
     setIsLoading(true);
+    setSelectedSubcategory("");
+    setProductTypes([]);
 
     async function loadSubcategories() {
       try {
@@ -113,10 +120,12 @@ function AddNewProducts({
   }, [selectedCategory]);
 
   useEffect(() => {
-    if (!selectedCategory) return;
+    if (!selectedSubcategory) {
+      setProductTypes([]);
+      return;
+    }
 
     async function loadProductTypes() {
-      // setLoadingProductTypes(true);
       try {
         setIsLoading(true);
         const data = await getProductTypes(selectedSubcategory);
@@ -225,11 +234,18 @@ function AddNewProducts({
       }
       showNotification("Product added successfully", "success");
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const { product } = await res.json();
+      const raw = await res.json();
+      const product = raw.product || raw.data || raw;
+      const totalUnits = Array.isArray(product.inStock)
+        ? product.inStock.reduce(
+            (sum: number, item: any) => sum + (Number(item?.quantity) || 0),
+            0
+          )
+        : 0;
       setProducts((prev) => [
         {
           ...product,
-          inStock: product.inStock.length,
+          inStock: totalUnits,
           id: product._id,
           category: product?.productType?.name,
           status: "Active",
@@ -237,7 +253,6 @@ function AddNewProducts({
         },
         ...prev,
       ]);
-      // setProductTabs(true);
       setAddNewProduct(false);
     } catch (error) {
       showNotification("Failed to add product", "error");

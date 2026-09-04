@@ -7,6 +7,7 @@ import AddNewProducts from "./add-new-products";
 import EditProduct from "./edit-product";
 import { ArrowLeft } from "lucide-react";
 import { authFetch } from "@/lib/auth-fetch";
+import DeletePopup from "../blog/delete-popup";
 
 interface TabData {
   id: string;
@@ -22,11 +23,15 @@ interface ProductTabsProps {
       productId: string;
     }>
   >;
+  onProductDeleted?: (id: string) => void;
+  onProductUpdated?: (product: any) => void;
 }
 
 export default function ProductTabs({
   productId,
   setViewProduct,
+  onProductDeleted,
+  onProductUpdated,
 }: ProductTabsProps) {
   const router = useRouter();
 
@@ -35,6 +40,8 @@ export default function ProductTabs({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editProduct, setEditProduct] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchProduct = async () => {
     try {
@@ -79,18 +86,25 @@ export default function ProductTabs({
   };
 
   const renderImagesTab = () => {
-    const otherImages = (product?.otherImages || []).map(
-      (image: string, index: number) => {
+    const otherImages = (product?.otherImages || [])
+      .filter((img: string) => Boolean(img))
+      .map((image: string, index: number) => {
         return { url: image, label: `Other Image ${index + 1}` };
-      }
-    );
+      });
     const images = [
-      {
-        url: product?.imageUrl,
-        label: "Product Main Image",
-      },
-      ...(otherImages || []),
+      ...(product?.imageUrl
+        ? [{ url: product.imageUrl, label: "Product Main Image" }]
+        : []),
+      ...otherImages,
     ];
+
+    if (images.length === 0) {
+      return (
+        <div className="p-8 text-center text-gray-500">
+          No images uploaded for this product.
+        </div>
+      );
+    }
 
     return (
       <div className="flex items-center p-6 gap-5 flex-wrap">
@@ -99,7 +113,7 @@ export default function ProductTabs({
             <Image
               src={image.url}
               className="h-[16rem] w-[20rem] object-cover object-top"
-              alt={image.label} // make sure you do the right thing here
+              alt={image.label}
               width={400}
               height={400}
             />
@@ -118,7 +132,7 @@ export default function ProductTabs({
       },
       {
         label: "Products Price",
-        value: "N" + (product?.price || ""),
+        value: "₦" + Number(product?.price || 0).toLocaleString("en-NG"),
       },
       {
         label: "Materials",
@@ -258,18 +272,58 @@ export default function ProductTabs({
           </button>
         </div>
 
-        <button
-          className="px-6 py-2 cursor-pointer bg-secondary text-white rounded-lg font-medium hover:bg-secondary/75 transition-colors"
-          onClick={() => setEditProduct(true)}
-        >
-          Update Product
-        </button>
+        <div className="flex space-x-3">
+          <button
+            className="px-6 py-2 cursor-pointer bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+            onClick={() => setShowDeleteModal(true)}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete Product"}
+          </button>
+          <button
+            className="px-6 py-2 cursor-pointer bg-secondary text-white rounded-lg font-medium hover:bg-secondary/75 transition-colors"
+            onClick={() => setEditProduct(true)}
+          >
+            Update Product
+          </button>
+        </div>
       </div>
       {editProduct && (
         <EditProduct
           setEditProduct={setEditProduct}
           product={product}
           setProducts={setProduct}
+          onProductUpdated={(updated) => {
+            setProduct(updated);
+            onProductUpdated?.(updated);
+          }}
+        />
+      )}
+      {showDeleteModal && (
+        <DeletePopup
+          title="Delete Product"
+          text="Are you sure you want to delete this product? This action cannot be undone."
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={async () => {
+            setIsDeleting(true);
+            try {
+              const res = await authFetch(`/products/${productId}`, {
+                method: "DELETE",
+                refreshPath: "/admin/refresh",
+              });
+              if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data?.message || "Failed to delete product");
+              }
+              setShowDeleteModal(false);
+              onProductDeleted?.(productId);
+              setViewProduct({ status: false, productId: "" });
+            } catch (err: any) {
+              alert(err?.message || "Failed to delete product");
+            } finally {
+              setIsDeleting(false);
+            }
+          }}
         />
       )}
     </div>

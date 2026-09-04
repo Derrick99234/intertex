@@ -1,43 +1,69 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useSearchParams } from "next/navigation";
 
 function UserProfileComponent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("id");
-  const [userData, setUserData] = React.useState({
-    _id: "",
-    fullName: "",
-    email: "",
-    phone: "",
-    createdAt: "",
-    isActive: false,
-    updatedAt: "",
-  });
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      setError("No user ID specified");
+      return;
+    }
     const fetchUserData = async () => {
-      const res = await fetch(`${API_BASE_URL}/user/${userId}`);
-      const data = await res.json();
-      setUserData(data);
+      setLoading(true);
+      try {
+        const res = await authFetch(`/user/${userId}`, {
+          refreshPath: "/admin/refresh",
+        });
+        if (!res.ok) {
+          const raw = await res.json().catch(() => ({}));
+          throw new Error(raw?.message || "Failed to fetch user");
+        }
+        const data = await res.json();
+        setUserData(data);
+      } catch (err: any) {
+        setError(err?.message || "Unable to load user profile");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUserData();
-  }, []);
+  }, [userId]);
+
+  if (loading) {
+    return <div className="p-10 text-center text-gray-500">Loading user profile...</div>;
+  }
+
+  if (error || !userData) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        <p>{error || "User not found"}</p>
+      </div>
+    );
+  }
+
+  const nameParts = (userData?.fullName || "").trim().split(" ");
+  const firstName = nameParts[0] || "N/A";
+  const lastName = nameParts.slice(1).join(" ") || "N/A";
 
   const user = {
-    "First Name": userData?.fullName.split(" ")[0] || "N/A",
-    "Last Name": userData?.fullName.split(" ")[1] || "N/A",
+    "First Name": firstName,
+    "Last Name": lastName,
     "User ID": userData?._id || "N/A",
     "Email Address": userData?.email || "N/A",
     "Phone Number": userData?.phone || "N/A",
-    DOB: userData?.createdAt
-      ? new Date(userData.createdAt).toLocaleDateString("en-US")
+    "Date Joined": userData?.createdAt
+      ? new Date(userData.createdAt).toLocaleDateString("en-GB")
       : "N/A",
-    "Date Created": "2023-01-01",
-    "No. of Orders": 15,
-    "No. of Pending Orders": 13,
+    Status: userData?.isActive !== false ? "Active" : "Inactive",
   };
   return (
     <div className="max-w-4xl">

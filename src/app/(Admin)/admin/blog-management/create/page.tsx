@@ -1,12 +1,15 @@
 "use client";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
+import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 
 function CreateBlog() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -23,6 +26,11 @@ function CreateBlog() {
   };
 
   const handlePost = async () => {
+    if (!title.trim()) {
+      alert("Please enter a blog title");
+      return;
+    }
+    setIsPosting(true);
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -32,19 +40,23 @@ function CreateBlog() {
         formData.append("imageCover", imageFile);
       }
 
-      const res = await fetch(`${API_BASE_URL}/blog`, {
+      const res = await authFetch("/blog", {
+        refreshPath: "/admin/refresh",
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to create post");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || "Failed to create post");
+      }
 
-      const data = await res.json();
-      console.log("✅ Post created:", data);
       alert("Blog created successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Error creating blog");
+      router.push("/admin/blog-management");
+    } catch (err: any) {
+      alert(err?.message || "Error creating blog");
+    } finally {
+      setIsPosting(false);
     }
   };
 

@@ -114,7 +114,10 @@ function UserProfile() {
           showViewAll={false}
         />
       ) : activeTab === "activity-log" ? (
-        <h2>hello</h2>
+        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-500 max-w-4xl">
+          <p className="font-medium">No activity log entries found for this user.</p>
+          <p className="text-sm text-gray-400 mt-1">Actions such as logins and status changes will appear here.</p>
+        </div>
       ) : (
         <Suspense fallback={<div>Loading user profile...</div>}>
           <UserProfileComponent />

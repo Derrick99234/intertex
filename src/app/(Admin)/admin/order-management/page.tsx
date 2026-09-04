@@ -29,7 +29,7 @@ function OrderManagement() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await authFetch("/orders", {
+        const res = await authFetch("/orders?all=true", {
           refreshPath: "/admin/refresh",
         });
 

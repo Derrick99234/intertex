@@ -178,6 +178,19 @@ export default function DynamicTable({
     startIndex + itemsPerPage
   );
 
+  const getPageNumbers = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, "...", totalPages];
+    }
+    if (currentPage >= totalPages - 2) {
+      return [1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+  };
+
   const renderCellContent = (item: any, column: TableColumn) => {
     const value = item[column.key];
 
@@ -333,21 +346,23 @@ export default function DynamicTable({
             >
               ←
             </button>
-            {Array.from({ length: Math.min(2, totalPages) }, (_, i) => {
-              const pageNum = i + 1;
-              return (
+            {getPageNumbers().map((item, index) =>
+              item === "..." ? (
+                <span key={`ellipsis-${index}`} className="px-2 py-1 text-gray-400">
+                  ...
+                </span>
+              ) : (
                 <button
-                  key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
-                  className={`px-3 py-1 border rounded cursor-pointer  ${
-                    currentPage === pageNum ? "bg-secondary text-white" : ""
+                  key={item}
+                  onClick={() => setCurrentPage(Number(item))}
+                  className={`px-3 py-1 border rounded cursor-pointer ${
+                    currentPage === item ? "bg-secondary text-white" : "hover:bg-gray-50"
                   }`}
                 >
-                  {pageNum}
+                  {item}
                 </button>
-              );
-            })}
-            {totalPages > 2 && <span>...</span>}
+              )
+            )}
             <button
               onClick={() =>
                 setCurrentPage(Math.min(totalPages, currentPage + 1))

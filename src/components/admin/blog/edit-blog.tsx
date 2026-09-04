@@ -1,6 +1,5 @@
 "use client";
-import AdminSidebar from "@/components/admin/aside/aside";
-import { API_BASE_URL } from "@/lib/constants";
+import { authFetch } from "@/lib/auth-fetch";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -23,23 +22,26 @@ export default function EditBlogComponent() {
 
   // Load blog data on mount
   useEffect(() => {
+    if (!id) return;
     const fetchBlog = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/blog/${id}`);
+        const res = await authFetch(`/blog/${id}`, {
+          refreshPath: "/admin/refresh",
+        });
         if (!res.ok) throw new Error("Failed to fetch blog");
         const data = await res.json();
 
-        setTitle(data.title);
+        setTitle(data.title || "");
         setTagsInput(data.tags?.join(", ") || "");
-        setContent(data.description);
+        setContent(data.description || "");
         setExistingImage(data.imageCover || null);
 
         if (editorRef.current) {
-          editorRef.current.innerHTML = data.description;
+          editorRef.current.innerHTML = data.description || "";
         }
       } catch (err) {
         console.error(err);
-        alert("Error loading blog");
+        setError("Error loading blog");
       }
     };
     fetchBlog();
@@ -64,12 +66,16 @@ export default function EditBlogComponent() {
         formData.append("imageCover", imageFile);
       }
 
-      const res = await fetch(`${API_BASE_URL}/blog/${id}`, {
-        method: "PUT",
+      const res = await authFetch(`/blog/${id}`, {
+        refreshPath: "/admin/refresh",
+        method: "PATCH",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Failed to update post");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || "Failed to update post");
+      }
 
       router.push("/admin/blog-management");
     } catch (err) {
@@ -80,14 +86,12 @@ export default function EditBlogComponent() {
   };
 
   return (
-    <section className="flex mt-20">
-      <AdminSidebar />
-      <div className="p-5 flex-1 ml-64">
-        <div className="max-w-4xl mx-auto p-6 bg-white">
-          <h2 className="text-xl font-bold mb-4">Edit Blog</h2>
+    <section className="py-5">
+      <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Edit Blog</h2>
 
-          {/* Title and Tags Row */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+        {/* Title and Tags Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Title
@@ -190,7 +194,6 @@ export default function EditBlogComponent() {
             </button>
           </div>
         </div>
-      </div>
     </section>
   );
 }

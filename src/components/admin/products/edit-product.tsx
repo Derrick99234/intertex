@@ -20,10 +20,12 @@ function EditProduct({
   setEditProduct,
   product,
   setProducts,
+  onProductUpdated,
 }: {
   setEditProduct: React.Dispatch<React.SetStateAction<boolean>>;
   product: any;
-  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  setProducts?: React.Dispatch<React.SetStateAction<any>>;
+  onProductUpdated?: (product: any) => void;
 }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [categories, setCategories] = useState<any[]>([]);
@@ -236,24 +238,29 @@ function EditProduct({
       // === NEW IMAGES ===
       imagePreview.forEach((img) => {
         if (img.file) {
-          // Only append if there is a new file (new upload)
-          formDataToSend.append("newImages", img.file); // Append all new images to 'newImages' (for upload)
+          if (img.isMain) {
+            formDataToSend.append("imageUrl", img.file);
+          } else {
+            formDataToSend.append("otherImages", img.file);
+          }
         }
       });
 
       // === DELETED IMAGES ===
+      const deletedUrls: string[] = [];
       imagePreview.forEach((img) => {
         if (img.deleted && img.preview) {
-          // If an image is marked for deletion
-          formDataToSend.append("deleteImages", img.preview); // Add deleted image URL to 'deleteImages'
+          deletedUrls.push(img.preview);
         }
       });
+      if (deletedUrls.length > 0) {
+        formDataToSend.append("deleteImages", deletedUrls.join(","));
+      }
 
       const res = await authFetch(`/products/${product._id}`, {
         refreshPath: "/admin/refresh",
         method: "PATCH",
-        headers: {
-        },
+        headers: {},
         body: formDataToSend,
       });
 
@@ -262,30 +269,19 @@ function EditProduct({
         return;
       }
 
-      // const { updatedProduct } = await res.json();
-      console.log(await res.json());
-
-      console.log(Object.fromEntries(formDataToSend.entries()));
+      const raw = await res.json();
+      const updatedProduct = raw.product || raw.data || raw;
 
       showNotification("Product updated successfully", "success");
 
-      // UPDATE PRODUCT LIST
-      // setProducts((prev) =>
-      //   prev.map((p) =>
-      //     p._id === product._id
-      //       ? {
-      //           ...updatedProduct,
-      //           id: updatedProduct._id,
-      //           inStock: updatedProduct.inStock.length,
-      //           category: updatedProduct?.productType?.name,
-      //           more: <IoEyeOutline />,
-      //           status: "Active",
-      //         }
-      //       : p
-      //   )
-      // );
+      if (typeof setProducts === "function") {
+        setProducts(updatedProduct);
+      }
+      if (typeof onProductUpdated === "function") {
+        onProductUpdated(updatedProduct);
+      }
 
-      setTimeout(() => setEditProduct(false), 1500);
+      setTimeout(() => setEditProduct(false), 1200);
     } catch (error) {
       showNotification("Failed to update product", "error");
     } finally {

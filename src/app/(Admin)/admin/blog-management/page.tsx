@@ -11,7 +11,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
 
 interface Blog {
   id: string;
-  checkbox: boolean;
+  checkbox?: boolean;
   no: string;
   initiatorId: string;
   topic: string;
@@ -49,7 +49,7 @@ function BlogManagement() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await authFetch("/blog", {
+        const res = await authFetch("/blog?all=true", {
           refreshPath: "/admin/refresh",
         });
         const json = await res.json();
@@ -60,6 +60,7 @@ function BlogManagement() {
         const list = Array.isArray(raw) ? raw : [];
         const transformedBlogs = list.map((blog: any, index: number) => ({
           id: blog._id,
+          checkbox: false,
           no: String(index + 1).padStart(2, "0"),
           initiatorId: `BLG-${String(index + 1).padStart(4, "0")}`,
           topic: blog.title || "N/A",
