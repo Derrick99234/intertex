@@ -165,11 +165,11 @@ async function deleteEntity(type: EntityType, id: string): Promise<void> {
   await delay();
 
   if (type === "categories") {
-    deleteCategory(id);
+    await deleteCategory(id);
   } else if (type === "subcategories") {
-    deleteSubCategory(id);
+    await deleteSubCategory(id);
   } else if (type === "productTypes") {
-    deleteProductType(id);
+    await deleteProductType(id);
   }
 }
 

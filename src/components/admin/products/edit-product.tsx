@@ -16,6 +16,33 @@ import { Product } from "./view-product";
 import { IoEyeOutline } from "react-icons/io5";
 import ImageUploader from "./edit-image-section";
 
+const getCategoryId = (p: any): string => {
+  if (!p) return "";
+  const sub = p?.subcategory;
+  if (sub && typeof sub === "object") {
+    const cat = sub.category;
+    if (cat && typeof cat === "object") return String(cat._id || cat.id || "");
+    if (typeof cat === "string") return cat;
+  }
+  return "";
+};
+
+const getSubcategoryId = (p: any): string => {
+  if (!p) return "";
+  const sub = p?.subcategory;
+  if (sub && typeof sub === "object") return String(sub._id || sub.id || "");
+  if (typeof sub === "string") return sub;
+  return "";
+};
+
+const getProductTypeId = (p: any): string => {
+  if (!p) return "";
+  const pt = p?.productType;
+  if (pt && typeof pt === "object") return String(pt._id || pt.id || "");
+  if (typeof pt === "string") return pt;
+  return "";
+};
+
 function EditProduct({
   setEditProduct,
   product,
@@ -31,11 +58,11 @@ function EditProduct({
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [productTypes, setProductTypes] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState(
-    product?.subcategory.category._id
+  const [selectedCategory, setSelectedCategory] = useState<string>(() =>
+    getCategoryId(product)
   );
-  const [selectedSubcategory, setSelectedSubcategory] = useState(
-    product?.subcategory._id
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(() =>
+    getSubcategoryId(product)
   );
 
   const [isLoading, setIsLoading] = useState(false);
@@ -100,16 +127,18 @@ function EditProduct({
 
   // LOAD PRODUCT DATA
   const [formData, setFormData] = useState({
-    productType: product?.productType?._id || "",
+    productType: getProductTypeId(product),
     productName: product?.productName || "",
-    price: product?.price || "",
+    price: product?.price ?? "",
     materials: product?.materials || "",
     process: product?.process || "",
     offer: product?.offer || "",
     description: product?.description || "",
-    ratings: product?.ratings || "4.6",
+    ratings: product?.ratings ? String(product.ratings) : "4.6",
     features: product?.features || "",
-    inStock: Array.isArray(product?.inStock) ? product.inStock : [{ id: "1", size: "S", quantity: 1 }],
+    inStock: Array.isArray(product?.inStock) && product.inStock.length > 0
+      ? product.inStock
+      : [{ id: "1", size: "S", quantity: 1 }],
   });
 
   // LOAD CATEGORIES
@@ -118,7 +147,7 @@ function EditProduct({
       setIsLoading(true);
       try {
         const data = await getCategories();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch {
         showNotification("Failed to fetch categories", "error");
       } finally {
@@ -130,12 +159,15 @@ function EditProduct({
 
   // LOAD SUBCATEGORIES
   useEffect(() => {
-    if (!selectedCategory) return;
+    if (!selectedCategory) {
+      setSubcategories([]);
+      return;
+    }
     async function loadSubcategories() {
       setIsLoading(true);
       try {
         const data = await getSubCategories(selectedCategory);
-        setSubcategories(data);
+        setSubcategories(Array.isArray(data) ? data : []);
       } catch {
         showNotification("Failed to fetch subcategories", "error");
       } finally {
@@ -147,12 +179,15 @@ function EditProduct({
 
   // LOAD TYPES
   useEffect(() => {
-    if (!selectedSubcategory) return;
+    if (!selectedSubcategory) {
+      setProductTypes([]);
+      return;
+    }
     async function loadTypes() {
       setIsLoading(true);
       try {
         const data = await getProductTypes(selectedSubcategory);
-        setProductTypes(data);
+        setProductTypes(Array.isArray(data) ? data : []);
       } catch {
         showNotification("Failed to fetch product types", "error");
       } finally {
@@ -165,34 +200,26 @@ function EditProduct({
   const validateFormFields = () => {
     const missingFields: string[] = [];
 
-    const required = {
-      productType: "Product Type",
-      productName: "Product Name",
-      price: "Price",
-      materials: "Materials",
-      process: "Process",
-      offer: "Offer",
-      description: "Description",
-      ratings: "Ratings",
-      features: "Features",
-    };
+    if (!selectedCategory) missingFields.push("Category");
+    if (!selectedSubcategory) missingFields.push("Subcategory");
+    if (!formData.productType) missingFields.push("Product Type");
+    if (!formData.productName.trim()) missingFields.push("Product Name");
+    if (!String(formData.price).trim()) missingFields.push("Price");
+    if (!formData.materials.trim()) missingFields.push("Materials");
+    if (!formData.process.trim()) missingFields.push("Process");
+    if (!formData.description.trim()) missingFields.push("Description");
+    if (!formData.features.trim()) missingFields.push("Features");
 
-    // iterate safely over the keys that exist on `required`
-    for (const key of Object.keys(required) as Array<keyof typeof required>) {
-      const formKey = key as keyof typeof formData;
-      const value = formData[formKey];
-      if (
-        value === undefined ||
-        value === null ||
-        value.toString().trim() === ""
-      ) {
-        missingFields.push(required[key]);
-      }
+    const hasActiveImage = imagePreview.some(
+      (img) => !img.deleted && (img.file !== null || (img.preview !== null && img.preview !== ""))
+    );
+    if (!hasActiveImage) {
+      missingFields.push("At least one image");
     }
 
     formData.inStock.forEach(
       (stock: { size: string; quantity: number }, i: number) => {
-        if (stock.size.trim() === "" || stock.quantity <= 0) {
+        if (!stock.size || stock.size.trim() === "" || Number(stock.quantity) <= 0) {
           missingFields.push(`Stock #${i + 1}`);
         }
       }
@@ -264,12 +291,13 @@ function EditProduct({
         body: formDataToSend,
       });
 
+      const raw = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        showNotification("Failed to update product", "error");
+        showNotification(raw?.message || "Failed to update product", "error");
         return;
       }
 
-      const raw = await res.json();
       const updatedProduct = raw.product || raw.data || raw;
 
       showNotification("Product updated successfully", "success");
@@ -282,8 +310,8 @@ function EditProduct({
       }
 
       setTimeout(() => setEditProduct(false), 1200);
-    } catch (error) {
-      showNotification("Failed to update product", "error");
+    } catch (error: any) {
+      showNotification(error?.message || "Failed to update product", "error");
     } finally {
       setIsLoading(false);
     }
@@ -325,7 +353,14 @@ function EditProduct({
               <select
                 className="border rounded px-3 py-2 w-full"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => {
+                  const newCat = e.target.value;
+                  setSelectedCategory(newCat);
+                  setSelectedSubcategory("");
+                  setSubcategories([]);
+                  setProductTypes([]);
+                  setFormData((prev) => ({ ...prev, productType: "" }));
+                }}
               >
                 <option value="">Select</option>
                 {categories.map((cat) => (
@@ -339,7 +374,12 @@ function EditProduct({
               <select
                 className="border rounded px-3 py-2 w-full"
                 value={selectedSubcategory}
-                onChange={(e) => setSelectedSubcategory(e.target.value)}
+                onChange={(e) => {
+                  const newSub = e.target.value;
+                  setSelectedSubcategory(newSub);
+                  setProductTypes([]);
+                  setFormData((prev) => ({ ...prev, productType: "" }));
+                }}
               >
                 <option value="">Select</option>
                 {subcategories.map((sub) => (

@@ -211,32 +211,34 @@ function AddNewProducts({
         );
       });
 
-      if (imagePreview.length > 0 && imagePreview[0].file) {
-        formDataToSend.append("imageUrl", imagePreview[0].file);
-        imagePreview.slice(1).forEach((image) => {
-          if (image.file) {
-            formDataToSend.append("otherImages", image.file);
-          }
+      const uploadedFiles = imagePreview
+        .map((img) => img.file)
+        .filter((file): file is File => file !== null);
+
+      if (uploadedFiles.length > 0) {
+        formDataToSend.append("imageUrl", uploadedFiles[0]);
+        uploadedFiles.slice(1).forEach((file) => {
+          formDataToSend.append("otherImages", file);
         });
       }
 
       const res = await authFetch("/products", {
         refreshPath: "/admin/refresh",
         method: "POST",
-        headers: {
-        },
+        headers: {},
         body: formDataToSend,
       });
 
+      const raw = await res.json().catch(() => ({}));
+
       if (!res.ok) {
-        showNotification("Failed to add product", "error");
+        showNotification(raw?.message || "Failed to add product", "error");
         return;
       }
       showNotification("Product added successfully", "success");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const raw = await res.json();
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       const product = raw.product || raw.data || raw;
-      const totalUnits = Array.isArray(product.inStock)
+      const totalUnits = Array.isArray(product?.inStock)
         ? product.inStock.reduce(
             (sum: number, item: any) => sum + (Number(item?.quantity) || 0),
             0
@@ -246,16 +248,19 @@ function AddNewProducts({
         {
           ...product,
           inStock: totalUnits,
-          id: product._id,
-          category: product?.productType?.name,
+          id: product?._id,
+          category:
+            product?.productType?.name ||
+            product?.subcategory?.category?.name ||
+            "N/A",
           status: "Active",
           more: <IoEyeOutline />,
         },
         ...prev,
       ]);
       setAddNewProduct(false);
-    } catch (error) {
-      showNotification("Failed to add product", "error");
+    } catch (error: any) {
+      showNotification(error?.message || "Failed to add product", "error");
     } finally {
       setIsLoading(false);
     }

@@ -54,18 +54,23 @@ function ProductManagement() {
   };
 
   const transformProducts = (list: any[]) =>
-    list.map((product: any) => ({
-      id: product._id,
-      productName: product.productName || "N/A",
-      category: product?.productType?.name || product?.subcategory?.category?.name || "N/A",
-      price: product.price,
-      createdAt: product?.createdAt
-        ? new Date(product.createdAt).toLocaleDateString("en-GB")
-        : "N/A",
-      inStock: calculateTotalStock(product.inStock),
-      status: "Active",
-      more: <IoEyeOutline />,
-    }));
+    (Array.isArray(list) ? list : [])
+      .filter(Boolean)
+      .map((product: any) => ({
+        id: product._id || product.id,
+        productName: product.productName || "N/A",
+        category:
+          product?.productType?.name ||
+          product?.subcategory?.category?.name ||
+          "N/A",
+        price: product.price ?? 0,
+        createdAt: product?.createdAt
+          ? new Date(product.createdAt).toLocaleDateString("en-GB")
+          : "N/A",
+        inStock: calculateTotalStock(product.inStock),
+        status: "Active",
+        more: <IoEyeOutline />,
+      }));
 
   useEffect(() => {
     async function loadCategoryNav() {
@@ -74,10 +79,13 @@ function ProductManagement() {
         if (Array.isArray(cats) && cats.length > 0) {
           setCategoriesNav([
             { name: "All Products", href: "all" },
-            ...cats.map((c: any) => ({
-              name: c.name,
-              href: c.slug || c._id,
-            })),
+            ...cats
+              .filter(Boolean)
+              .map((c: any) => ({
+                name: c.name || "Category",
+                href: c.slug || c._id || "",
+              }))
+              .filter((c: any) => Boolean(c.href)),
           ]);
         }
       } catch {}
@@ -144,18 +152,20 @@ function ProductManagement() {
             setProducts((prev) => prev.filter((p) => p.id !== deletedId));
           }}
           onProductUpdated={(updated) => {
+            if (!updated) return;
+            const updatedId = updated._id || updated.id;
             setProducts((prev) =>
               prev.map((p) =>
-                p.id === updated._id
+                p.id === updatedId
                   ? {
                       ...p,
-                      id: updated._id,
+                      id: updatedId,
                       productName: updated.productName || p.productName,
                       category:
                         updated?.productType?.name ||
                         updated?.subcategory?.category?.name ||
                         p.category,
-                      price: updated.price,
+                      price: updated.price ?? p.price,
                       inStock: calculateTotalStock(updated.inStock),
                     }
                   : p

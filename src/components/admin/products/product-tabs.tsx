@@ -281,14 +281,15 @@ export default function ProductTabs({
             {isDeleting ? "Deleting..." : "Delete Product"}
           </button>
           <button
-            className="px-6 py-2 cursor-pointer bg-secondary text-white rounded-lg font-medium hover:bg-secondary/75 transition-colors"
+            className="px-6 py-2 cursor-pointer bg-secondary text-white rounded-lg font-medium hover:bg-secondary/75 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => setEditProduct(true)}
+            disabled={!product || loading}
           >
             Update Product
           </button>
         </div>
       </div>
-      {editProduct && (
+      {editProduct && product && (
         <EditProduct
           setEditProduct={setEditProduct}
           product={product}

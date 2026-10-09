@@ -141,7 +141,9 @@ function Dashboard() {
           userId: `USR-${String(index + 1).padStart(4, "0")}`, // or use user._id.slice(-6) etc.
           fullName: user.fullName || "N/A",
           email: user.email,
-          dateJoined: new Date(user.createdAt).toLocaleDateString("en-GB"), // adjust format if needed
+          dateJoined: user?.createdAt
+            ? new Date(user.createdAt).toLocaleDateString("en-GB")
+            : "N/A",
           totalOrders: user.totalOrders ?? user.orders?.length ?? 0,
           more: <IoEyeOutline />,
         }));
