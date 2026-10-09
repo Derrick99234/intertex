@@ -66,6 +66,7 @@ function EditProduct({
   );
 
   const [isLoading, setIsLoading] = useState(false);
+  const [inlineError, setInlineError] = useState<string | null>(null);
   const [notifications, setNotifications] = useState({
     status: false,
     message: "",
@@ -197,43 +198,61 @@ function EditProduct({
     loadTypes();
   }, [selectedSubcategory]);
 
-  const validateFormFields = () => {
-    const missingFields: string[] = [];
-
-    if (!selectedCategory) missingFields.push("Category");
-    if (!selectedSubcategory) missingFields.push("Subcategory");
-    if (!formData.productType) missingFields.push("Product Type");
-    if (!formData.productName.trim()) missingFields.push("Product Name");
-    if (!String(formData.price).trim()) missingFields.push("Price");
-    if (!formData.materials.trim()) missingFields.push("Materials");
-    if (!formData.process.trim()) missingFields.push("Process");
-    if (!formData.description.trim()) missingFields.push("Description");
-    if (!formData.features.trim()) missingFields.push("Features");
-
-    const hasActiveImage = imagePreview.some(
-      (img) => !img.deleted && (img.file !== null || (img.preview !== null && img.preview !== ""))
-    );
-    if (!hasActiveImage) {
-      missingFields.push("At least one image");
+  const validateStep = (step: number): string | null => {
+    if (step === 0) {
+      if (!selectedCategory) return "Please select a Category.";
+      if (!selectedSubcategory) return "Please select a Subcategory.";
+      if (!formData.productType) {
+        if (!isLoading && productTypes.length === 0) {
+          return "The selected subcategory has no product types yet. Please create a Product Type under this subcategory in 'Manage Categories' first.";
+        }
+        return "Please select a Product Type.";
+      }
+      return null;
     }
-
-    formData.inStock.forEach(
-      (stock: { size: string; quantity: number }, i: number) => {
-        if (!stock.size || stock.size.trim() === "" || Number(stock.quantity) <= 0) {
-          missingFields.push(`Stock #${i + 1}`);
+    if (step === 1) {
+      const hasActiveImage = imagePreview.some(
+        (img) => !img.deleted && (img.file !== null || (img.preview !== null && img.preview !== ""))
+      );
+      if (!hasActiveImage) return "At least one active product image is required.";
+      return null;
+    }
+    if (step === 2) {
+      if (!formData.productName.trim()) return "Please enter a product name.";
+      if (!String(formData.price).trim() || Number(formData.price) <= 0)
+        return "Please enter a valid price greater than 0.";
+      if (!formData.materials.trim()) return "Please enter product materials.";
+      if (!formData.process.trim()) return "Please enter product process.";
+      if (!formData.description.trim()) return "Please enter product description.";
+      if (!formData.features.trim()) return "Please enter product features.";
+      return null;
+    }
+    if (step === 3) {
+      if (!formData.inStock || formData.inStock.length === 0)
+        return "Please add at least one stock variant.";
+      for (let i = 0; i < formData.inStock.length; i++) {
+        const item = formData.inStock[i];
+        if (!item.size || item.size.trim() === "" || Number(item.quantity) <= 0) {
+          return `Please provide a valid size and quantity for Stock #${i + 1}.`;
         }
       }
-    );
-
-    return missingFields;
+      return null;
+    }
+    return null;
   };
 
   // SUBMIT UPDATE
   const handleUpdate = async () => {
-    const missing = validateFormFields();
-    if (missing.length > 0) {
-      showNotification(`Missing fields: ${missing.join(", ")}`, "error");
-      return;
+    setInlineError(null);
+
+    for (let s = 0; s <= 3; s++) {
+      const err = validateStep(s);
+      if (err) {
+        setInlineError(err);
+        showNotification(err, "error");
+        setCurrentPage(s);
+        return;
+      }
     }
 
     try {
@@ -334,24 +353,40 @@ function EditProduct({
   );
 
   return (
-    <div className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50">
+    <div className="flex justify-center items-center fixed inset-0 z-50 bg-black/50 p-4">
       <CgClose
-        className="text-white text-2xl absolute top-8 right-4 cursor-pointer"
+        className="text-white text-2xl absolute top-8 right-4 cursor-pointer hover:opacity-80"
         onClick={() => setEditProduct(false)}
       />
 
-      <div className="bg-white w-full max-w-lg rounded-lg">
-        <h2 className="bg-secondary py-2 text-lg text-white text-center">
+      <div
+        className="bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="bg-secondary py-2 text-lg text-white text-center font-medium">
           Edit Product
         </h2>
 
-        <div className="px-8">
+        {inlineError && (
+          <div className="mx-8 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-md flex items-center justify-between">
+            <span>{inlineError}</span>
+            <button
+              type="button"
+              onClick={() => setInlineError(null)}
+              className="text-red-500 hover:text-red-800 font-bold ml-2 text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        <div className="px-8 overflow-y-auto flex-1">
           {/* STEP 1 */}
           {currentPage === 0 && (
             <>
               <h3 className="text-sm font-medium my-3">Category</h3>
               <select
-                className="border rounded px-3 py-2 w-full"
+                className="border rounded px-3 py-2 w-full text-sm outline-none"
                 value={selectedCategory}
                 onChange={(e) => {
                   const newCat = e.target.value;
@@ -362,7 +397,7 @@ function EditProduct({
                   setFormData((prev) => ({ ...prev, productType: "" }));
                 }}
               >
-                <option value="">Select</option>
+                <option value="">Select a category</option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>
                     {cat.name}
@@ -372,8 +407,9 @@ function EditProduct({
 
               <h3 className="text-sm font-medium my-3">Subcategory</h3>
               <select
-                className="border rounded px-3 py-2 w-full"
+                className="border rounded px-3 py-2 w-full text-sm outline-none disabled:bg-gray-100"
                 value={selectedSubcategory}
+                disabled={!selectedCategory}
                 onChange={(e) => {
                   const newSub = e.target.value;
                   setSelectedSubcategory(newSub);
@@ -381,7 +417,7 @@ function EditProduct({
                   setFormData((prev) => ({ ...prev, productType: "" }));
                 }}
               >
-                <option value="">Select</option>
+                <option value="">Select a subcategory</option>
                 {subcategories.map((sub) => (
                   <option key={sub._id} value={sub._id}>
                     {sub.name}
@@ -391,19 +427,34 @@ function EditProduct({
 
               <h3 className="text-sm font-medium my-3">Product Type</h3>
               <select
-                className="border rounded px-3 py-2 w-full"
+                className="border rounded px-3 py-2 w-full text-sm outline-none disabled:bg-gray-100"
                 value={formData.productType}
-                onChange={(e) =>
-                  setFormData({ ...formData, productType: e.target.value })
-                }
+                disabled={!selectedSubcategory}
+                onChange={(e) => {
+                  setFormData({ ...formData, productType: e.target.value });
+                  setInlineError(null);
+                }}
               >
-                <option value="">Select</option>
+                <option value="">Select a type</option>
                 {productTypes.map((type) => (
                   <option key={type._id} value={type._id}>
                     {type.name}
                   </option>
                 ))}
               </select>
+
+              {selectedSubcategory && !isLoading && productTypes.length === 0 && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 flex items-start gap-2">
+                  <span className="text-sm">⚠️</span>
+                  <div>
+                    <p className="font-semibold">No product types found for this subcategory</p>
+                    <p className="mt-0.5">
+                      You must first create a Product Type assigned to this subcategory in{" "}
+                      <span className="font-semibold">Manage Categories &rarr; Product Types</span> before selecting it here.
+                    </p>
+                  </div>
+                </div>
+              )}
             </>
           )}
 
@@ -431,23 +482,35 @@ function EditProduct({
           )}
 
           {/* NAVIGATION */}
-          <div className="flex mt-6 mb-12 gap-4">
+          <div className="flex mt-6 mb-8 gap-4">
             {currentPage > 0 && (
               <button
-                className="w-full bg-gray-800 py-2 text-white rounded-md"
-                onClick={() => setCurrentPage(currentPage - 1)}
+                className="w-full bg-gray-800 py-2 text-base text-white rounded-md hover:bg-gray-900 transition-colors"
+                onClick={() => {
+                  setInlineError(null);
+                  setCurrentPage(currentPage - 1);
+                }}
               >
                 Back
               </button>
             )}
 
             <button
-              className="w-full bg-secondary py-2 text-white rounded-md"
-              onClick={() =>
-                currentPage !== 3
-                  ? setCurrentPage(currentPage + 1)
-                  : handleUpdate()
-              }
+              className="w-full bg-secondary py-2 text-base text-white rounded-md hover:opacity-90 transition-opacity"
+              onClick={() => {
+                if (currentPage !== 3) {
+                  const err = validateStep(currentPage);
+                  if (err) {
+                    setInlineError(err);
+                    showNotification(err, "error");
+                    return;
+                  }
+                  setInlineError(null);
+                  setCurrentPage(currentPage + 1);
+                } else {
+                  handleUpdate();
+                }
+              }}
             >
               {currentPage === 3 ? "Update Product" : "Next"}
             </button>

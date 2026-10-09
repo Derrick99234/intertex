@@ -34,6 +34,7 @@ function AddNewProducts({
   const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
 
   const [isLoading, setIsLoading] = useState(false);
+  const [inlineError, setInlineError] = useState<string | null>(null);
   const [notifications, setNotifications] = useState({
     status: false,
     message: "",
@@ -48,7 +49,7 @@ function AddNewProducts({
 
     setTimeout(() => {
       setNotifications((prev) => ({ ...prev, status: false }));
-    }, 3000);
+    }, 4000);
   };
 
   const [imagePreview, setImagePreview] = useState([
@@ -84,7 +85,7 @@ function AddNewProducts({
       try {
         setIsLoading(true);
         const data = await getCategories();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         showNotification("Failed to fetch categories", "error");
       } finally {
@@ -99,16 +100,18 @@ function AddNewProducts({
       setSubcategories([]);
       setSelectedSubcategory("");
       setProductTypes([]);
+      setFormData((prev) => ({ ...prev, productType: "" }));
       return;
     }
     setIsLoading(true);
     setSelectedSubcategory("");
     setProductTypes([]);
+    setFormData((prev) => ({ ...prev, productType: "" }));
 
     async function loadSubcategories() {
       try {
         const data = await getSubCategories(selectedCategory);
-        setSubcategories(data);
+        setSubcategories(Array.isArray(data) ? data : []);
       } catch (error) {
         showNotification("Failed to fetch subcategories", "error");
       } finally {
@@ -122,6 +125,7 @@ function AddNewProducts({
   useEffect(() => {
     if (!selectedSubcategory) {
       setProductTypes([]);
+      setFormData((prev) => ({ ...prev, productType: "" }));
       return;
     }
 
@@ -129,7 +133,7 @@ function AddNewProducts({
       try {
         setIsLoading(true);
         const data = await getProductTypes(selectedSubcategory);
-        setProductTypes(data);
+        setProductTypes(Array.isArray(data) ? data : []);
       } catch (error) {
         showNotification("Failed to fetch product types", "error");
       } finally {
@@ -140,69 +144,76 @@ function AddNewProducts({
     loadProductTypes();
   }, [selectedSubcategory]);
 
-  const validateFormFields = () => {
-    const missingFields = [];
-
-    // Check main formData fields
-    const requiredFormDataFields = {
-      productType: "Product Type",
-      productName: "Product Name",
-      price: "Price",
-      materials: "Materials",
-      process: "Process",
-      description: "Description",
-      features: "Features",
-    };
-
-    for (const key in requiredFormDataFields) {
-      const typedKey = key as keyof typeof formData;
-      if (!formData[typedKey] || formData[typedKey].toString().trim() === "") {
-        missingFields.push(
-          requiredFormDataFields[key as keyof typeof requiredFormDataFields]
-        );
+  const validateStep = (step: number): string | null => {
+    if (step === 0) {
+      if (!selectedCategory) return "Please select a Category.";
+      if (!selectedSubcategory) return "Please select a Subcategory.";
+      if (!formData.productType) {
+        if (!isLoading && productTypes.length === 0) {
+          return "The selected subcategory has no product types yet. Please create a Product Type under this subcategory in 'Manage Categories' first.";
+        }
+        return "Please select a Product Type.";
       }
+      return null;
     }
-
-    // Check if at least one image has been selected
-    const hasImage = imagePreview.some((img) => img.file !== null);
-    if (!hasImage) {
-      missingFields.push("At least one image");
+    if (step === 1) {
+      const hasImage = imagePreview.some((img) => img.file !== null);
+      if (!hasImage) return "Please upload at least one product image.";
+      return null;
     }
-
-    // Check the inStock array for valid size and quantity
-    formData.inStock.forEach((stock, index) => {
-      if (stock.size.toString().trim() === "" || stock.quantity <= 0) {
-        missingFields.push(`Size & Quantity for Stock #${index + 1}`);
+    if (step === 2) {
+      if (!formData.productName.trim()) return "Please enter a product name.";
+      if (!String(formData.price).trim() || Number(formData.price) <= 0)
+        return "Please enter a valid price greater than 0.";
+      if (!formData.materials.trim()) return "Please enter product materials.";
+      if (!formData.process.trim()) return "Please enter product process.";
+      if (!formData.description.trim()) return "Please enter product description.";
+      if (!formData.features.trim()) return "Please enter product features.";
+      return null;
+    }
+    if (step === 3) {
+      if (!formData.inStock || formData.inStock.length === 0)
+        return "Please add at least one stock variant.";
+      for (let i = 0; i < formData.inStock.length; i++) {
+        const item = formData.inStock[i];
+        if (!item.size || item.size.trim() === "" || Number(item.quantity) <= 0) {
+          return `Please provide a valid size and quantity for Stock #${i + 1}.`;
+        }
       }
-    });
-
-    return missingFields;
+      return null;
+    }
+    return null;
   };
 
   const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-      const missingFields = validateFormFields();
-      if (missingFields.length > 0) {
-        const message = `Please fill in all required fields: ${missingFields.join(
-          ", "
-        )}.`;
-        showNotification(message, "error");
+    setInlineError(null);
+
+    // Validate all steps from 0 to 3 before triggering any loading spinner
+    for (let s = 0; s <= 3; s++) {
+      const err = validateStep(s);
+      if (err) {
+        setInlineError(err);
+        showNotification(err, "error");
+        setCurrentPage(s);
         return;
       }
+    }
+
+    try {
+      setIsLoading(true);
       const formDataToSend = new FormData();
 
       formDataToSend.append("price", String(Number(formData.price)));
-      formDataToSend.append("productName", formData.productName);
+      formDataToSend.append("productName", formData.productName.trim());
       formDataToSend.append("productType", formData.productType);
       formDataToSend.append("subcategory", selectedSubcategory);
       formDataToSend.append("ratings", formData.ratings.toString());
-      formDataToSend.append("materials", formData.materials);
-      formDataToSend.append("process", formData.process);
-      formDataToSend.append("offer", formData.offer);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("features", formData.features);
-      // formDataToSend.append("inStock", JSON.stringify(formData.inStock));
+      formDataToSend.append("materials", formData.materials.trim());
+      formDataToSend.append("process", formData.process.trim());
+      formDataToSend.append("offer", formData.offer || "");
+      formDataToSend.append("description", formData.description.trim());
+      formDataToSend.append("features", formData.features.trim());
+
       formData.inStock.forEach((stock, index) => {
         formDataToSend.append(`inStock[${index}][size]`, stock.size);
         formDataToSend.append(
@@ -232,11 +243,16 @@ function AddNewProducts({
       const raw = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        showNotification(raw?.message || "Failed to add product", "error");
+        const errorMsg =
+          raw?.message ||
+          (Array.isArray(raw?.errors) ? raw.errors.join(", ") : null) ||
+          "Failed to add product";
+        setInlineError(errorMsg);
+        showNotification(errorMsg, "error");
         return;
       }
       showNotification("Product added successfully", "success");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1200));
       const product = raw.product || raw.data || raw;
       const totalUnits = Array.isArray(product?.inStock)
         ? product.inStock.reduce(
@@ -260,7 +276,9 @@ function AddNewProducts({
       ]);
       setAddNewProduct(false);
     } catch (error: any) {
-      showNotification(error?.message || "Failed to add product", "error");
+      const errorMsg = error?.message || "Failed to add product";
+      setInlineError(errorMsg);
+      showNotification(errorMsg, "error");
     } finally {
       setIsLoading(false);
     }
@@ -275,31 +293,45 @@ function AddNewProducts({
   });
 
   return (
-    <div className="flex justify-center items-center fixed top-0 bottom-0 left-0 right-0 bg-black/50">
+    <div className="flex justify-center items-center fixed inset-0 z-50 bg-black/50 p-4">
       <CgClose
-        className="text-white text-2xl absolute top-8 font-bold right-4 cursor-pointer"
+        className="text-white text-2xl absolute top-8 font-bold right-4 cursor-pointer hover:opacity-80"
         onClick={() => setAddNewProduct(false)}
       />
       <div
-        className="bg-white w-full max-w-lg rounded-lg"
+        className="bg-white w-full max-w-lg rounded-lg shadow-xl overflow-hidden max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="bg-secondary py-2 text-lg text-white text-center">
-          Add New Products
+        <h2 className="bg-secondary py-2 text-lg text-white text-center font-medium">
+          Add New Product
         </h2>
-        <div className="px-8">
+
+        {inlineError && (
+          <div className="mx-8 mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-md flex items-center justify-between">
+            <span>{inlineError}</span>
+            <button
+              type="button"
+              onClick={() => setInlineError(null)}
+              className="text-red-500 hover:text-red-800 font-bold ml-2 text-sm"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        <div className="px-8 overflow-y-auto flex-1">
           {currentPage === 0 && (
             <>
-              <h3 className="text-sm font-medium my-3">Categories</h3>
+              <h3 className="text-sm font-medium my-3">Category</h3>
               <select
                 name="categories"
                 id="categories"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="border rounded px-3 py-2 w-full"
+                className="border rounded px-3 py-2 w-full text-sm outline-none"
               >
                 <option value="">Select a category</option>
-                {isLoading ? (
+                {isLoading && categories.length === 0 ? (
                   <option value="">Loading categories...</option>
                 ) : (
                   categories.map((category) => (
@@ -309,16 +341,18 @@ function AddNewProducts({
                   ))
                 )}
               </select>
-              <h3 className="text-sm font-medium my-3">Sub categories</h3>
+
+              <h3 className="text-sm font-medium my-3">Subcategory</h3>
               <select
-                name="categories"
-                id="categories"
+                name="subcategories"
+                id="subcategories"
                 value={selectedSubcategory}
                 onChange={(e) => setSelectedSubcategory(e.target.value)}
-                className="border rounded px-3 py-2 w-full "
+                disabled={!selectedCategory}
+                className="border rounded px-3 py-2 w-full text-sm outline-none disabled:bg-gray-100"
               >
                 <option value="">Select a subcategory</option>
-                {isLoading ? (
+                {isLoading && subcategories.length === 0 ? (
                   <option value="">Loading subcategories...</option>
                 ) : (
                   subcategories.map((subcategory) => (
@@ -328,18 +362,21 @@ function AddNewProducts({
                   ))
                 )}
               </select>
-              <h3 className="text-sm font-medium my-3">Types</h3>
+
+              <h3 className="text-sm font-medium my-3">Product Type</h3>
               <select
-                name="categories"
-                id="categories"
+                name="productTypes"
+                id="productTypes"
                 value={formData.productType}
-                onChange={(e) =>
-                  setFormData({ ...formData, productType: e.target.value })
-                }
-                className="border rounded px-3 py-2 w-full"
+                onChange={(e) => {
+                  setFormData({ ...formData, productType: e.target.value });
+                  setInlineError(null);
+                }}
+                disabled={!selectedSubcategory}
+                className="border rounded px-3 py-2 w-full text-sm outline-none disabled:bg-gray-100"
               >
-                <option value="">Select a types</option>
-                {isLoading ? (
+                <option value="">Select a type</option>
+                {isLoading && productTypes.length === 0 ? (
                   <option value="">Loading types...</option>
                 ) : (
                   productTypes.map((type) => (
@@ -349,14 +386,29 @@ function AddNewProducts({
                   ))
                 )}
               </select>
+
+              {selectedSubcategory && !isLoading && productTypes.length === 0 && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 flex items-start gap-2">
+                  <span className="text-sm">⚠️</span>
+                  <div>
+                    <p className="font-semibold">No product types found for this subcategory</p>
+                    <p className="mt-0.5">
+                      You must first create a Product Type assigned to this subcategory in{" "}
+                      <span className="font-semibold">Manage Categories &rarr; Product Types</span> before adding products here.
+                    </p>
+                  </div>
+                </div>
+              )}
             </>
           )}
+
           {currentPage === 1 && (
             <ImageUploader
               images={imagePreview}
               setImages={(images) => setImagePreview(images)}
             />
           )}
+
           {currentPage === 2 && (
             <ProductDetails formData={formData} setFormData={setFormData} />
           )}
@@ -367,12 +419,14 @@ function AddNewProducts({
               setSizes={(sizes) => setFormData({ ...formData, inStock: sizes })}
             />
           )}
-          <div className="flex mt-6 mb-12 gap-4">
+
+          <div className="flex mt-6 mb-8 gap-4">
             <button
-              className={` w-full bg-gray-800 py-2 cursor-pointer text-lg text-white rounded-md text-center ${
+              className={`w-full bg-gray-800 py-2 cursor-pointer text-base text-white rounded-md text-center hover:bg-gray-900 transition-colors ${
                 currentPage === 0 ? "hidden" : ""
               }`}
               onClick={() => {
+                setInlineError(null);
                 if (currentPage > 0) {
                   setCurrentPage(currentPage - 1);
                 }
@@ -381,9 +435,16 @@ function AddNewProducts({
               Back
             </button>
             <button
-              className="w-full bg-secondary py-2 cursor-pointer text-lg text-white rounded-md text-center"
+              className="w-full bg-secondary py-2 cursor-pointer text-base text-white rounded-md text-center hover:opacity-90 transition-opacity"
               onClick={() => {
                 if (currentPage !== 3) {
+                  const err = validateStep(currentPage);
+                  if (err) {
+                    setInlineError(err);
+                    showNotification(err, "error");
+                    return;
+                  }
+                  setInlineError(null);
                   setCurrentPage(currentPage + 1);
                 } else {
                   handleSubmit();

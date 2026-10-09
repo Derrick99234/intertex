@@ -392,22 +392,17 @@ const GenericForm = ({
     initialData?.description || ""
   );
   const [status, setStatus] = useState(initialData?.status ?? true);
-  const [parentId, setParentId] = useState(
-    initialData?.category || initialData?.subcategory || ""
-  );
+  const getInitialParentId = () => {
+    const cat = initialData?.category;
+    const sub = initialData?.subcategory;
+    if (cat) return typeof cat === "object" ? cat._id : String(cat);
+    if (sub) return typeof sub === "object" ? sub._id : String(sub);
+    return "";
+  };
+
+  const [parentId, setParentId] = useState(getInitialParentId());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Set initial parent ID based on entity type and available data
-    if (!isEditing && entityType !== "categories") {
-      if (entityType === "subcategories" && categories.length > 0) {
-        setParentId(categories[0]._id);
-      } else if (entityType === "productTypes" && subcategories.length > 0) {
-        setParentId(subcategories[0]._id);
-      }
-    }
-  }, [isEditing, entityType, categories, subcategories]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -487,17 +482,25 @@ const GenericForm = ({
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-3 bg-white focus:ring-secondary focus:border-secondary appearance-none pr-10"
             disabled={parentOptions.length === 0}
           >
-            {parentOptions.length === 0 && (
-              <option value="">No {parentLabel} Available</option>
-            )}
-            {parentOptions.map((p) => (
-              <option key={p._id} value={p._id}>
-                {p.name}
-                {entityType === "productTypes" &&
-                  (p as Subcategory).categoryName &&
-                  ` (Cat: ${(p as Subcategory).categoryName})`}
-              </option>
-            ))}
+            <option value="">
+              {parentOptions.length === 0
+                ? `No ${parentLabel} Available`
+                : `Select a ${parentLabel}`}
+            </option>
+            {parentOptions.map((p) => {
+              const catName =
+                (p as any).categoryName ||
+                (p as any).category?.name ||
+                "";
+              return (
+                <option key={p._id} value={p._id}>
+                  {p.name}
+                  {entityType === "productTypes" &&
+                    catName &&
+                    ` (Cat: ${catName})`}
+                </option>
+              );
+            })}
           </select>
           <ChevronDown className="w-4 h-4 text-gray-500 absolute right-3 top-[calc(1.75rem+4px)] pointer-events-none" />
         </div>
