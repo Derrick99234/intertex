@@ -243,10 +243,20 @@ function AddNewProducts({
       const raw = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        const errorMsg =
+        let errorMsg =
           raw?.message ||
-          (Array.isArray(raw?.errors) ? raw.errors.join(", ") : null) ||
-          "Failed to add product";
+          (Array.isArray(raw?.errors) ? raw.errors.join(", ") : null);
+        if (!errorMsg) {
+          if (res.status === 504) {
+            errorMsg = "Server timeout (504). Please try again with smaller images or check connection.";
+          } else if (res.status === 502) {
+            errorMsg = "Server is starting up or temporarily unavailable (502). Please retry in a few seconds.";
+          } else if (res.status === 401) {
+            errorMsg = "Session expired. Please log in again.";
+          } else {
+            errorMsg = `Failed to add product (status ${res.status}).`;
+          }
+        }
         setInlineError(errorMsg);
         showNotification(errorMsg, "error");
         return;
